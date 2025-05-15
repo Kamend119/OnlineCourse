@@ -12,13 +12,24 @@ interface ApiService {
     //1.	авторизация
     @POST("rpc/authorize_user")
     suspend fun authorizeUser(
-        @Body request: AuthorizeRequest
+        @Query("p_login") login: String,
+        @Query("p_password") password: String
     ): List<AuthorizeResponse>
 
     //2.   регистрация
     @POST("rpc/register_user")
     suspend fun registerUser(
-        @Body request: RegisterRequest
+        @Query("p_login") login: String,
+        @Query("p_mail") mail: String,
+        @Query("p_password") password: String,
+        @Query("p_last_name") lastName: String,
+        @Query("p_first_name") firstName: String,
+        @Query("p_patronymic") patronymic: String,
+        @Query("p_file_type") fileType: String? = null,
+        @Query("p_file_path") filePath: String? = null,
+        @Query("p_original_name") originalName: String? = null,
+        @Query("p_mime_type") mimeType: String? = null,
+        @Query("p_size_bytes") sizeBytes: Long? = null
     ): Long
 
     //3.	просмотр своих обращений
@@ -36,13 +47,23 @@ interface ApiService {
     //5.	добавить обращение
     @POST("rpc/add_appeal_with_file")
     suspend fun addAppeal(
-        @Body request: AddAppealRequest
+        @Query("p_user_id") userId: Long,
+        @Query("p_topic_appeal_id") topicAppealId: Long,
+        @Query("p_heading_appeal") headingAppeal: String,
+        @Query("p_text_appeal") textAppeal: String,
+        @Query("p_file_type") fileType: String? = null,
+        @Query("p_file_path") filePath: String? = null,
+        @Query("p_original_name") originalName: String? = null,
+        @Query("p_mime_type") mimeType: String? = null,
+        @Query("p_size_bytes") sizeBytes: Long? = null
     ): Boolean
 
     //6.	добавить ответ на обращение
     @POST("rpc/add_answer_to_appeal")
     suspend fun addAnswerToAppeal(
-        @Body request: AddAnswerRequest
+        @Query("p_appeal_id") appealId: Long,
+        @Query("p_user_id") userId: Long,
+        @Query("p_text_answer") textAnswer: String
     ): Boolean
 
     //7.	просмотр тем обращений
@@ -62,13 +83,24 @@ interface ApiService {
     //10.	изменение данных пользователя
     @POST("rpc/update_user_profile")
     suspend fun updateUserProfile(
-        @Body request: UpdateUserProfileRequest
+        @Query("p_id") userId: Long,
+        @Query("p_mail") mail: String,
+        @Query("p_last_name") lastName: String,
+        @Query("p_first_name") firstName: String,
+        @Query("p_patronymic") patronymic: String,
+        @Query("p_file_type") fileType: String? = null,
+        @Query("p_file_path") filePath: String? = null,
+        @Query("p_original_name") originalName: String? = null,
+        @Query("p_mime_type") mimeType: String? = null,
+        @Query("p_size_bytes") sizeBytes: Long? = null
     ): Boolean
 
     //11.	изменение пароля
     @POST("rpc/update_user_password")
     suspend fun updateUserPassword(
-        @Body request: UpdateUserPasswordRequest
+        @Query("p_id") userId: Long,
+        @Query("p_password") currentPassword: String,
+        @Query("p_new_password") newPassword: String
     ): Boolean
 
     //12.	просмотр уведомлений
@@ -96,7 +128,8 @@ interface ApiService {
     //16.	просмотр курсов
     @POST("rpc/get_courses_by_user_and_status")
     suspend fun getCoursesByUserAndStatus(
-        @Body request: UserCourseRequest
+        @Query("p_user_id") userId: Long,
+        @Query("p_status_name") statusName: String
     ): List<UserCourseResponse>
 
     //17.	просмотр уроков курса
@@ -138,7 +171,10 @@ interface ApiService {
     //23.	создание курса
     @POST("rpc/create_course")
     suspend fun createCourse(
-        @Body courseData: CreateCourseRequest
+        @Query("p_course_category_id") courseCategoryId: Long,
+        @Query("p_user_id") userId: Long,
+        @Query("p_name") name: String,
+        @Query("p_description") description: String
     ): Long
 
     //24.	просмотр категорий курсов
@@ -148,37 +184,51 @@ interface ApiService {
     //25.	создание урока
     @POST("rpc/create_lesson")
     suspend fun createLesson(
-        @Body request: CreateLessonRequest
+        @Query("course_id") courseId: Long,
+        @Query("name") name: String,
+        @Query("description") description: String,
+        @Query("sequence_number") sequenceNumber: Long
     ): Long
 
     //26.	изменение курса
     @POST("rpc/update_course")
     suspend fun updateCourse(
-        @Body request: UpdateCourseRequest
+        @Query("course_id") courseId: Long,
+        @Query("course_category_id") courseCategoryId: Long,
+        @Query("user_id") userId: Long,
+        @Query("name") name: String,
+        @Query("description") description: String
     ): Boolean
 
     //27.	изменение урока
     @POST("rpc/update_lesson")
     suspend fun updateLesson(
-        @Body request: UpdateLessonRequest
+        @Query("lesson_id") lessonId: Long,
+        @Query("course_id") courseId: Long,
+        @Query("name") name: String,
+        @Query("description") description: String,
+        @Query("sequence_number") sequenceNumber: Long
     ): Boolean
 
     //28.	удаление курса
     @POST("rpc/delete_course")
     suspend fun deleteCourse(
-        @Body request: DeleteCourseRequest
+        @Query("course_id") courseId: Long,
+        @Query("user_id") userId: Long
     ): Boolean
 
     //29.	удаление урока
     @POST("rpc/delete_lesson")
     suspend fun deleteLesson(
-        @Body request: DeleteLessonRequest
+        @Query("lesson_id") lessonId: Long,
+        @Query("user_id") userId: Long
     ): Boolean
 
     //30.	удаление шага
     @POST("rpc/delete_step")
     suspend fun deleteStep(
-        @Body request: DeleteStepRequest
+        @Query("step_id") stepId: Long,
+        @Query("user_id") userId: Long
     ): Boolean
 
     //31.	просмотр ответов на шаг
@@ -196,7 +246,9 @@ interface ApiService {
     //33.	оценить ответ на шаг
     @POST("rpc/evaluate_answer_on_step")
     suspend fun evaluateAnswerOnStep(
-        @Body request: EvaluateAnswerOnStepRequest
+        @Query("answer_user_id") answerUserId: Long,
+        @Query("score") score: Long,
+        @Query("comment_teacher") commentTeacher: String? = null
     ): Boolean
 
     //34.	просмотр статистики на курсе
@@ -215,24 +267,34 @@ interface ApiService {
 
     //37.	выдать предупреждение пользователю
     @POST("rpc/issue_warning")
-    suspend fun issueWarning(@Query("user_id") userId: Long): Boolean
+    suspend fun issueWarning(
+        @Query("user_id") userId: Long
+    ): Boolean
 
     //38.	удалить страницу пользователя
     @POST("rpc/delete_user")
-    suspend fun deleteUser(@Query("p_user_id") userId: Long): Boolean
+    suspend fun deleteUser(
+        @Query("p_user_id") userId: Long)
+            : Boolean
 
     //39.	выдать предупреждение на курс
     @POST("rpc/warn_on_course")
-    suspend fun warnOnCourse(@Query("course_id") courseId: Long): Boolean
+    suspend fun warnOnCourse(
+        @Query("course_id") courseId: Long
+    ): Boolean
 
     //40.	выдать предупреждение на шаг урока
     @POST("rpc/warn_on_step")
-    suspend fun warnOnStep(@Query("step_id") stepId: Long): Boolean
+    suspend fun warnOnStep(
+        @Query("step_id") stepId: Long
+    ): Boolean
 
     //41.	поступление/отложить курс
     @POST("rpc/enroll_or_defer_course")
     suspend fun enrollOrDeferCourse(
-        @Body request: EnrollOrDeferCourseRequest
+        @Query("p_user_id") userId: Long,
+        @Query("p_course_id") courseId: Long,
+        @Query("p_status_name") statusName: String
     ): Boolean
 
     //42.	просмотр своих сертификатов
@@ -246,73 +308,157 @@ interface ApiService {
     //44.	ответ на шаг урока
     @POST("rpc/answer_lesson_step")
     suspend fun answerLessonStep(
-        @Body request: AnswerLessonStepRequest
+        @Query("user_id") userId: Long,
+        @Query("step_lesson_id") stepLessonId: Long,
+        @Query("answer_text") answerText: String? = null,
+        @Query("selected_option_ids") selectedOptionIds: List<Long>? = null,
+        @Query("file_path") filePath: String? = null,
+        @Query("original_name") originalName: String? = null,
+        @Query("mime_type") mimeType: String? = null,
+        @Query("size_bytes") sizeBytes: Long? = null,
+        @Query("comment_student") commentStudent: String? = null
     ): Boolean
 
     //45.	изменение ответа на шаг урока
     @POST("rpc/update_lesson_step_answer")
     suspend fun updateLessonStepAnswer(
-        @Body request: UpdateLessonStepAnswerRequest
+        @Query("answer_id") answerId: Long,
+        @Query("user_id") userId: Long,
+        @Query("step_lesson_id") stepLessonId: Long,
+        @Query("answer_text") answerText: String? = null,
+        @Query("selected_option_ids") selectedOptionIds: List<Long>? = null,
+        @Query("file_path") filePath: String? = null,
+        @Query("original_name") originalName: String? = null,
+        @Query("mime_type") mimeType: String? = null,
+        @Query("size_bytes") sizeBytes: Long? = null,
+        @Query("comment_student") commentStudent: String? = null
     ): Boolean
 
     //46.1.	создание шага «Лекция»
     @POST("rpc/create_lecture_step")
     suspend fun createLectureStep(
-        @Body request: CreateLectureStepRequest
+        @Query("lesson_id") lessonId: Long,
+        @Query("name") name: String,
+        @Query("content") content: String,
+        @Query("sequence_number") sequenceNumber: Long,
+        @Query("obligatory") obligatory: Boolean,
+        @Query("file_path") filePath: String? = null,
+        @Query("original_name") originalName: String? = null,
+        @Query("mime_type") mimeType: String? = null,
+        @Query("size_bytes") sizeBytes: Long? = null
     ): Boolean
 
     //46.2.	создание шага «Вопрос без вариантов ответа»
     @POST("rpc/create_open_question_step")
     suspend fun createOpenQuestionStep(
-        @Body request: CreateOpenQuestionStepRequest
+        @Query("lesson_id") lessonId: Long,
+        @Query("name") name: String,
+        @Query("content") content: String,
+        @Query("sequence_number") sequenceNumber: Long,
+        @Query("time_passes") timePasses: String,
+        @Query("obligatory") obligatory: Boolean,
+        @Query("max_score") maxScore: Long? = null
     ): Boolean
 
     //46.3.	создание шага «Вопрос с вариантами ответа»
     @POST("rpc/create_multiple_choice_question_step")
     suspend fun createMultipleChoiceQuestionStep(
-        @Body request: CreateMultipleChoiceQuestionStepRequest
+        @Query("lesson_id") lessonId: Long,
+        @Query("name") name: String,
+        @Query("content") content: String,
+        @Query("sequence_number") sequenceNumber: Long,
+        @Query("time_passes") timePasses: String,
+        @Query("obligatory") obligatory: Boolean,
+        @Query("max_score") maxScore: Long,
+        @Query("text_options") textOptions: List<String>,
+        @Query("correct") correct: List<Boolean>,
+        @Query("scores") scores: List<Long>
     ): Boolean
 
     //46.4.	создание шага «Вопрос с приложением»
     @POST("rpc/create_file_upload_question_step")
     suspend fun createFileUploadQuestionStep(
-        @Body request: CreateFileUploadQuestionStepRequest
+        @Query("lesson_id") lessonId: Long,
+        @Query("name") name: String,
+        @Query("content") content: String,
+        @Query("sequence_number") sequenceNumber: Long,
+        @Query("obligatory") obligatory: Boolean,
+        @Query("max_score") maxScore: Long,
+        @Query("file_path") filePath: String,
+        @Query("original_name") originalName: String,
+        @Query("mime_type") mimeType: String,
+        @Query("size_bytes") sizeBytes: Long
     ): Boolean
 
     //47.1.	изменение шага «Лекция»
     @POST("rpc/update_lecture_step")
     suspend fun updateLectureStep(
-        @Body request: UpdateLectureStepRequest
+        @Query("step_id") stepId: Long,
+        @Query("name") name: String,
+        @Query("content") content: String,
+        @Query("sequence_number") sequenceNumber: Long,
+        @Query("obligatory") obligatory: Boolean,
+        @Query("file_path") filePath: String? = null,
+        @Query("original_name") originalName: String? = null,
+        @Query("mime_type") mimeType: String? = null,
+        @Query("size_bytes") sizeBytes: Long? = null
     ): Boolean
 
     //47.2.	изменение шага «Вопрос без вариантов ответа»
     @POST("rpc/update_open_question_step")
     suspend fun updateOpenQuestionStep(
-        @Body request: UpdateOpenQuestionStepRequest
+        @Query("step_id") stepId: Long,
+        @Query("name") name: String,
+        @Query("content") content: String,
+        @Query("sequence_number") sequenceNumber: Long,
+        @Query("time_passes") timePasses: String,
+        @Query("obligatory") obligatory: Boolean,
+        @Query("max_score") maxScore: Long
     ): Boolean
 
     //47.3.	изменение шага «Вопрос с вариантами ответа»
     @POST("rpc/update_multiple_choice_question_step")
     suspend fun updateMultipleChoiceQuestionStep(
-        @Body request: UpdateMultipleChoiceQuestionStepRequest
+        @Query("step_id") stepId: Long,
+        @Query("name") name: String,
+        @Query("content") content: String,
+        @Query("sequence_number") sequenceNumber: Long,
+        @Query("time_passes") timePasses: String,  // Time format: HH:MM:SS
+        @Query("obligatory") obligatory: Boolean,
+        @Query("max_score") maxScore: Long,
+        @Query("text_options") textOptions: List<String>,
+        @Query("correct") correct: List<Boolean>,
+        @Query("scores") scores: List<Long>
     ): Boolean
 
     //47.4.	изменение шага «Вопрос с приложением»
     @POST("rpc/update_file_upload_question_step")
     suspend fun updateFileUploadQuestionStep(
-        @Body request: UpdateFileUploadQuestionStepRequest
+        @Query("step_id") stepId: Long,
+        @Query("name") name: String,
+        @Query("content") content: String,
+        @Query("sequence_number") sequenceNumber: Long,
+        @Query("obligatory") obligatory: Boolean,
+        @Query("max_score") maxScore: Long,
+        @Query("file_path") filePath: String,
+        @Query("original_name") originalName: String,
+        @Query("mime_type") mimeType: String,
+        @Query("size_bytes") sizeBytes: Long
     ): Boolean
 
     //48.	добавить категории курсов
     @POST("rpc/add_course_category")
     suspend fun addCourseCategory(
-        @Body request: AddCourseCategoryRequest
+        @Query("name") name: String,
+        @Query("description") description: String
     ): Boolean
 
     //49.	изменить категорию курсов
     @POST("rpc/update_course_category")
     suspend fun updateCourseCategory(
-        @Body request: UpdateCourseCategoryRequest
+        @Query("id") id: Long,
+        @Query("name") name: String,
+        @Query("description") description: String
     ): Boolean
 
     //50.	удалить категорию курсов
@@ -324,13 +470,16 @@ interface ApiService {
     //51.	добавить темы обращений
     @POST("rpc/add_topic_appeal")
     suspend fun addTopicAppeal(
-        @Body request: AddTopicAppealRequest
+        @Query("name") name: String,
+        @Query("description") description: String
     ): Boolean
 
     //52.	изменить тему обращений
     @POST("rpc/update_topic_appeal")
     suspend fun updateTopicAppeal(
-        @Body request: UpdateTopicAppealRequest
+        @Query("id") id: Long,
+        @Query("name") name: String,
+        @Query("description") description: String
     ): Boolean
 
     //53.	удалить тему обращения
@@ -342,7 +491,12 @@ interface ApiService {
     //54.	зарегистрировать преподавателя
     @POST("rpc/register_teacher")
     suspend fun registerTeacher(
-        @Body request: RegisterTeacherRequest
+        @Query("login") login: String,
+        @Query("mail") mail: String,
+        @Query("password") password: String,
+        @Query("last_name") lastName: String,
+        @Query("first_name") firstName: String,
+        @Query("patronymic") patronymic: String
     ): Long
 
     //55.	Общая статистика платформы
