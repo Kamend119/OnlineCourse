@@ -4,12 +4,12 @@ import com.google.gson.annotations.SerializedName
 
 // 1.	авторизация
 data class AuthorizeResponse(
-    @SerializedName("id_user") val idUser: Long,
+    @SerializedName("user_id") val userId: Long,
     @SerializedName("role_name") val roleName: String?
 )
 
 //3.	просмотр своих обращений
-data class UserAppealResponse(
+data class UserAppealsResponse(
     @SerializedName("appeal_id") val appealId: Long,
     @SerializedName("heading_appeal") val headingAppeal: String,
     @SerializedName("topic_name") val topicName: String,
@@ -50,7 +50,7 @@ data class UserProfileResponse(
     @SerializedName("mail") val mail: String,
     @SerializedName("last_name") val lastName: String,
     @SerializedName("first_name") val firstName: String,
-    @SerializedName("patronymic") val patronymic: String,
+    @SerializedName("patronymic") val patronymic: String?,
     @SerializedName("date_registration") val dateRegistration: String,
     @SerializedName("file_path") val filePath: String?,
     @SerializedName("original_name") val originalName: String?,
@@ -80,7 +80,7 @@ data class CourseResponse(
     @SerializedName("category_name") val categoryName: String,
     @SerializedName("teacher_last_name") val teacherLastName: String,
     @SerializedName("teacher_first_name") val teacherFirstName: String,
-    @SerializedName("teacher_patronymic") val teacherPatronymic: String
+    @SerializedName("teacher_patronymic") val teacherPatronymic: String?
 )
 
 //15.	просмотр конкретного курса
@@ -91,7 +91,7 @@ data class CourseDetailResponse(
     @SerializedName("category_name") val categoryName: String,
     @SerializedName("teacher_last_name") val teacherLastName: String,
     @SerializedName("teacher_first_name") val teacherFirstName: String,
-    @SerializedName("teacher_patronymic") val teacherPatronymic: String
+    @SerializedName("teacher_patronymic") val teacherPatronymic: String?
 )
 
 //16.	просмотр курсов
@@ -102,7 +102,7 @@ data class UserCourseResponse(
     @SerializedName("category_name") val categoryName: String,
     @SerializedName("teacher_last_name") val teacherLastName: String,
     @SerializedName("teacher_first_name") val teacherFirstName: String,
-    @SerializedName("teacher_patronymic") val teacherPatronymic: String,
+    @SerializedName("teacher_patronymic") val teacherPatronymic: String?,
     @SerializedName("date_finishing") val dateFinishing: String?
 )
 
@@ -121,7 +121,7 @@ data class LessonDetailResponse(
 )
 
 //19.	просмотр шагов урока
-data class StepResponse(
+data class StepsByLessons(
     @SerializedName("step_id") val stepId: Long,
     @SerializedName("step_name") val stepName: String,
     @SerializedName("obligatory") val obligatory: Boolean,
@@ -143,7 +143,16 @@ data class StepDetailResponse(
     @SerializedName("original_name") val originalName: String?,
     @SerializedName("mime_type") val mimeType: String?,
     @SerializedName("size_bytes") val sizeBytes: Long?,
-    @SerializedName("upload_date") val uploadDate: String?
+    @SerializedName("upload_date") val uploadDate: String?,
+    @SerializedName("answer_option_ids") val answerOptionIds: List<Long>?,
+    @SerializedName("answer_option_texts") val answerOptionTexts: List<String>?,
+    @SerializedName("answer_option_scores") val answerOptionScores: List<Long>?,
+    @SerializedName("user_answer_id") val userAnswerId: Long?,
+    @SerializedName("user_answer_text") val userAnswerText: String?,
+    @SerializedName("user_score") val userScore: Long?,
+    @SerializedName("user_comment_student") val userCommentStudent: String?,
+    @SerializedName("user_comment_ticher") val userCommentTeacher: String?,
+    @SerializedName("user_date_answer") val userDateAnswer: String?
 )
 
 //21.	просмотр статистики по дням
@@ -170,25 +179,25 @@ data class CourseCategory(
 //31.	просмотр ответов на шаг
 data class AnswersForStepResponse(
     @SerializedName("answer_id") val answerId: Long,
-    @SerializedName("student_last_name") val studentLastName: String,
-    @SerializedName("student_first_name") val studentFirstName: String,
-    @SerializedName("student_patronymic") val studentPatronymic: String,
-    @SerializedName("answer_date") val answerDate: String
+    @SerializedName("student_last_name") val studentLastName: String?,
+    @SerializedName("student_first_name") val studentFirstName: String?,
+    @SerializedName("student_patronymic") val studentPatronymic: String?,
+    @SerializedName("answer_date") val answerDate: String?
 )
 
 //32.	просмотр ответа на шаг
 data class AnswerForStepResponse(
-    @SerializedName("student_last_name") val studentLastName: String,
-    @SerializedName("student_first_name") val studentFirstName: String,
-    @SerializedName("student_patronymic") val studentPatronymic: String,
-    @SerializedName("answer_text") val answerText: String,
+    @SerializedName("student_last_name") val studentLastName: String?,
+    @SerializedName("student_first_name") val studentFirstName: String?,
+    @SerializedName("student_patronymic") val studentPatronymic: String?,
+    @SerializedName("answer_text") val answerText: String?,
     @SerializedName("comment_student") val commentStudent: String?,
     @SerializedName("comment_teacher") val commentTeacher: String?,
-    @SerializedName("score") val score: Long,
-    @SerializedName("option_text") val optionText: List<String>,
-    @SerializedName("is_correct") val isCorrect: List<Boolean>,
-    @SerializedName("option_score") val optionScore: List<Long>,
-    @SerializedName("file_path") val filePath: List<String>
+    @SerializedName("score") val score: Long?,
+    @SerializedName("option_text") val optionText: List<String>?,
+    @SerializedName("is_correct") val isCorrect: List<Boolean>?,
+    @SerializedName("option_score") val optionScore: List<Long>?,
+    @SerializedName("file_path") val filePath: List<String>?
 )
 
 //34.	просмотр статистики на курсе
@@ -203,17 +212,17 @@ data class NewUserResponse(
     @SerializedName("user_id") val userId: Long,
     @SerializedName("last_name") val lastName: String,
     @SerializedName("first_name") val firstName: String,
-    @SerializedName("patronymic") val patronymic: String,
+    @SerializedName("patronymic") val patronymic: String?,
     @SerializedName("date_registration") val dateRegistration: String
 )
 
 //36.	просмотр всех пользователей
 data class AllUserResponse(
     @SerializedName("user_id") val userId: Long,
-    @SerializedName("last_name") val lastName: String,
-    @SerializedName("first_name") val firstName: String,
-    @SerializedName("patronymic") val patronymic: String,
-    @SerializedName("date_registration") val dateRegistration: String
+    @SerializedName("last_name") val lastName: String?,
+    @SerializedName("first_name") val firstName: String?,
+    @SerializedName("patronymic") val patronymic: String?,
+    @SerializedName("date_registration") val dateRegistration: String?
 )
 
 //42.	просмотр своих сертификатов
@@ -223,7 +232,12 @@ data class UserCertificatesResponse(
     @SerializedName("upload_date") val uploadDate: String
 )
 
-//43.	просмотр конкретного сертификата	???
+//43.	просмотр конкретного сертификата
+data class ViewCertificate(
+    @SerializedName("file_path") val filePath: String,
+    @SerializedName("original_name") val originalName: String,
+    @SerializedName("mime_type") val mimeType: String
+)
 
 //55.	Общая статистика платформы
 data class GetPlatformStatisticsResponse(
@@ -241,7 +255,7 @@ data class GetPlatformStatisticsResponse(
 
 //56.	Активность пользователей
 data class UserActivityStatsItemResponse(
-    @SerializedName("day") val day: String, // Дата в формате "YYYY-MM-DD"
+    @SerializedName("day") val day: String,
     @SerializedName("active_users") val activeUsers: Long,
     @SerializedName("new_users") val newUsers: Long,
     @SerializedName("answered_questions") val answeredQuestions: Long,
@@ -255,9 +269,17 @@ data class AppealStatisticsItemResponse(
     @SerializedName("avg_response_hours") val avgResponseHours: Double,
     @SerializedName("overdue_appeals") val overdueAppeals: Long,
     @SerializedName("resolution_rate") val resolutionRate: Double,
-    @SerializedName("most_common_topic") val mostCommonTopic: String?,
+    @SerializedName("most_common_topic") val mostCommonTopic: String,
     @SerializedName("avg_files_per_appeal") val avgFilesPerAppeal: Double
 )
 
-//58.	выдать сертификат студенту	???
-//59.	скачать сертификат	???
+//58.	выдать сертификат студенту
+data class IssueCertificateResponse(
+    @SerializedName("student_name") val studentName: String,
+    @SerializedName("course_name") val courseName: String,
+    @SerializedName("teacher_name") val teacherName: String,
+    @SerializedName("average_score") val averageScore: Double,
+    @SerializedName("completion_percent") val completionPercent: Double,
+    @SerializedName("issue_date") val issueDate: String,
+    @SerializedName("cert_id") val certId: Long
+)
