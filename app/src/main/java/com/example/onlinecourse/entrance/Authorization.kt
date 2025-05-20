@@ -128,8 +128,7 @@ fun Authorization(navController: NavHostController) {
                                 userPreferences.setUser(userId.toString(), roleName)
 
                                 when (roleName) {
-                                    "Студент" -> navController.navigate("test")
-                                        //navController.navigate("mainStudent/$userId/$roleName")
+                                    "Студент" -> navController.navigate("main/$userId/$roleName")
                                     else -> Toast.makeText(context, "Роль не распознана", Toast.LENGTH_SHORT).show()
                                 }
 

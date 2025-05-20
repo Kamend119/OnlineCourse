@@ -44,6 +44,8 @@ class RegisterUserViewModel : ViewModel() {
         private set
     var registrationResult by mutableStateOf<String?>(null)
         private set
+    var userId by mutableStateOf<Long?>(null)
+        private set
 
     fun registerUser(
         login: String,
@@ -57,14 +59,14 @@ class RegisterUserViewModel : ViewModel() {
         mimeType: String? = null,
         sizeBytes: String? = null,
         file: MultipartBody.Part? = null,
-        onSuccess: () -> Unit
+        onSuccess: (Long) -> Unit
     ) {
         viewModelScope.launch {
             isLoading = true
             try {
                 val rb = { str: String -> str.toRequestBody("text/plain".toMediaTypeOrNull()) }
 
-                val userId = RetrofitClient.instance.registerUser(
+                val responseId = RetrofitClient.instance.registerUser(
                     login = rb(login),
                     email = rb(email),
                     password = rb(password),
@@ -78,8 +80,8 @@ class RegisterUserViewModel : ViewModel() {
                     file = file
                 ).id
 
-                registrationResult = "Регистрация успешна. ID пользователя: $userId"
-                onSuccess()
+                userId = responseId
+                onSuccess(userId!!)
             } catch (e: Exception) {
                 registrationResult = "Ошибка регистрации: ${e.message}"
             } finally {

@@ -1,4 +1,4 @@
-package com.example.onlinecourse
+package com.example.onlinecourse.function
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,8 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
-import com.example.onlinecourse.function.User
-import com.example.onlinecourse.function.UserPreferences
 
 
 @Composable

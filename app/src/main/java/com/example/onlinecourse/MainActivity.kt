@@ -4,17 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.onlinecourse.entrance.Authorization
 import com.example.onlinecourse.entrance.Entrance
 import com.example.onlinecourse.entrance.Registration
+import com.example.onlinecourse.function.Loading
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,20 +40,39 @@ fun MyApp() {
     var role by remember { mutableStateOf("Не распознано") }
 
     NavHost(navController = navController, startDestination = "loading") {
-        //loading
+        // загрузка
         composable("loading") { Loading(navController, userId, role) }
 
-        //entrance
+        // аккаунт
+
+        // администрирование
+
+        // обращения
+
+        // сертификаты
+
+        // курсы
+
+        // первый вход
         composable("entrance") { Entrance(navController) }
         composable("authorization") { Authorization(navController) }
         composable("registration") { Registration(navController) }
 
-        // тест
-        composable("test") {testpage(navController)}
-    }
-}
+        // оценка знаний
 
-@Composable
-fun testpage(navController: NavHostController) {
-    Text("test page")
+        // уведомления
+
+        // настройки
+
+        // статистика
+
+        // пользователь
+
+        // главная страница
+        composable("main/{userId}/{role}") {backStackEntry ->
+            userId = backStackEntry.arguments?.getString("userId") ?: "-1"
+            role = backStackEntry.arguments?.getString("role") ?: "-1"
+            MainPage(navController, userId, role)
+        }
+    }
 }

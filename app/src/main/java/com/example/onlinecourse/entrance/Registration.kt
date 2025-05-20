@@ -243,14 +243,12 @@ fun Registration(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Кнопка выбора фото
                         Button(onClick = {
                             launcher.launch("image/*")
                         }) {
                             Text(text = if (photoUri.value == null) "Загрузить фото" else "Изменить фото")
                         }
 
-                        // Отображение превью фото, если выбрано
                         photoUri.value?.let { uri ->
                             Spacer(modifier = Modifier.height(8.dp))
                             Image(
@@ -328,8 +326,8 @@ fun Registration(
                                     mimeType = mimeType,
                                     sizeBytes = sizeBytes,
                                     file = filePart,
-                                    onSuccess = {
-                                        navController.navigate("test")
+                                    onSuccess = { id ->
+                                        navController.navigate("main/$id/Студент")
                                     }
                                 )
                             },
