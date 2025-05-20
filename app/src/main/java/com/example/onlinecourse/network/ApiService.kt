@@ -1,6 +1,7 @@
 package com.example.onlinecourse.network
 
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET
@@ -26,16 +27,16 @@ interface ApiService {
     @Multipart
     @POST("register_user")
     suspend fun registerUser(
-        @Query("login") login: String,
-        @Query("email") email: String,
-        @Query("password") password: String,
-        @Query("last_name") lastName: String,
-        @Query("first_name") firstName: String,
-        @Query("patronymic") patronymic: String,
-        @Query("file_type") fileType: String? = null,
-        @Query("original_name") originalName: String? = null,
-        @Query("mime_type") mimeType: String? = null,
-        @Query("size_bytes") sizeBytes: String? = null,
+        @Part("login") login: RequestBody,
+        @Part("email") email: RequestBody,
+        @Part("password") password: RequestBody,
+        @Part("last_name") lastName: RequestBody,
+        @Part("first_name") firstName: RequestBody,
+        @Part("patronymic") patronymic: RequestBody,
+        @Part("file_type") fileType: RequestBody? = null,
+        @Part("original_name") originalName: RequestBody? = null,
+        @Part("mime_type") mimeType: RequestBody? = null,
+        @Part("size_bytes") sizeBytes: RequestBody? = null,
         @Part file: MultipartBody.Part? = null
     ): LongResponse
 

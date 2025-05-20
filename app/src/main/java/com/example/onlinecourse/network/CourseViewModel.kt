@@ -8,7 +8,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 
@@ -60,26 +62,26 @@ class RegisterUserViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
-                Log.d("RegisterUserViewModel", "Регистрация пользователя: $login, $email")
+                val rb = { str: String -> str.toRequestBody("text/plain".toMediaTypeOrNull()) }
+
                 val userId = RetrofitClient.instance.registerUser(
-                    login = login,
-                    email = email,
-                    password = password,
-                    lastName = lastName,
-                    firstName = firstName,
-                    patronymic = patronymic,
-                    fileType = fileType,
-                    originalName = originalName,
-                    mimeType = mimeType,
-                    sizeBytes = sizeBytes,
+                    login = rb(login),
+                    email = rb(email),
+                    password = rb(password),
+                    lastName = rb(lastName),
+                    firstName = rb(firstName),
+                    patronymic = rb(patronymic),
+                    fileType = fileType?.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    originalName = originalName?.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    mimeType = mimeType?.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    sizeBytes = sizeBytes?.toRequestBody("text/plain".toMediaTypeOrNull()),
                     file = file
                 ).id
+
                 registrationResult = "Регистрация успешна. ID пользователя: $userId"
-                Log.d("RegisterUserViewModel", "Регистрация успешна: ID = $userId")
                 onSuccess()
             } catch (e: Exception) {
                 registrationResult = "Ошибка регистрации: ${e.message}"
-                Log.e("RegisterUserViewModel", "Ошибка регистрации: ${e.message}", e)
             } finally {
                 isLoading = false
             }
@@ -127,19 +129,34 @@ class LoginViewModel : ViewModel() {
 
 // изменение пароля
 class ChangePasswordViewModel : ViewModel() {
-    var isLoading by mutableStateOf(false)
+    var newPassword = mutableStateOf("")
         private set
-    var passwordUpdateResult by mutableStateOf<String?>(null)
+    var repeatPassword = mutableStateOf("")
+        private set
+    var errorMessage = mutableStateOf("")
+        private set
+    var successMessage = mutableStateOf("")
+        private set
+    var isLoading = mutableStateOf(false)
+        private set
+    var passwordUpdated = mutableStateOf(false)
         private set
 
-    fun updateUserPassword(
-        userId: Long,
-        currentPassword: String,
-        newPassword: String,
-        onSuccess: () -> Unit
-    ) {
+    fun onNewPasswordChanged(newPass: String) {
+        newPassword.value = newPass
+    }
+
+    fun onRepeatPasswordChanged(repeatPass: String) {
+        repeatPassword.value = repeatPass
+    }
+
+    fun updateUserPassword(userId: Long, currentPassword: String, newPassword: String) {
+        errorMessage.value = ""
+        successMessage.value = ""
+        passwordUpdated.value = false
+
         viewModelScope.launch {
-            isLoading = true
+            isLoading.value = true
             try {
                 val result = RetrofitClient.instance.updateUserPassword(
                     userId = userId,
@@ -147,16 +164,16 @@ class ChangePasswordViewModel : ViewModel() {
                     newPassword = newPassword
                 )
                 if (result.response) {
-                    passwordUpdateResult = "Пароль успешно обновлён"
-                    onSuccess()
+                    successMessage.value = "Пароль успешно обновлён"
+                    passwordUpdated.value = true
                 } else {
-                    passwordUpdateResult = "Не удалось обновить пароль. Проверьте текущий пароль"
+                    errorMessage.value = "Не удалось обновить пароль. Проверьте текущий пароль"
                 }
             } catch (e: Exception) {
-                passwordUpdateResult = "Ошибка при смене пароля: ${e.message}"
+                errorMessage.value = "Ошибка при смене пароля: ${e.message}"
                 Log.e("ChangePasswordViewModel", "Ошибка смены пароля", e)
             } finally {
-                isLoading = false
+                isLoading.value = false
             }
         }
     }
