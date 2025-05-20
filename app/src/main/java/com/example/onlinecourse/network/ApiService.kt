@@ -31,13 +31,13 @@ interface ApiService {
         @Query("password") password: String,
         @Query("last_name") lastName: String,
         @Query("first_name") firstName: String,
-        @Query("patronymic") patronymic: String? = null,
+        @Query("patronymic") patronymic: String,
         @Query("file_type") fileType: String? = null,
         @Query("original_name") originalName: String? = null,
         @Query("mime_type") mimeType: String? = null,
         @Query("size_bytes") sizeBytes: String? = null,
         @Part file: MultipartBody.Part? = null
-    ): Long
+    ): LongResponse
 
     //3.	просмотр своих обращений
     @GET("get_user_appeals")
@@ -64,7 +64,7 @@ interface ApiService {
         @Part("mime_type") mimeType: String? = null,
         @Part("size_bytes") sizeBytes: Int? = null,
         @Part file: MultipartBody.Part? = null
-    ): Boolean
+    ): BooleanResponse
 
     //6.	добавить ответ на обращение
     @POST("add_answer_to_appeal")
@@ -72,7 +72,7 @@ interface ApiService {
         @Query("appeal_id") appealId: Long,
         @Query("user_id") userId: Long,
         @Query("text_answer") textAnswer: String
-    ): Boolean
+    ): BooleanResponse
 
     //7.	просмотр тем обращений
     @GET("get_topics_appeals")
@@ -102,7 +102,7 @@ interface ApiService {
         @Query("mime_type") mimeType: String?,
         @Query("size_bytes") sizeBytes: Long?,
         @Part file: MultipartBody.Part?
-    ): Boolean
+    ): BooleanResponse
 
     //11.	изменение пароля
     @POST("update_user_password")
@@ -110,7 +110,7 @@ interface ApiService {
         @Query("user_id") userId: Long,
         @Query("password") currentPassword: String,
         @Query("new_password") newPassword: String
-    ): Boolean
+    ): BooleanResponse
 
     //12.	просмотр уведомлений
     @GET("get_user_notifications")
@@ -185,7 +185,7 @@ interface ApiService {
         @Query("user_id") userId: Long,
         @Query("name") name: String,
         @Query("description") description: String
-    ): Long
+    ): LongResponse
 
     //24.	просмотр категорий курсов
     @GET("get_course_categories")
@@ -198,7 +198,7 @@ interface ApiService {
         @Query("name") name: String,
         @Query("description") description: String,
         @Query("sequence_number") sequenceNumber: Long
-    ): Long
+    ): LongResponse
 
     //26.	изменение курса
     @POST("update_course")
@@ -208,7 +208,7 @@ interface ApiService {
         @Query("user_id") userId: Long,
         @Query("name") name: String,
         @Query("description") description: String
-    ): Boolean
+    ): BooleanResponse
 
     //27.	изменение урока
     @POST("update_lesson")
@@ -218,28 +218,28 @@ interface ApiService {
         @Query("name") name: String,
         @Query("description") description: String,
         @Query("sequence_number") sequenceNumber: Long
-    ): Boolean
+    ): BooleanResponse
 
     //28.	удаление курса
     @POST("delete_course")
     suspend fun deleteCourse(
         @Query("course_id") courseId: Long,
         @Query("user_id") userId: Long
-    ): Boolean
+    ): BooleanResponse
 
     //29.	удаление урока
     @POST("delete_lesson")
     suspend fun deleteLesson(
         @Query("lesson_id") lessonId: Long,
         @Query("user_id") userId: Long
-    ): Boolean
+    ): BooleanResponse
 
     //30.	удаление шага
     @POST("delete_step")
     suspend fun deleteStep(
         @Query("step_id") stepId: Long,
         @Query("user_id") userId: Long
-    ): Boolean
+    ): BooleanResponse
 
     //31.	просмотр ответов на шаг
     @GET("get_answers_for_step")
@@ -259,7 +259,7 @@ interface ApiService {
         @Query("answer_user_id") answerUserId: Long,
         @Query("score") score: Long,
         @Query("comment_teacher") commentTeacher: String?
-    ): Boolean
+    ): BooleanResponse
 
     //34.	просмотр статистики на курсе
     @GET("view_course_statistics")
@@ -279,25 +279,25 @@ interface ApiService {
     @POST("issue_warning")
     suspend fun issueWarning(
         @Query("user_id") userId: Long
-    ): Boolean
+    ): BooleanResponse
 
     //38.	удалить страницу пользователя
     @POST("delete_user")
     suspend fun deleteUser(
         @Query("user_id") userId: Long
-    ): Boolean
+    ): BooleanResponse
 
     //39.	выдать предупреждение на курс
     @POST("warn_on_course")
     suspend fun warnOnCourse(
         @Query("course_id") courseId: Long
-    ): Boolean
+    ): BooleanResponse
 
     //40.	выдать предупреждение на шаг урока
     @POST("warn_on_step")
     suspend fun warnOnStep(
         @Query("step_id") stepId: Long
-    ): Boolean
+    ): BooleanResponse
 
     //41.	поступление/отложить курс
     @POST("enroll_or_defer_course")
@@ -305,7 +305,7 @@ interface ApiService {
         @Query("user_id") userId: Long,
         @Query("course_id") courseId: Long,
         @Query("status_name") statusName: String
-    ): Boolean
+    ): BooleanResponse
 
     //42.	просмотр своих сертификатов
     @GET("get_user_sertificates")
@@ -332,7 +332,7 @@ interface ApiService {
         @Query("size_bytes") sizeBytes: Long? = null,
         @Query("comment_student") commentStudent: String? = null,
         @Part file: MultipartBody.Part? = null
-    ): Boolean
+    ): BooleanResponse
 
     //45.	изменение ответа на шаг урока
     @Multipart
@@ -348,7 +348,7 @@ interface ApiService {
         @Query("size_bytes") sizeBytes: Long? = null,
         @Query("comment_student") commentStudent: String? = null,
         @Part file: MultipartBody.Part? = null
-    ): Boolean
+    ): BooleanResponse
 
     //46.1.	создание шага «Лекция»
     @Multipart
@@ -363,7 +363,7 @@ interface ApiService {
         @Query("mime_type") mimeType: String? = null,
         @Query("size_bytes") sizeBytes: Long? = null,
         @Part file: MultipartBody.Part? = null
-    ): Boolean
+    ): BooleanResponse
 
     //46.2.	создание шага «Вопрос без вариантов ответа»
     @POST("create_open_question_step")
@@ -375,7 +375,7 @@ interface ApiService {
         @Query("time_passes") timePasses: String,
         @Query("obligatory") obligatory: Boolean,
         @Query("max_score") maxScore: Long? = null
-    ): Boolean
+    ): BooleanResponse
 
     //46.3.	создание шага «Вопрос с вариантами ответа»
     @POST("create_multiple_choice_question_step")
@@ -390,7 +390,7 @@ interface ApiService {
         @Query("text_options") textOptions: List<String>,
         @Query("correct") correct: List<Boolean>,
         @Query("scores") scores: List<Long>
-    ): Boolean
+    ): BooleanResponse
 
     //46.4.	создание шага «Вопрос с приложением»
     @Multipart
@@ -407,7 +407,7 @@ interface ApiService {
         @Part("mime_type") mimeType: String,
         @Part("size_bytes") sizeBytes: Long,
         @Part file: MultipartBody.Part
-    ): Boolean
+    ): BooleanResponse
 
     //47.1.	изменение шага «Лекция»
     @Multipart
@@ -422,7 +422,7 @@ interface ApiService {
         @Part("mime_type") mimeType: String?,
         @Part("size_bytes") sizeBytes: Long?,
         @Part file: MultipartBody.Part?
-    ): Boolean
+    ): BooleanResponse
 
     //47.2.	изменение шага «Вопрос без вариантов ответа»
     @POST("update_open_question_step")
@@ -434,7 +434,7 @@ interface ApiService {
         @Query("time_passes") timePasses: String,
         @Query("obligatory") obligatory: Boolean,
         @Query("max_score") maxScore: Long
-    ): Boolean
+    ): BooleanResponse
 
     //47.3.	изменение шага «Вопрос с вариантами ответа»
     @POST("update_multiple_choice_question_step")
@@ -449,7 +449,7 @@ interface ApiService {
         @Query("text_options") textOptions: List<String>,
         @Query("correct") correct: List<Boolean>,
         @Query("scores") scores: List<Long>
-    ): Boolean
+    ): BooleanResponse
 
     //47.4.	изменение шага «Вопрос с приложением»
     @Multipart
@@ -466,14 +466,14 @@ interface ApiService {
         @Query("mime_type") mimeType: String,
         @Query("size_bytes") sizeBytes: Long,
         @Part file: MultipartBody.Part
-    ): Boolean
+    ): BooleanResponse
 
     //48.	добавить категории курсов
     @POST("add_course_category")
     suspend fun addCourseCategory(
         @Query("name") name: String,
         @Query("description") description: String
-    ): Boolean
+    ): BooleanResponse
 
     //49.	изменить категорию курсов
     @POST("update_course_category")
@@ -481,20 +481,20 @@ interface ApiService {
         @Query("course_id") courseId: Long,
         @Query("name") name: String,
         @Query("description") description: String
-    ): Boolean
+    ): BooleanResponse
 
     //50.	удалить категорию курсов
     @POST("delete_course_category")
     suspend fun deleteCourseCategory(
         @Query("course_id") courseId: Long
-    ): Boolean
+    ): BooleanResponse
 
     //51.	добавить темы обращений
     @POST("add_topic_appeal")
     suspend fun addTopicAppeal(
         @Query("name") name: String,
         @Query("description") description: String
-    ): Boolean
+    ): BooleanResponse
 
     //52.	изменить тему обращений
     @POST("update_topic_appeal")
@@ -502,13 +502,13 @@ interface ApiService {
         @Query("id_") id: Long,
         @Query("name") name: String,
         @Query("description") description: String
-    ): Boolean
+    ): BooleanResponse
 
     //53.	удалить тему обращения
     @POST("delete_topic_appeal")
     suspend fun deleteTopicAppeal(
         @Query("id_") id: Long
-    ): Boolean
+    ): BooleanResponse
 
     //54.	зарегистрировать преподавателя
     @POST("register_teacher")
@@ -519,7 +519,7 @@ interface ApiService {
         @Query("last_name") lastName: String,
         @Query("first_name") firstName: String,
         @Query("patronymic") patronymic: String
-    ): Long
+    ): LongResponse
 
     //55.	Общая статистика платформы
     @GET("get_platform_statistics")

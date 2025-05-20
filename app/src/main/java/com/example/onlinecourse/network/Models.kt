@@ -2,6 +2,14 @@ package com.example.onlinecourse.network
 
 import com.google.gson.annotations.SerializedName
 
+data class LongResponse(
+    val id: Long
+)
+
+data class BooleanResponse(
+    val response: Boolean
+)
+
 // 1.	авторизация
 data class AuthorizeResponse(
     @SerializedName("user_id") val userId: Long,

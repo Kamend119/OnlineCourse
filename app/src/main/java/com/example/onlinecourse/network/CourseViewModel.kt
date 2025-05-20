@@ -49,7 +49,7 @@ class RegisterUserViewModel : ViewModel() {
         password: String,
         lastName: String,
         firstName: String,
-        patronymic: String? = null,
+        patronymic: String,
         fileType: String? = null,
         originalName: String? = null,
         mimeType: String? = null,
@@ -73,7 +73,7 @@ class RegisterUserViewModel : ViewModel() {
                     mimeType = mimeType,
                     sizeBytes = sizeBytes,
                     file = file
-                )
+                ).id
                 registrationResult = "Регистрация успешна. ID пользователя: $userId"
                 Log.d("RegisterUserViewModel", "Регистрация успешна: ID = $userId")
                 onSuccess()
@@ -98,10 +98,10 @@ class LoginViewModel : ViewModel() {
     var roleName by mutableStateOf<String?>(null)
         private set
 
-    fun loginUser(
+    fun login(
         login: String,
         password: String,
-        onSuccess: () -> Unit
+        onSuccess: (userId: Long, roleName: String) -> Unit
     ) {
         viewModelScope.launch {
             isLoading = true
@@ -112,7 +112,9 @@ class LoginViewModel : ViewModel() {
                 roleName = response.roleName
                 loginResult = "Вход выполнен. ID: $userId, роль: $roleName"
                 Log.d("LoginViewModel", "Авторизация успешна: ID=$userId, роль=$roleName")
-                onSuccess()
+                if (userId != null && roleName != null) {
+                    onSuccess(userId!!, roleName!!)
+                }
             } catch (e: Exception) {
                 loginResult = "Ошибка авторизации: ${e.message}"
                 Log.e("LoginViewModel", "Ошибка авторизации: ${e.message}", e)
@@ -144,7 +146,7 @@ class ChangePasswordViewModel : ViewModel() {
                     currentPassword = currentPassword,
                     newPassword = newPassword
                 )
-                if (result) {
+                if (result.response) {
                     passwordUpdateResult = "Пароль успешно обновлён"
                     onSuccess()
                 } else {
@@ -252,7 +254,7 @@ class RegisterTeacherViewModel : ViewModel() {
                     patronymic = patronymic
                 )
                 registrationResult = "Преподаватель успешно зарегистрирован. ID: $userId"
-                onSuccess(userId)
+                onSuccess(userId.id)
                 Log.d("RegisterTeacherViewModel", "Преподаватель зарегистрирован с ID: $userId")
             } catch (e: Exception) {
                 registrationResult = "Ошибка регистрации: ${e.message}"
@@ -325,7 +327,7 @@ class UserProfileViewModel : ViewModel() {
             isLoading = true
             try {
                 val result = RetrofitClient.instance.deleteUser(userId)
-                if (result) {
+                if (result.response) {
                     deletionResult = "Пользователь удалён"
                     onSuccess()
                 } else {
@@ -367,7 +369,7 @@ class UserProfileViewModel : ViewModel() {
                     sizeBytes = sizeBytes,
                     file = file
                 )
-                updateResult = if (result) {
+                updateResult = if (result.response) {
                     "Данные успешно обновлены"
                 } else {
                     "Не удалось обновить данные"
@@ -386,7 +388,7 @@ class UserProfileViewModel : ViewModel() {
             isLoading = true
             try {
                 val result = RetrofitClient.instance.issueWarning(userId)
-                warningResult = if (result) {
+                warningResult = if (result.response) {
                     "Предупреждение успешно выдано"
                 } else {
                     "Не удалось выдать предупреждение"
@@ -499,7 +501,7 @@ class AppealViewModel : ViewModel() {
                     mimeType,
                     sizeBytes,
                     file
-                )
+                ).response
                 errorMessage = null
             } catch (e: Exception) {
                 errorMessage = "Ошибка при отправке обращения: ${e.message}"
@@ -518,7 +520,7 @@ class AppealViewModel : ViewModel() {
                     appealId,
                     userId,
                     text
-                )
+                ).response
                 errorMessage = null
             } catch (e: Exception) {
                 errorMessage = "Ошибка при отправке ответа: ${e.message}"
@@ -659,7 +661,7 @@ class CourseDetailsViewModel : ViewModel() {
             isLoading = true
             try {
                 val result = RetrofitClient.instance.enrollOrDeferCourse(userId, courseId, statusName)
-                enrollmentResult = if (result) {
+                enrollmentResult = if (result.response) {
                     if (statusName == "поступление") "Вы успешно записались на курс"
                     else "Курс отложен"
                 } else {
@@ -684,7 +686,7 @@ class CourseDetailsViewModel : ViewModel() {
             isLoading = true
             try {
                 val result = RetrofitClient.instance.updateCourse(courseId, courseCategoryId, userId, name, description)
-                updateResult = if (result) {
+                updateResult = if (result.response) {
                     "Курс успешно обновлён"
                 } else {
                     "Не удалось обновить курс"
@@ -702,7 +704,7 @@ class CourseDetailsViewModel : ViewModel() {
             isLoading = true
             try {
                 val result = RetrofitClient.instance.warnOnCourse(courseId)
-                warningResult = if (result) {
+                warningResult = if (result.response) {
                     "Предупреждение выдано"
                 } else {
                     "Не удалось выдать предупреждение"
@@ -720,7 +722,7 @@ class CourseDetailsViewModel : ViewModel() {
             isLoading = true
             try {
                 val result = RetrofitClient.instance.deleteCourse(courseId, userId)
-                deleteResult = if (result) {
+                deleteResult = if (result.response) {
                     "Курс успешно удалён"
                 } else {
                     "Не удалось удалить курс"
@@ -801,7 +803,7 @@ class LessonDetailsViewModel : ViewModel() {
                     description = description,
                     sequenceNumber = sequenceNumber
                 )
-                updateResult = if (result) {
+                updateResult = if (result.response) {
                     "Урок успешно обновлён"
                 } else {
                     "Не удалось обновить урок"
@@ -819,7 +821,7 @@ class LessonDetailsViewModel : ViewModel() {
             isLoading = true
             try {
                 val result = RetrofitClient.instance.warnOnStep(stepId)
-                warningResult = if (result) {
+                warningResult = if (result.response) {
                     "Предупреждение по шагу выдано"
                 } else {
                     "Не удалось выдать предупреждение"
@@ -837,7 +839,7 @@ class LessonDetailsViewModel : ViewModel() {
             isLoading = true
             try {
                 val result = RetrofitClient.instance.deleteLesson(lessonId, userId)
-                deleteResult = if (result) {
+                deleteResult = if (result.response) {
                     "Урок успешно удалён"
                 } else {
                     "Не удалось удалить урок"
@@ -894,8 +896,8 @@ class LessonStepAnswerViewModel : ViewModel() {
                     commentStudent,
                     file
                 )
-                result = response
-                if (response) {
+                result = response.response
+                if (response.response) {
                     errorMessage = null
                     onSuccess()
                 } else {
@@ -937,8 +939,8 @@ class LessonStepAnswerViewModel : ViewModel() {
                     commentStudent,
                     file
                 )
-                result = response
-                if (response) {
+                result = response.response
+                if (response.response) {
                     errorMessage = null
                     onSuccess()
                 } else {
@@ -978,8 +980,8 @@ class LessonStepAnswerViewModel : ViewModel() {
                     sizeBytes,
                     file
                 )
-                result = response
-                if (response) {
+                result = response.response
+                if (response.response) {
                     errorMessage = null
                     onSuccess()
                 } else {
@@ -1015,8 +1017,8 @@ class LessonStepAnswerViewModel : ViewModel() {
                     obligatory,
                     maxScore
                 )
-                result = response
-                if (response) {
+                result = response.response
+                if (response.response) {
                     errorMessage = null
                     onSuccess()
                 } else {
@@ -1058,8 +1060,8 @@ class LessonStepAnswerViewModel : ViewModel() {
                     correct,
                     scores
                 )
-                result = response
-                if (response) {
+                result = response.response
+                if (response.response) {
                     errorMessage = null
                     onSuccess()
                 } else {
@@ -1103,8 +1105,8 @@ class LessonStepAnswerViewModel : ViewModel() {
                     sizeBytes,
                     file
                 )
-                result = response
-                if (response) {
+                result = response.response
+                if (response.response) {
                     errorMessage = null
                     onSuccess()
                 } else {
@@ -1170,7 +1172,7 @@ class LessonStepAnswerViewModel : ViewModel() {
             isLoading = true
             try {
                 val response = RetrofitClient.instance.deleteStep(stepId, userId)
-                deleteResult = if (response) {
+                deleteResult = if (response.response) {
                     "Шаг успешно удалён"
                 } else {
                     "Не удалось удалить шаг"
@@ -1225,9 +1227,9 @@ class CourseCreateViewModel : ViewModel() {
                     name = name,
                     description = description
                 )
-                createCourseResult = courseId
+                createCourseResult = courseId.id
                 errorMessage = null
-                onSuccess(courseId)
+                onSuccess(courseId.id)
             } catch (e: Exception) {
                 errorMessage = "Ошибка при создании курса: ${e.message}"
             } finally {
@@ -1262,9 +1264,9 @@ class LessonCreateViewModel : ViewModel() {
                     description = description,
                     sequenceNumber = sequenceNumber
                 )
-                createLessonResult = lessonId
+                createLessonResult = lessonId.id
                 errorMessage = null
-                onSuccess(lessonId)
+                onSuccess(lessonId.id)
             } catch (e: Exception) {
                 errorMessage = "Ошибка при создании урока: ${e.message}"
             } finally {
@@ -1302,8 +1304,8 @@ class StepCreationViewModel : ViewModel() {
                     lessonId, name, content, sequenceNumber, obligatory,
                     originalName, mimeType, sizeBytes, file
                 )
-                creationResult = result
-                if (result) {
+                creationResult = result.response
+                if (result.response) {
                     errorMessage = null
                     onSuccess()
                 } else {
@@ -1333,8 +1335,8 @@ class StepCreationViewModel : ViewModel() {
                 val result = RetrofitClient.instance.createOpenQuestionStep(
                     lessonId, name, content, sequenceNumber, timePasses, obligatory, maxScore
                 )
-                creationResult = result
-                if (result) {
+                creationResult = result.response
+                if (result.response) {
                     errorMessage = null
                     onSuccess()
                 } else {
@@ -1368,8 +1370,8 @@ class StepCreationViewModel : ViewModel() {
                     lessonId, name, content, sequenceNumber, timePasses,
                     obligatory, maxScore, textOptions, correct, scores
                 )
-                creationResult = result
-                if (result) {
+                creationResult = result.response
+                if (result.response) {
                     errorMessage = null
                     onSuccess()
                 } else {
@@ -1414,10 +1416,12 @@ class StepCreationViewModel : ViewModel() {
                         file = it
                     )
                 }
-                if (result == true) {
-                    errorMessage = "Шаг успешно создан"
-                } else {
-                    errorMessage = "Не удалось создать шаг"
+                if (result != null) {
+                    if (result.response) {
+                        errorMessage = "Шаг успешно создан"
+                    } else {
+                        errorMessage = "Не удалось создать шаг"
+                    }
                 }
             } catch (e: Exception) {
                 errorMessage = "Ошибка: ${e.message}"
@@ -1475,7 +1479,7 @@ class StepAnswersViewModel : ViewModel() {
             try {
                 operationSuccess = RetrofitClient.instance.evaluateAnswerOnStep(
                     answerUserId, score, commentTeacher
-                )
+                ).response
                 errorMessage = null
             } catch (e: Exception) {
                 operationSuccess = false
@@ -1685,7 +1689,7 @@ class AppealTopicViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
-                operationResult = RetrofitClient.instance.addTopicAppeal(name, description)
+                operationResult = RetrofitClient.instance.addTopicAppeal(name, description).response
                 errorMessage = null
                 if (operationResult == true) loadTopics()
             } catch (e: Exception) {
@@ -1701,7 +1705,8 @@ class AppealTopicViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
-                operationResult = RetrofitClient.instance.updateTopicAppeal(id, name, description)
+                operationResult = RetrofitClient.instance.updateTopicAppeal(id, name,
+                    description).response
                 errorMessage = null
                 if (operationResult == true) loadTopics()
             } catch (e: Exception) {
@@ -1717,7 +1722,7 @@ class AppealTopicViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
-                operationResult = RetrofitClient.instance.deleteTopicAppeal(id)
+                operationResult = RetrofitClient.instance.deleteTopicAppeal(id).response
                 errorMessage = null
                 if (operationResult == true) loadTopics()
             } catch (e: Exception) {
@@ -1759,7 +1764,8 @@ class CourseCategoryViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
-                operationResult = RetrofitClient.instance.addCourseCategory(name, description)
+                operationResult = RetrofitClient.instance.addCourseCategory(name,
+                    description).response
                 errorMessage = null
                 if (operationResult == true) loadCategories()
             } catch (e: Exception) {
@@ -1775,7 +1781,8 @@ class CourseCategoryViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
-                operationResult = RetrofitClient.instance.updateCourseCategory(courseId, name, description)
+                operationResult = RetrofitClient.instance.updateCourseCategory(courseId, name,
+                    description).response
                 errorMessage = null
                 if (operationResult == true) loadCategories()
             } catch (e: Exception) {
@@ -1791,7 +1798,7 @@ class CourseCategoryViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
-                operationResult = RetrofitClient.instance.deleteCourseCategory(courseId)
+                RetrofitClient.instance.deleteCourseCategory(courseId)
                 errorMessage = null
                 if (operationResult == true) loadCategories()
             } catch (e: Exception) {
