@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 
-
 @Composable
 fun Loading(navController: NavHostController, userId: String, role: String) {
     val (isLoading, setIsLoading) = remember { mutableStateOf(true) }
@@ -39,9 +38,9 @@ fun Loading(navController: NavHostController, userId: String, role: String) {
         }
     } else {
         when {
-            user.value.role == "Студент" && user.value.userId.isNotEmpty() -> navController.navigate("")
-            user.value.role == "Преподаватель" && user.value.userId.isNotEmpty() -> navController.navigate("")
-            user.value.role == "Администратор" && user.value.userId.isNotEmpty() -> navController.navigate("")
+            user.value.role == "Студент" && user.value.userId.isNotEmpty() -> navController.navigate("main/${user.value.userId}/${user.value.role}")
+            user.value.role == "Учитель" && user.value.userId.isNotEmpty() -> navController.navigate("main/${user.value.userId}/${user.value.role}")
+            user.value.role == "Администратор" && user.value.userId.isNotEmpty() -> navController.navigate("main/${user.value.userId}/${user.value.role}")
             user.value.role == "Не распознано" && user.value.userId == "-1" -> navController.navigate("entrance")
         }
     }

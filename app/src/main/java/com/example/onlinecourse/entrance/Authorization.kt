@@ -126,26 +126,13 @@ fun Authorization(navController: NavHostController) {
                             viewModel.login(login, password) { userId, roleName ->
                                 val userPreferences = UserPreferences(context)
                                 userPreferences.setUser(userId.toString(), roleName)
-
-                                when (roleName) {
-                                    "Студент" -> navController.navigate("main/$userId/$roleName")
-                                    else -> Toast.makeText(context, "Роль не распознана", Toast.LENGTH_SHORT).show()
-                                }
-
+                                navController.navigate("main/$userId/$roleName")
                                 Toast.makeText(context, "Добро пожаловать, $roleName!", Toast.LENGTH_SHORT).show()
                             }
                         },
                         modifier = Modifier.padding(top = 20.dp)
                     ) {
                         Text(text = "Войти")
-                    }
-
-                    viewModel.loginResult?.let { message ->
-                        Text(
-                            text = message,
-                            color = if (message.startsWith("Ошибка")) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(top = 16.dp)
-                        )
                     }
                 }
             }

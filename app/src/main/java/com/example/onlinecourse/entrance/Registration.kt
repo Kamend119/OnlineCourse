@@ -51,6 +51,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.onlinecourse.R
+import com.example.onlinecourse.function.UserPreferences
 import com.example.onlinecourse.function.isEmailValid
 import com.example.onlinecourse.function.isPasswordValid
 import com.example.onlinecourse.function.isValidAge
@@ -327,6 +328,8 @@ fun Registration(
                                     sizeBytes = sizeBytes,
                                     file = filePart,
                                     onSuccess = { id ->
+                                        val userPreferences = UserPreferences(context)
+                                        userPreferences.setUser(id.toString(),"Студент")
                                         navController.navigate("main/$id/Студент")
                                     }
                                 )

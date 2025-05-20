@@ -132,52 +132,6 @@ fun AppBar(
                                         )
                                     }
                                 }
-                                else if (role == "Преподаватель"){
-                                    IconButton(onClick = { navController.navigate("") }) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.search),
-                                            contentDescription = "Мои курсы",
-                                            modifier = Modifier.size(30.dp)
-                                        )
-                                    }
-                                    IconButton(onClick = { navController.navigate("") }) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.home),
-                                            contentDescription = "Главная",
-                                            modifier = Modifier.size(35.dp)
-                                        )
-                                    }
-                                    IconButton(onClick = { navController.navigate("") }) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.graph),
-                                            contentDescription = "Статистика",
-                                            modifier = Modifier.size(30.dp)
-                                        )
-                                    }
-                                }
-                                else if (role == "Администратор"){
-                                    IconButton(onClick = { navController.navigate("") }) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.search),
-                                            contentDescription = "Поиск",
-                                            modifier = Modifier.size(30.dp)
-                                        )
-                                    }
-                                    IconButton(onClick = { navController.navigate("") }) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.home),
-                                            contentDescription = "Главная",
-                                            modifier = Modifier.size(35.dp)
-                                        )
-                                    }
-                                    IconButton(onClick = { navController.navigate("") }) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.graph),
-                                            contentDescription = "Статистика",
-                                            modifier = Modifier.size(30.dp)
-                                        )
-                                    }
-                                }
                             }
                         }
                     }
