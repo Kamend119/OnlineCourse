@@ -18,6 +18,8 @@ import com.example.onlinecourse.entrance.Authorization
 import com.example.onlinecourse.entrance.Entrance
 import com.example.onlinecourse.entrance.Registration
 import com.example.onlinecourse.function.Loading
+import com.example.onlinecourse.notification.NotificationView
+import com.example.onlinecourse.notification.NotificationsView
 import com.example.onlinecourse.setting.ChangingThePassword
 import com.example.onlinecourse.setting.Settings
 
@@ -38,6 +40,7 @@ fun MyApp() {
     var subjectId by remember { mutableStateOf("-1") }
     var courseId by remember { mutableStateOf("-1") }
     var stepId by remember { mutableStateOf("-1") }
+    var notificationId by remember { mutableStateOf("-1") }
     var userId by remember { mutableStateOf("-1") }
     var role by remember { mutableStateOf("Не распознано") }
 
@@ -46,6 +49,7 @@ fun MyApp() {
         composable("loading") { Loading(navController, userId, role) }
 
         // аккаунт
+
 
         // администрирование
 
@@ -63,9 +67,14 @@ fun MyApp() {
         // оценка знаний
 
         // уведомления
+        composable("notificationsView/{userId}/{role}") { NotificationsView(navController,userId,role) }
+        composable("notificationView/{userId}/{role}/{notificationId}") { backStackEntry ->
+            notificationId = backStackEntry.arguments?.getString("notificationId") ?: "-1"
+            NotificationView(navController,userId,role,notificationId)
+        }
 
         // настройки
-        composable("changingThePassword/{userId}/{role}") { ChangingThePassword(navController, userId, role) }
+        composable("changingThePassword/{userId}/{role}") { ChangingThePassword(navController,userId,role) }
         composable("settings/{userId}/{role}") { Settings(navController,userId,role) }
 
         // статистика

@@ -67,7 +67,7 @@ fun AppBar(
                                             modifier = Modifier.size(35.dp)
                                         )
                                     }
-                                    IconButton(onClick = { navController.navigate("") }) {
+                                    IconButton(onClick = { navController.navigate("notificationsView/${userId}/${role}") }) {
                                         Icon(
                                             painter = painterResource(id = R.drawable.notification),
                                             contentDescription = "Уведомления",
