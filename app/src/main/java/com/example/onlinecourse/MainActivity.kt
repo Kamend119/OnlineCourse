@@ -14,6 +14,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.onlinecourse.account.ChangeProfileData
+import com.example.onlinecourse.account.PageView
 import com.example.onlinecourse.entrance.Authorization
 import com.example.onlinecourse.entrance.Entrance
 import com.example.onlinecourse.entrance.Registration
@@ -40,6 +42,7 @@ fun MyApp() {
     var subjectId by remember { mutableStateOf("-1") }
     var courseId by remember { mutableStateOf("-1") }
     var stepId by remember { mutableStateOf("-1") }
+    var viewId by remember { mutableStateOf("-1") }
     var notificationId by remember { mutableStateOf("-1") }
     var userId by remember { mutableStateOf("-1") }
     var role by remember { mutableStateOf("Не распознано") }
@@ -49,7 +52,11 @@ fun MyApp() {
         composable("loading") { Loading(navController, userId, role) }
 
         // аккаунт
-
+        composable("pageView/{userId}/{role}/{viewId}") { backStackEntry ->
+            viewId = backStackEntry.arguments?.getString("viewId") ?: "-1"
+            PageView(navController,userId,role,viewId)
+        }
+        composable("changeProfileData/{userId}/{role}") { ChangeProfileData(navController,userId,role) }
 
         // администрирование
 

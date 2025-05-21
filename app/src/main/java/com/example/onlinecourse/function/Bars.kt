@@ -60,7 +60,7 @@ fun AppBar(
                                     modifier = Modifier.padding(10.dp)
                                 )
                                 Row {
-                                    IconButton(onClick = { navController.navigate("") }) {
+                                    IconButton(onClick = { navController.navigate("pageView/${userId}/${role}/${userId}") }) {
                                         Icon(
                                             painter = painterResource(id = R.drawable.user),
                                             contentDescription = "Акаунт",

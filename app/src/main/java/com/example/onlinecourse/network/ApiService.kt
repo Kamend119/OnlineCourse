@@ -56,14 +56,14 @@ interface ApiService {
     @Multipart
     @POST("add_appeal_with_file")
     suspend fun addAppealWithFile(
-        @Part("user_id") userId: Long,
-        @Part("topic_appeal_id") topicAppealId: Long,
-        @Part("heading_appeal") headingAppeal: String,
-        @Part("text_appeal") textAppeal: String,
-        @Part("file_type") fileType: String? = null,
-        @Part("original_name") originalName: String? = null,
-        @Part("mime_type") mimeType: String? = null,
-        @Part("size_bytes") sizeBytes: Int? = null,
+        @Part("user_id") userId: RequestBody,
+        @Part("topic_appeal_id") topicAppealId: RequestBody,
+        @Part("heading_appeal") headingAppeal: RequestBody,
+        @Part("text_appeal") textAppeal: RequestBody,
+        @Part("file_type") fileType: RequestBody? = null,
+        @Part("original_name") originalName: RequestBody? = null,
+        @Part("mime_type") mimeType: RequestBody? = null,
+        @Part("size_bytes") sizeBytes: RequestBody? = null,
         @Part file: MultipartBody.Part? = null
     ): Response<Boolean>
 
@@ -93,15 +93,15 @@ interface ApiService {
     @Multipart
     @POST("update_user_profile")
     suspend fun updateUserProfile(
-        @Query("user_id") userId: Long,
-        @Query("email") email: String,
-        @Query("last_name") lastName: String,
-        @Query("first_name") firstName: String,
-        @Query("patronymic") patronymic: String?,
-        @Query("file_type") fileType: String?,
-        @Query("original_name") originalName: String?,
-        @Query("mime_type") mimeType: String?,
-        @Query("size_bytes") sizeBytes: Long?,
+        @Part("user_id") userId: RequestBody,
+        @Part("email") email: RequestBody,
+        @Part("last_name") lastName: RequestBody,
+        @Part("first_name") firstName: RequestBody,
+        @Part("patronymic") patronymic: RequestBody?,
+        @Part("file_type") fileType: RequestBody?,
+        @Part("original_name") originalName: RequestBody?,
+        @Part("mime_type") mimeType: RequestBody?,
+        @Part("size_bytes") sizeBytes: RequestBody?,
         @Part file: MultipartBody.Part?
     ): Response<Boolean>
 
@@ -324,14 +324,14 @@ interface ApiService {
     @Multipart
     @POST("answer_lesson_step")
     suspend fun answerLessonStep(
-        @Query("user_id") userId: Long,
-        @Query("step_lesson_id") stepLessonId: Long,
-        @Query("answer_text") answerText: String? = null,
-        @Query("selected_option_ids") selectedOptionIds: List<Long>? = null,
-        @Query("original_name") originalName: String? = null,
-        @Query("mime_type") mimeType: String? = null,
-        @Query("size_bytes") sizeBytes: Long? = null,
-        @Query("comment_student") commentStudent: String? = null,
+        @Part("user_id") userId: RequestBody,
+        @Part("step_lesson_id") stepLessonId: RequestBody,
+        @Part("answer_text") answerText: RequestBody? = null,
+        @Part("selected_option_ids") selectedOptionIds: RequestBody? = null,
+        @Part("original_name") originalName: RequestBody? = null,
+        @Part("mime_type") mimeType: RequestBody? = null,
+        @Part("size_bytes") sizeBytes: RequestBody? = null,
+        @Part("comment_student") commentStudent: RequestBody? = null,
         @Part file: MultipartBody.Part? = null
     ): Response<Boolean>
 
@@ -339,15 +339,15 @@ interface ApiService {
     @Multipart
     @POST("update_lesson_step_answer")
     suspend fun updateLessonStepAnswer(
-        @Query("answer_id") answerId: Long,
-        @Query("user_id") userId: Long,
-        @Query("step_lesson_id") stepLessonId: Long,
-        @Query("answer_text") answerText: String? = null,
-        @Query("selected_option_ids") selectedOptionIds: List<Long>? = null,
-        @Query("original_name") originalName: String? = null,
-        @Query("mime_type") mimeType: String? = null,
-        @Query("size_bytes") sizeBytes: Long? = null,
-        @Query("comment_student") commentStudent: String? = null,
+        @Part("answer_id") answerId: RequestBody,
+        @Part("user_id") userId: RequestBody,
+        @Part("step_lesson_id") stepLessonId: RequestBody,
+        @Part("answer_text") answerText: RequestBody? = null,
+        @Part("selected_option_ids") selectedOptionIds: RequestBody? = null,
+        @Part("original_name") originalName: RequestBody? = null,
+        @Part("mime_type") mimeType: RequestBody? = null,
+        @Part("size_bytes") sizeBytes: RequestBody? = null,
+        @Part("comment_student") commentStudent: RequestBody? = null,
         @Part file: MultipartBody.Part? = null
     ): Response<Boolean>
 
@@ -355,14 +355,14 @@ interface ApiService {
     @Multipart
     @POST("create_lecture_step")
     suspend fun createLectureStep(
-        @Query("lesson_id") lessonId: Long,
-        @Query("name") name: String,
-        @Query("content") content: String,
-        @Query("sequence_number") sequenceNumber: Long,
-        @Query("obligatory") obligatory: Boolean,
-        @Query("original_name") originalName: String? = null,
-        @Query("mime_type") mimeType: String? = null,
-        @Query("size_bytes") sizeBytes: Long? = null,
+        @Part("lesson_id") lessonId: RequestBody,
+        @Part("name") name: RequestBody,
+        @Part("content") content: RequestBody,
+        @Part("sequence_number") sequenceNumber: RequestBody,
+        @Part("obligatory") obligatory: RequestBody,
+        @Part("original_name") originalName: RequestBody? = null,
+        @Part("mime_type") mimeType: RequestBody? = null,
+        @Part("size_bytes") sizeBytes: RequestBody? = null,
         @Part file: MultipartBody.Part? = null
     ): Response<Boolean>
 
@@ -397,16 +397,16 @@ interface ApiService {
     @Multipart
     @POST("create_file_upload_question_step")
     suspend fun createFileUploadQuestionStep(
-        @Part("lesson_id") lessonId: Long,
-        @Part("name") name: String,
-        @Part("content") content: String,
-        @Part("sequence_number") sequenceNumber: Long,
-        @Part("time_passes") timePasses: String,
-        @Part("obligatory") obligatory: Boolean,
-        @Part("max_score") maxScore: Long,
-        @Part("original_name") originalName: String,
-        @Part("mime_type") mimeType: String,
-        @Part("size_bytes") sizeBytes: Long,
+        @Part("lesson_id") lessonId: RequestBody,
+        @Part("name") name: RequestBody,
+        @Part("content") content: RequestBody,
+        @Part("sequence_number") sequenceNumber: RequestBody,
+        @Part("time_passes") timePasses: RequestBody,
+        @Part("obligatory") obligatory: RequestBody,
+        @Part("max_score") maxScore: RequestBody,
+        @Part("original_name") originalName: RequestBody,
+        @Part("mime_type") mimeType: RequestBody,
+        @Part("size_bytes") sizeBytes: RequestBody,
         @Part file: MultipartBody.Part
     ): Response<Boolean>
 
@@ -414,14 +414,14 @@ interface ApiService {
     @Multipart
     @POST("update_lecture_step")
     suspend fun updateLectureStep(
-        @Part("step_id") stepId: Long,
-        @Part("name") name: String,
-        @Part("content") content: String,
-        @Part("sequence_number") sequenceNumber: Long,
-        @Part("obligatory") obligatory: Boolean,
-        @Part("original_name") originalName: String?,
-        @Part("mime_type") mimeType: String?,
-        @Part("size_bytes") sizeBytes: Long?,
+        @Part("step_id") stepId: RequestBody,
+        @Part("name") name: RequestBody,
+        @Part("content") content: RequestBody,
+        @Part("sequence_number") sequenceNumber: RequestBody,
+        @Part("obligatory") obligatory: RequestBody,
+        @Part("original_name") originalName: RequestBody?,
+        @Part("mime_type") mimeType: RequestBody?,
+        @Part("size_bytes") sizeBytes: RequestBody?,
         @Part file: MultipartBody.Part?
     ): Response<Boolean>
 
@@ -456,16 +456,16 @@ interface ApiService {
     @Multipart
     @POST("update_file_upload_question_step")
     suspend fun updateFileUploadQuestionStep(
-        @Query("step_id") stepId: Long,
-        @Query("name") name: String,
-        @Query("content") content: String,
-        @Query("sequence_number") sequenceNumber: Long,
-        @Query("time_passes") timePasses: String,
-        @Query("obligatory") obligatory: Boolean,
-        @Query("max_score") maxScore: Long,
-        @Query("original_name") originalName: String,
-        @Query("mime_type") mimeType: String,
-        @Query("size_bytes") sizeBytes: Long,
+        @Part("step_id") stepId: RequestBody,
+        @Part("name") name: RequestBody,
+        @Part("content") content: RequestBody,
+        @Part("sequence_number") sequenceNumber: RequestBody,
+        @Part("time_passes") timePasses: RequestBody,
+        @Part("obligatory") obligatory: RequestBody,
+        @Part("max_score") maxScore: RequestBody,
+        @Part("original_name") originalName: RequestBody,
+        @Part("mime_type") mimeType: RequestBody,
+        @Part("size_bytes") sizeBytes: RequestBody,
         @Part file: MultipartBody.Part
     ): Response<Boolean>
 

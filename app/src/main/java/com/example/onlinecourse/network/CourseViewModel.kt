@@ -303,6 +303,11 @@ class UserProfileViewModel : ViewModel() {
         private set
     var errorMessage by mutableStateOf<String?>(null)
         private set
+    var saveResult by mutableStateOf<Boolean?>(null)
+        private set
+    fun clearSaveResult() {
+        saveResult = null
+    }
 
     fun loadUserProfile(userId: Long) {
         viewModelScope.launch {
@@ -368,41 +373,40 @@ class UserProfileViewModel : ViewModel() {
         email: String,
         lastName: String,
         firstName: String,
-        patronymic: String?,
-        fileType: String?,
-        originalName: String?,
-        mimeType: String?,
-        sizeBytes: Long?,
-        file: MultipartBody.Part?
+        patronymic: String,
+        fileType: String? = null,
+        originalName: String? = null,
+        mimeType: String? = null,
+        sizeBytes: Long? = null,
+        file: MultipartBody.Part? = null
     ) {
         viewModelScope.launch {
-            isLoading = true
             try {
-                val result = RetrofitClient.instance.updateUserProfile(
-                    userId = userId,
-                    email = email,
-                    lastName = lastName,
-                    firstName = firstName,
-                    patronymic = patronymic,
-                    fileType = fileType,
-                    originalName = originalName,
-                    mimeType = mimeType,
-                    sizeBytes = sizeBytes,
+                isLoading = true
+                val rb = { str: String -> str.toRequestBody("text/plain".toMediaTypeOrNull()) }
+
+                val response = RetrofitClient.instance.updateUserProfile(
+                    userId = rb(userId.toString()),
+                    email = rb(email),
+                    lastName = rb(lastName),
+                    firstName = rb(firstName),
+                    patronymic = rb(patronymic),
+                    fileType = fileType?.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    originalName = originalName?.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    mimeType = mimeType?.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    sizeBytes = sizeBytes.toString().toRequestBody("text/plain".toMediaTypeOrNull()),
                     file = file
                 )
-                updateResult = if (result.body() == true) {
-                    "Данные успешно обновлены"
-                } else {
-                    "Не удалось обновить данные"
-                }
+                saveResult = response.body() == true
             } catch (e: Exception) {
-                updateResult = "Ошибка при обновлении данных: ${e.message}"
-                Log.e("UserProfileViewModel", "Ошибка обновления", e)
+                saveResult = false
+                errorMessage = "Ошибка при обновлении: ${e.message}"
             } finally {
                 isLoading = false
             }
         }
     }
+
 
     fun issueWarning(userId: Long) {
         viewModelScope.launch {
@@ -512,15 +516,17 @@ class AppealViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
+                val rb = { str: String -> str.toRequestBody("text/plain".toMediaTypeOrNull()) }
+
                 operationSuccess = RetrofitClient.instance.addAppealWithFile(
-                    userId,
-                    topicAppealId,
-                    heading,
-                    text,
-                    fileType,
-                    originalName,
-                    mimeType,
-                    sizeBytes,
+                    rb(userId.toString()),
+                    rb(topicAppealId.toString()),
+                    rb(heading),
+                    rb(text),
+                    fileType?.let { rb(it) },
+                    originalName?.let { rb(it) },
+                    mimeType?.let { rb(it) },
+                    sizeBytes?.toString()?.let { rb(it) },
                     file
                 ).body()
                 errorMessage = null
@@ -906,16 +912,18 @@ class LessonStepAnswerViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
+                val rb = { str: String -> str.toRequestBody("text/plain".toMediaTypeOrNull()) }
+                val selectedOptionsString = selectedOptionIds?.joinToString(separator = ",")
                 val response = RetrofitClient.instance.answerLessonStep(
-                    userId,
-                    stepLessonId,
-                    answerText,
-                    selectedOptionIds,
-                    originalName,
-                    mimeType,
-                    sizeBytes,
-                    commentStudent,
-                    file
+                    userId = rb(userId.toString()),
+                    stepLessonId = rb(stepLessonId.toString()),
+                    answerText = answerText?.let { rb(it) } ?: rb(""),
+                    selectedOptionIds = selectedOptionsString?.let { rb(it) } ?: rb(""),
+                    originalName = originalName?.let { rb(it) },
+                    mimeType = mimeType?.let { rb(it) },
+                    sizeBytes = sizeBytes?.toString()?.let { rb(it) },
+                    commentStudent = commentStudent?.let { rb(it) },
+                    file = file
                 )
                 result = response.body()
                 if (response.body() == true) {
@@ -948,17 +956,20 @@ class LessonStepAnswerViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
+                val rb = { str: String -> str.toRequestBody("text/plain".toMediaTypeOrNull()) }
+                val selectedOptionsString = selectedOptionIds?.joinToString(",") ?: ""
+
                 val response = RetrofitClient.instance.updateLessonStepAnswer(
-                    answerId,
-                    userId,
-                    stepLessonId,
-                    answerText,
-                    selectedOptionIds,
-                    originalName,
-                    mimeType,
-                    sizeBytes,
-                    commentStudent,
-                    file
+                    answerId = rb(answerId.toString()),
+                    userId = rb(userId.toString()),
+                    stepLessonId = rb(stepLessonId.toString()),
+                    answerText = answerText?.let { rb(it) } ?: rb(""),
+                    selectedOptionIds = rb(selectedOptionsString),
+                    originalName = originalName?.let { rb(it) },
+                    mimeType = mimeType?.let { rb(it) },
+                    sizeBytes = sizeBytes?.toString()?.let { rb(it) },
+                    commentStudent = commentStudent?.let { rb(it) },
+                    file = file
                 )
                 result = response.body()
                 if (response.body() == true) {
@@ -990,16 +1001,18 @@ class LessonStepAnswerViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
+                val rb = { str: String -> str.toRequestBody("text/plain".toMediaTypeOrNull()) }
+
                 val response = RetrofitClient.instance.updateLectureStep(
-                    stepId,
-                    name,
-                    content,
-                    sequenceNumber,
-                    obligatory,
-                    originalName,
-                    mimeType,
-                    sizeBytes,
-                    file
+                    stepId = rb(stepId.toString()),
+                    name = rb(name),
+                    content = rb(content),
+                    sequenceNumber = rb(sequenceNumber.toString()),
+                    obligatory = rb(obligatory.toString()),
+                    originalName = originalName?.let { rb(it) },
+                    mimeType = mimeType?.let { rb(it) },
+                    sizeBytes = sizeBytes?.toString()?.let { rb(it) },
+                    file = file
                 )
                 result = response.body()
                 if (response.body() == true) {
@@ -1113,18 +1126,20 @@ class LessonStepAnswerViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
+                val rb = { str: String -> str.toRequestBody("text/plain".toMediaTypeOrNull()) }
+
                 val response = RetrofitClient.instance.updateFileUploadQuestionStep(
-                    stepId,
-                    name,
-                    content,
-                    sequenceNumber,
-                    timePasses,
-                    obligatory,
-                    maxScore,
-                    originalName,
-                    mimeType,
-                    sizeBytes,
-                    file
+                    stepId = rb(stepId.toString()),
+                    name = rb(name),
+                    content = rb(content),
+                    sequenceNumber = rb(sequenceNumber.toString()),
+                    timePasses = rb(timePasses),
+                    obligatory = rb(obligatory.toString()),
+                    maxScore = rb(maxScore.toString()),
+                    originalName = rb(originalName),
+                    mimeType = rb(mimeType),
+                    sizeBytes = rb(sizeBytes.toString()),
+                    file = file
                 )
                 result = response.body()
                 if (response.body() == true) {
@@ -1321,9 +1336,18 @@ class StepCreationViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
+                val rb = { str: String -> str.toRequestBody("text/plain".toMediaTypeOrNull()) }
+
                 val result = RetrofitClient.instance.createLectureStep(
-                    lessonId, name, content, sequenceNumber, obligatory,
-                    originalName, mimeType, sizeBytes, file
+                    lessonId = rb(lessonId.toString()),
+                    name = rb(name),
+                    content = rb(content),
+                    sequenceNumber = rb(sequenceNumber.toString()),
+                    obligatory = rb(obligatory.toString()),
+                    originalName = originalName?.let { rb(it) },
+                    mimeType = mimeType?.let { rb(it) },
+                    sizeBytes = sizeBytes?.toString()?.let { rb(it) },
+                    file = file
                 )
                 creationResult = result.body()
                 if (result.body() == true) {
@@ -1422,18 +1446,20 @@ class StepCreationViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
+                val rb = { str: String -> str.toRequestBody("text/plain".toMediaTypeOrNull()) }
+
                 val result = file?.let {
                     RetrofitClient.instance.createFileUploadQuestionStep(
-                        lessonId = lessonId,
-                        name = name,
-                        content = content,
-                        sequenceNumber = sequenceNumber,
-                        timePasses = timePasses,
-                        obligatory = obligatory,
-                        maxScore = maxScore,
-                        originalName = originalName,
-                        mimeType = mimeType,
-                        sizeBytes = sizeBytes,
+                        lessonId = rb(lessonId.toString()),
+                        name = rb(name),
+                        content = rb(content),
+                        sequenceNumber = rb(sequenceNumber.toString()),
+                        timePasses = rb(timePasses),
+                        obligatory = rb(obligatory.toString()),
+                        maxScore = rb(maxScore.toString()),
+                        originalName = rb(originalName),
+                        mimeType = rb(mimeType),
+                        sizeBytes = rb(sizeBytes.toString()),
                         file = it
                     )
                 }

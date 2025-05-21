@@ -1,6 +1,5 @@
 package com.example.onlinecourse
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -42,10 +41,6 @@ import com.example.onlinecourse.ui.theme.OnlineCursesTheme
 
 @Composable
 fun MainPage(navController: NavHostController, userId: String, role: String) {
-
-    Log.d("UserPreferences", "Получен пользователь: userId = $userId, role = $role")
-
-
     when (role) {
         "Студент" -> {
             val viewModel: DailyStatisticsViewModel = viewModel()
@@ -183,96 +178,100 @@ fun MainPage(navController: NavHostController, userId: String, role: String) {
             }
         }
         "Учитель" -> {
-            AppBar(
-                title = "Главная",
-                showTopBar = true,
-                showBottomBar = false,
-                navController,
-                userId = userId,
-                role = role
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(horizontal = 16.dp, vertical = 24.dp),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.Top
+            OnlineCursesTheme {
+                AppBar(
+                    title = "Главная",
+                    showTopBar = true,
+                    showBottomBar = false,
+                    navController,
+                    userId = userId,
+                    role = role
                 ) {
-                    FeatureButton(
-                        text = "Мои курсы",
-                        icon = R.drawable.book,
-                        onClick = { navController.navigate("") }
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(horizontal = 16.dp, vertical = 24.dp),
+                        horizontalAlignment = Alignment.Start,
+                        verticalArrangement = Arrangement.Top
+                    ) {
+                        FeatureButton(
+                            text = "Мои курсы",
+                            icon = R.drawable.book,
+                            onClick = { navController.navigate("") }
+                        )
 
-                    FeatureButton(
-                        text = "Создать курс",
-                        icon = R.drawable.add,
-                        onClick = { navController.navigate("") }
-                    )
+                        FeatureButton(
+                            text = "Создать курс",
+                            icon = R.drawable.add,
+                            onClick = { navController.navigate("") }
+                        )
 
-                    FeatureButton(
-                        text = "Статистика",
-                        icon = R.drawable.graph,
-                        onClick = { navController.navigate("") }
-                    )
+                        FeatureButton(
+                            text = "Статистика",
+                            icon = R.drawable.graph,
+                            onClick = { navController.navigate("") }
+                        )
 
-                    FeatureButton(
-                        text = "Проверка выполнения",
-                        icon = R.drawable.check_mark,
-                        onClick = { navController.navigate("") }
-                    )
+                        FeatureButton(
+                            text = "Проверка выполнения",
+                            icon = R.drawable.check_mark,
+                            onClick = { navController.navigate("") }
+                        )
+                    }
                 }
             }
         }
         "Администратор" -> {
-            AppBar(
-                title = "Главная",
-                showTopBar = true,
-                showBottomBar = false,
-                navController,
-                userId = userId,
-                role = role
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(20.dp),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.Top
+            OnlineCursesTheme {
+                AppBar(
+                    title = "Главная",
+                    showTopBar = true,
+                    showBottomBar = false,
+                    navController,
+                    userId = userId,
+                    role = role
                 ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(20.dp),
+                        horizontalAlignment = Alignment.Start,
+                        verticalArrangement = Arrangement.Top
+                    ) {
 
-                    FeatureButton(
-                        text = "Администрирование",
-                        icon = R.drawable.settings,
-                        onClick = { navController.navigate("") }
-                    )
+                        FeatureButton(
+                            text = "Администрирование",
+                            icon = R.drawable.settings,
+                            onClick = { navController.navigate("") }
+                        )
 
-                    FeatureButton(
-                        text = "Поддержка",
-                        icon = R.drawable.person,
-                        onClick = { navController.navigate("") }
-                    )
+                        FeatureButton(
+                            text = "Поддержка",
+                            icon = R.drawable.person,
+                            onClick = { navController.navigate("") }
+                        )
 
-                    FeatureButton(
-                        text = "Статистика",
-                        icon = R.drawable.graph,
-                        onClick = { navController.navigate("") }
-                    )
+                        FeatureButton(
+                            text = "Статистика",
+                            icon = R.drawable.graph,
+                            onClick = { navController.navigate("") }
+                        )
 
-                    FeatureButton(
-                        text = "Пользователи",
-                        icon = R.drawable.user,
-                        onClick = { navController.navigate("") }
-                    )
+                        FeatureButton(
+                            text = "Пользователи",
+                            icon = R.drawable.user,
+                            onClick = { navController.navigate("") }
+                        )
 
-                    FeatureButton(
-                        text = "Курсы",
-                        icon = R.drawable.book,
-                        onClick = { navController.navigate("") }
-                    )
+                        FeatureButton(
+                            text = "Курсы",
+                            icon = R.drawable.book,
+                            onClick = { navController.navigate("") }
+                        )
 
+                    }
                 }
             }
         }

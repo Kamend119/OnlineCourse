@@ -52,6 +52,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.onlinecourse.R
 import com.example.onlinecourse.function.UserPreferences
+import com.example.onlinecourse.function.getRealPathFromUri
 import com.example.onlinecourse.function.isEmailValid
 import com.example.onlinecourse.function.isPasswordValid
 import com.example.onlinecourse.function.isValidAge
@@ -347,17 +348,4 @@ fun Registration(
             }
         }
     }
-}
-
-fun getRealPathFromUri(context: Context, contentUri: Uri): String {
-    var filePath = ""
-    val projection = arrayOf(MediaStore.Images.Media.DATA)
-    val cursor = context.contentResolver.query(contentUri, projection, null, null, null)
-    cursor?.use {
-        if (it.moveToFirst()) {
-            val columnIndex = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-            filePath = it.getString(columnIndex)
-        }
-    }
-    return filePath
 }
