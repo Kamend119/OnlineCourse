@@ -102,6 +102,10 @@ class LoginViewModel : ViewModel() {
     var roleName by mutableStateOf<String?>(null)
         private set
 
+    fun clearError() {
+        loginResult = null
+    }
+
     fun login(
         login: String,
         password: String,
@@ -110,18 +114,17 @@ class LoginViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
-                Log.d("LoginViewModel", "Попытка входа: $login")
                 val response = RetrofitClient.instance.login(login, password)
                 userId = response.userId
                 roleName = response.roleName
-                loginResult = "Вход выполнен. ID: $userId, роль: $roleName"
-                Log.d("LoginViewModel", "Авторизация успешна: ID=$userId, роль=$roleName")
+                loginResult = "Вход выполнен"
                 if (userId != null && roleName != null) {
                     onSuccess(userId!!, roleName!!)
+                } else {
+                    loginResult = "Неверный логин или пароль"
                 }
             } catch (e: Exception) {
                 loginResult = "Ошибка авторизации: ${e.message}"
-                Log.e("LoginViewModel", "Ошибка авторизации: ${e.message}", e)
             } finally {
                 isLoading = false
             }
@@ -439,8 +442,6 @@ class AppealViewModel : ViewModel() {
         private set
     var operationSuccess by mutableStateOf<Boolean?>(null)
     var errorMessage by mutableStateOf<String?>(null)
-        private set
-    var fileResponse by mutableStateOf<Response<ResponseBody>?>(null)
         private set
 
     fun loadUserAppeals(userId: Long) {

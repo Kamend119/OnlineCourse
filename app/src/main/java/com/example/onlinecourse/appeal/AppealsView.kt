@@ -27,9 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.onlinecourse.R
-import com.example.onlinecourse.network.AllAppealResponse
 import com.example.onlinecourse.network.AppealViewModel
-import com.example.onlinecourse.network.UserAppealsResponse
 import com.example.onlinecourse.ui.theme.OnlineCursesTheme
 
 @Composable
@@ -104,54 +102,53 @@ fun AppealsView(navController: NavHostController, userId: String, role: String) 
                     }
 
                     else -> {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                        ) {
-                            items(appeals) { request ->
-                                val appealId = if (isAdmin) {
-                                    (request as AllAppealResponse).id
-                                } else {
-                                    (request as UserAppealsResponse).id
-                                }
-
-                                val subject = if (isAdmin) {
-                                    (request as AllAppealResponse).topicName
-                                } else {
-                                    (request as UserAppealsResponse).topicName
-                                }
-
-                                val heading = if (isAdmin) {
-                                    (request as AllAppealResponse).headingAppeal
-                                } else {
-                                    (request as UserAppealsResponse).headingAppeal
-                                }
-
-                                val status = if (isAdmin) {
-                                    (request as AllAppealResponse).statusAppeal
-                                } else {
-                                    (request as UserAppealsResponse).statusName
-                                }
-
-                                Card(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 8.dp)
-                                        .clickable {
-                                            navController.navigate("appealView/${userId}/${role}/${appealId}")
-                                        },
-                                    elevation = CardDefaults.cardElevation(1.dp),
-                                    colors = CardDefaults.cardColors(containerColor = Color.Transparent)
-                                ) {
-                                    Column(
-                                        modifier = Modifier.padding(16.dp),
-                                        verticalArrangement = Arrangement.Center
+                        if (isAdmin) {
+                            LazyColumn {
+                                items(allAppeals) { appeal ->
+                                    Card(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 8.dp)
+                                            .clickable {
+                                                navController.navigate("appealView/${userId}/${role}/${appeal.id}")
+                                            },
+                                        elevation = CardDefaults.cardElevation(1.dp),
+                                        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                                     ) {
-                                        Text("Обращение №$appealId", style = MaterialTheme.typography.bodyMedium)
-                                        Text("Тема: $subject", style = MaterialTheme.typography.bodyMedium)
-                                        Text("Заголовок: $heading", style = MaterialTheme.typography.bodyMedium)
-                                        Text("Статус: $status", style = MaterialTheme.typography.bodyMedium)
+                                        Column(
+                                            modifier = Modifier.padding(16.dp),
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            Text("Обращение №${appeal.id}", style = MaterialTheme.typography.bodyMedium)
+                                            Text("Тема: ${appeal.topicName}", style = MaterialTheme.typography.bodyMedium)
+                                            Text("Заголовок: ${appeal.headingAppeal}", style = MaterialTheme.typography.bodyMedium)
+                                            Text("Статус: ${appeal.statusName}", style = MaterialTheme.typography.bodyMedium)
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            LazyColumn {
+                                items(userAppeals) { appeal ->
+                                    Card(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 8.dp)
+                                            .clickable {
+                                                navController.navigate("appealView/${userId}/${role}/${appeal.id}")
+                                            },
+                                        elevation = CardDefaults.cardElevation(1.dp),
+                                        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                                    ) {
+                                        Column(
+                                            modifier = Modifier.padding(16.dp),
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            Text("Обращение №${appeal.id}", style = MaterialTheme.typography.bodyMedium)
+                                            Text("Тема: ${appeal.topicName}", style = MaterialTheme.typography.bodyMedium)
+                                            Text("Заголовок: ${appeal.headingAppeal}", style = MaterialTheme.typography.bodyMedium)
+                                            Text("Статус: ${appeal.statusName}", style = MaterialTheme.typography.bodyMedium)
+                                        }
                                     }
                                 }
                             }

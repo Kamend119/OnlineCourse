@@ -250,7 +250,7 @@ fun MainPage(navController: NavHostController, userId: String, role: String) {
                         FeatureButton(
                             text = "Поддержка",
                             icon = R.drawable.person,
-                            onClick = { navController.navigate("") }
+                            onClick = { navController.navigate("appealsView/$userId/$role") }
                         )
 
                         FeatureButton(

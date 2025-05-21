@@ -44,9 +44,9 @@ data class AppealTopicResponse(
 //8.	просмотр всех обращений
 data class AllAppealResponse(
     @SerializedName("id") val id: Long,
-    @SerializedName("heading_appeal") val headingAppeal: String,
-    @SerializedName("topic_name") val topicName: String,
-    @SerializedName("status_appeal") val statusAppeal: String
+    @SerializedName("name") val headingAppeal: String,
+    @SerializedName("description") val topicName: String,
+    @SerializedName("status_appeal") val statusName: String
 )
 
 //9.	просмотр данных пользователя

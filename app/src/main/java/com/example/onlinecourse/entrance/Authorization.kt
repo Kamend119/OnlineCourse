@@ -44,6 +44,12 @@ fun Authorization(navController: NavHostController) {
     val isLoading = viewModel.isLoading
     val context = LocalContext.current
     val isDarkMode = rememberDarkModeStateSystem()
+    val errorMessage = viewModel.loginResult
+
+    if (errorMessage != null) {
+        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+        viewModel.clearError()
+    }
 
     OnlineCursesTheme(darkTheme = isDarkMode) {
         Column(
