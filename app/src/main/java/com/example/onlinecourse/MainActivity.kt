@@ -16,6 +16,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.onlinecourse.account.ChangeProfileData
 import com.example.onlinecourse.account.PageView
+import com.example.onlinecourse.certificate.ViewCertificate
+import com.example.onlinecourse.certificate.ViewYourCertificates
 import com.example.onlinecourse.entrance.Authorization
 import com.example.onlinecourse.entrance.Entrance
 import com.example.onlinecourse.entrance.Registration
@@ -43,6 +45,7 @@ fun MyApp() {
     var courseId by remember { mutableStateOf("-1") }
     var stepId by remember { mutableStateOf("-1") }
     var viewId by remember { mutableStateOf("-1") }
+    var sertificateId by remember { mutableStateOf("-1") }
     var notificationId by remember { mutableStateOf("-1") }
     var userId by remember { mutableStateOf("-1") }
     var role by remember { mutableStateOf("Не распознано") }
@@ -66,6 +69,11 @@ fun MyApp() {
         // обращения
 
         // сертификаты
+        composable("viewYourCertificates/{userId}/{role}") { ViewYourCertificates(navController,userId,role) }
+        composable("viewCertificate/{userId}/{role}/{sertificateId}") { backStackEntry ->
+            sertificateId = backStackEntry.arguments?.getString("sertificateId") ?: "-1"
+            ViewCertificate(navController,userId,role,sertificateId)
+        }
 
         // курсы
 

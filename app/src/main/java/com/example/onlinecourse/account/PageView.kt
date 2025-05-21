@@ -147,7 +147,7 @@ fun PageView(navController: NavHostController, userId: String, role: String, vie
                     if (role == "Студент") {
                         Button(
                             onClick = {
-                                //navController.navigate("/${userId}/${role}")
+                                navController.navigate("viewYourCertificates/${userId}/${role}")
                             },
                             modifier = Modifier.padding(bottom = 16.dp)
                         ) {
