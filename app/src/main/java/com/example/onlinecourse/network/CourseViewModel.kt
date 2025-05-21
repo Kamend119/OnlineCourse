@@ -1713,7 +1713,6 @@ class AppealTopicViewModel : ViewModel() {
     var topics by mutableStateOf<List<AppealTopicResponse>>(emptyList())
         private set
     var operationResult by mutableStateOf<Boolean?>(null)
-        private set
     var errorMessage by mutableStateOf<String?>(null)
         private set
 

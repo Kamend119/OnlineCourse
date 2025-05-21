@@ -53,6 +53,8 @@ fun MyApp() {
     var courseId by remember { mutableStateOf("-1") }
     var stepId by remember { mutableStateOf("-1") }
     var topicId by remember { mutableStateOf("-1") }
+    var topicName by remember { mutableStateOf("-1") }
+    var topicDescription by remember { mutableStateOf("-1") }
     var categoryId by remember { mutableStateOf("-1") }
     var categoryName by remember { mutableStateOf("-1") }
     var categoryDescription by remember { mutableStateOf("-1") }
@@ -89,9 +91,11 @@ fun MyApp() {
         }
         composable("appealTopicsView/{userId}/{role}") { AppealTopicsView(navController,userId,role) }
         composable("appealTopicsAdd/{userId}/{role}") { AppealTopicsAdd(navController,userId,role) }
-        composable("appealTopicsEdit/{userId}/{role}/{topicId}") { backStackEntry ->
+        composable("appealTopicsEdit/{userId}/{role}/{topicId}/{topicName}/{topicDescription}") { backStackEntry ->
             topicId = backStackEntry.arguments?.getString("topicId") ?: "-1"
-            AppealTopicEdit(navController,userId,role, topicId)
+            topicName = backStackEntry.arguments?.getString("topicName") ?: "-1"
+            topicDescription = backStackEntry.arguments?.getString("topicDescription") ?: "-1"
+            AppealTopicEdit(navController,userId,role, topicId, topicName, topicDescription)
         }
 
 
