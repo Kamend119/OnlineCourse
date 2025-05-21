@@ -1,5 +1,6 @@
 package com.example.onlinecourse
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -12,21 +13,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -36,35 +42,151 @@ import com.example.onlinecourse.ui.theme.OnlineCursesTheme
 
 @Composable
 fun MainPage(navController: NavHostController, userId: String, role: String) {
-    val viewModel: DailyStatisticsViewModel = viewModel()
-    val isLoading by remember { viewModel::isLoading }
-    val errorMessage by remember { viewModel::errorMessage }
-    val statistics by remember { viewModel::dailyStatistics }
 
-    LaunchedEffect(userId) {
-        viewModel.loadDailyStatistics(userId.toLong())
-    }
+    Log.d("UserPreferences", "Получен пользователь: userId = $userId, role = $role")
 
-    var showDialog by remember { mutableStateOf(false) }
-    var selectedTaskCount by remember { mutableStateOf(0) }
-    var selectedDate by remember { mutableStateOf("") }
 
-    fun getCellColor(taskCount: Int): Color {
-        return when (taskCount) {
-            in 0..2 -> Color(0xFFE0E0E0)
-            in 3..5 -> Color(0xFFD9A7FF)
-            in 6..8 -> Color(0xFFBF68FF)
-            in 9..10 -> Color(0xFFB645FF)
-            else -> Color(0xFFD175FF)
+    when (role) {
+        "Студент" -> {
+            val viewModel: DailyStatisticsViewModel = viewModel()
+            val isLoading by remember { viewModel::isLoading }
+            val errorMessage by remember { viewModel::errorMessage }
+            val statistics by remember { viewModel::dailyStatistics }
+
+            LaunchedEffect(userId) {
+                viewModel.loadDailyStatistics(userId.toLong())
+            }
+
+            var showDialog by remember { mutableStateOf(false) }
+            var selectedTaskCount by remember { mutableIntStateOf(0) }
+            var selectedDate by remember { mutableStateOf("") }
+
+            fun getCellColor(taskCount: Int): Color {
+                return when (taskCount) {
+                    in 0..2 -> Color(0xFFE0E0E0)
+                    in 3..5 -> Color(0xFFD9A7FF)
+                    in 6..8 -> Color(0xFFBF68FF)
+                    in 9..10 -> Color(0xFFB645FF)
+                    else -> Color(0xFFD175FF)
+                }
+            }
+
+            OnlineCursesTheme {
+                AppBar(
+                    title = "Главная",
+                    showTopBar = true,
+                    showBottomBar = true,
+                    navController,
+                    userId = userId,
+                    role = role
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Top
+                    ) {
+                        Text(
+                            text = "Статистика по дням",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(bottom = 16.dp),
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+
+                        when {
+                            isLoading -> {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 32.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator(
+                                        color = MaterialTheme.colorScheme.primary,
+                                        strokeWidth = 4.dp,
+                                        modifier = Modifier.size(48.dp)
+                                    )
+                                }
+                            }
+
+                            errorMessage != null -> {
+                                Text("Ошибка: $errorMessage", color = MaterialTheme.colorScheme.error)
+                            }
+
+                            else -> {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 32.dp)
+                                ) {
+                                    statistics.chunked(7).forEach { weekStats ->
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            weekStats.forEach { dateStep ->
+                                                val taskCount = dateStep.answersCount
+                                                val date = dateStep.dateDay
+
+                                                Box(
+                                                    modifier = Modifier
+                                                        .size(40.dp)
+                                                        .border(1.dp, Color.Gray)
+                                                        .background(getCellColor(taskCount.toInt()))
+                                                        .clickable {
+                                                            selectedTaskCount = taskCount.toInt()
+                                                            selectedDate = date
+                                                            showDialog = true
+                                                        },
+                                                    contentAlignment = Alignment.Center
+                                                ) {
+                                                    Text(
+                                                        text = taskCount.toString(),
+                                                        style = MaterialTheme.typography.bodySmall,
+                                                        color = Color.Black
+                                                    )
+                                                }
+                                            }
+                                        }
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                    }
+                                }
+                            }
+                        }
+
+                        if (showDialog) {
+                            AlertDialog(
+                                onDismissRequest = { showDialog = false },
+                                confirmButton = {
+                                    TextButton(onClick = { showDialog = false }) {
+                                        Text("Ок", color = MaterialTheme.colorScheme.onSurface)
+                                    }
+                                },
+                                title = {
+                                    Text(
+                                        "Количество заданий",
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                },
+                                text = {
+                                    Text(
+                                        "В день $selectedDate выполнено $selectedTaskCount заданий.",
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
+                            )
+                        }
+                    }
+                }
+            }
         }
-    }
-
-    OnlineCursesTheme {
-        if (role == "Студент") {
+        "Учитель" -> {
             AppBar(
                 title = "Главная",
                 showTopBar = true,
-                showBottomBar = true,
+                showBottomBar = false,
                 navController,
                 userId = userId,
                 role = role
@@ -73,126 +195,114 @@ fun MainPage(navController: NavHostController, userId: String, role: String) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.background)
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                        .padding(horizontal = 16.dp, vertical = 24.dp),
+                    horizontalAlignment = Alignment.Start,
                     verticalArrangement = Arrangement.Top
                 ) {
-                    Text(
-                        text = "Статистика по дням",
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(bottom = 16.dp),
-                        color = MaterialTheme.colorScheme.onBackground
+                    FeatureButton(
+                        text = "Мои курсы",
+                        icon = R.drawable.book,
+                        onClick = { navController.navigate("") }
                     )
 
-                    when {
-                        isLoading -> {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 32.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator(
-                                    color = MaterialTheme.colorScheme.primary,
-                                    strokeWidth = 4.dp,
-                                    modifier = Modifier.size(48.dp)
-                                )
-                            }
-                        }
+                    FeatureButton(
+                        text = "Создать курс",
+                        icon = R.drawable.add,
+                        onClick = { navController.navigate("") }
+                    )
 
-                        errorMessage != null -> {
-                            Text("Ошибка: $errorMessage", color = MaterialTheme.colorScheme.error)
-                        }
+                    FeatureButton(
+                        text = "Статистика",
+                        icon = R.drawable.graph,
+                        onClick = { navController.navigate("") }
+                    )
 
-                        else -> {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(bottom = 32.dp)
-                            ) {
-                                statistics.chunked(7).forEach { weekStats ->
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween
-                                    ) {
-                                        weekStats.forEach { dateStep ->
-                                            val taskCount = dateStep.answersCount
-                                            val date = dateStep.dateDay
-
-                                            Box(
-                                                modifier = Modifier
-                                                    .size(40.dp)
-                                                    .border(1.dp, Color.Gray)
-                                                    .background(getCellColor(taskCount.toInt()))
-                                                    .clickable {
-                                                        selectedTaskCount = taskCount.toInt()
-                                                        selectedDate = date
-                                                        showDialog = true
-                                                    },
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                Text(
-                                                    text = taskCount.toString(),
-                                                    style = MaterialTheme.typography.bodySmall,
-                                                    color = Color.Black
-                                                )
-                                            }
-                                        }
-                                    }
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                }
-                            }
-                        }
-                    }
-
-                    if (showDialog) {
-                        AlertDialog(
-                            onDismissRequest = { showDialog = false },
-                            confirmButton = {
-                                TextButton(onClick = { showDialog = false }) {
-                                    Text("Ок", color = MaterialTheme.colorScheme.onSurface)
-                                }
-                            },
-                            title = {
-                                Text(
-                                    "Количество заданий",
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            },
-                            text = {
-                                Text(
-                                    "В день $selectedDate выполнено $selectedTaskCount заданий.",
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                        )
-                    }
+                    FeatureButton(
+                        text = "Проверка выполнения",
+                        icon = R.drawable.check_mark,
+                        onClick = { navController.navigate("") }
+                    )
                 }
             }
         }
-        else if (role == "Преподаватель") {
+        "Администратор" -> {
             AppBar(
                 title = "Главная",
                 showTopBar = true,
-                showBottomBar = true,
+                showBottomBar = false,
                 navController,
                 userId = userId,
                 role = role
             ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(20.dp),
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.Top
+                ) {
 
+                    FeatureButton(
+                        text = "Администрирование",
+                        icon = R.drawable.settings,
+                        onClick = { navController.navigate("") }
+                    )
+
+                    FeatureButton(
+                        text = "Поддержка",
+                        icon = R.drawable.person,
+                        onClick = { navController.navigate("") }
+                    )
+
+                    FeatureButton(
+                        text = "Статистика",
+                        icon = R.drawable.graph,
+                        onClick = { navController.navigate("") }
+                    )
+
+                    FeatureButton(
+                        text = "Пользователи",
+                        icon = R.drawable.user,
+                        onClick = { navController.navigate("") }
+                    )
+
+                    FeatureButton(
+                        text = "Курсы",
+                        icon = R.drawable.book,
+                        onClick = { navController.navigate("") }
+                    )
+
+                }
             }
         }
-        else if (role == "Администратор") {
-            AppBar(
-                title = "Главная",
-                showTopBar = true,
-                showBottomBar = true,
-                navController,
-                userId = userId,
-                role = role
-            ) {
+    }
+}
 
-            }
-        }
+@Composable
+fun FeatureButton(
+    text: String,
+    icon: Int,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .padding(vertical = 10.dp)
+            .fillMaxWidth()
+            .height(70.dp),
+        shape = MaterialTheme.shapes.medium,
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 6.dp,
+            pressedElevation = 2.dp
+        )
+    ) {
+        Icon(
+            painter = painterResource(id = icon),
+            contentDescription = text,
+            modifier = Modifier.padding(8.dp).size(30.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = text, style = MaterialTheme.typography.titleMedium)
     }
 }

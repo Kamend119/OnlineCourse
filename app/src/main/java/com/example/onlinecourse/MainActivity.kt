@@ -18,6 +18,8 @@ import com.example.onlinecourse.entrance.Authorization
 import com.example.onlinecourse.entrance.Entrance
 import com.example.onlinecourse.entrance.Registration
 import com.example.onlinecourse.function.Loading
+import com.example.onlinecourse.setting.ChangingThePassword
+import com.example.onlinecourse.setting.Settings
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,6 +65,8 @@ fun MyApp() {
         // уведомления
 
         // настройки
+        composable("changingThePassword/{userId}/{role}") { ChangingThePassword(navController, userId, role) }
+        composable("settings/{userId}/{role}") { Settings(navController,userId,role) }
 
         // статистика
 
