@@ -56,7 +56,10 @@ fun MyApp() {
             viewId = backStackEntry.arguments?.getString("viewId") ?: "-1"
             PageView(navController,userId,role,viewId)
         }
-        composable("changeProfileData/{userId}/{role}") { ChangeProfileData(navController,userId,role) }
+        composable("changeProfileData/{userId}/{role}/{viewId}") { backStackEntry ->
+            viewId = backStackEntry.arguments?.getString("viewId") ?: "-1"
+            ChangeProfileData(navController,userId,role, viewId)
+        }
 
         // администрирование
 

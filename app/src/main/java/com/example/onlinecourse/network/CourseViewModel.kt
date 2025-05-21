@@ -407,7 +407,6 @@ class UserProfileViewModel : ViewModel() {
         }
     }
 
-
     fun issueWarning(userId: Long) {
         viewModelScope.launch {
             isLoading = true
