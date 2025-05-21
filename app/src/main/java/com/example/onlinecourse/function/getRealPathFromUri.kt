@@ -2,8 +2,6 @@ package com.example.onlinecourse.function
 
 import android.net.Uri
 
-
-// Функция получения реального пути из Uri
 fun getRealPathFromUri(context: android.content.Context, contentUri: Uri): String {
     var filePath = ""
     val projection = arrayOf(android.provider.MediaStore.Images.Media.DATA)

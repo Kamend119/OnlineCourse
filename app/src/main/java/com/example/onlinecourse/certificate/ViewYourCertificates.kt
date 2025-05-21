@@ -1,5 +1,6 @@
 package com.example.onlinecourse.certificate
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -113,7 +114,7 @@ fun ViewYourCertificates(navController: NavHostController, userId: String, role:
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .clickable {
-                                                // navController.navigate("viewCertificate/${userId}/${role}/${certificate.sertificateId}")
+                                                navController.navigate("viewCertificate/${userId}/${role}/${certificate.sertificateId}")
                                             }
                                             .padding(vertical = 8.dp),
                                         elevation = CardDefaults.cardElevation(2.dp),
@@ -127,6 +128,11 @@ fun ViewYourCertificates(navController: NavHostController, userId: String, role:
                                             )
                                             Text(
                                                 text = "Дата получения: ${certificate.uploadDate}",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                modifier = Modifier.padding(4.dp)
+                                            )
+                                            Text(
+                                                text = "ID: ${certificate.sertificateId}",
                                                 style = MaterialTheme.typography.bodyMedium,
                                                 modifier = Modifier.padding(4.dp)
                                             )

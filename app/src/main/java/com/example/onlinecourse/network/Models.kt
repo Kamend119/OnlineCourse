@@ -232,7 +232,7 @@ data class AllUserResponse(
 //42.	просмотр своих сертификатов
 data class UserCertificatesResponse(
     @SerializedName("course_name") val courseName: String,
-    @SerializedName("sertificate_id") val sertificateId: Long,
+    @SerializedName("serf_id") val sertificateId: Long,
     @SerializedName("upload_date") val uploadDate: String
 )
 
