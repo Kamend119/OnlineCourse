@@ -1788,7 +1788,6 @@ class CourseCategoryViewModel : ViewModel() {
     var categories by mutableStateOf<List<CourseCategory>>(emptyList())
         private set
     var operationResult by mutableStateOf<Boolean?>(null)
-        private set
     var errorMessage by mutableStateOf<String?>(null)
         private set
 
@@ -1845,6 +1844,7 @@ class CourseCategoryViewModel : ViewModel() {
             isLoading = true
             try {
                 RetrofitClient.instance.deleteCourseCategory(courseId)
+                operationResult = true
                 errorMessage = null
                 if (operationResult == true) loadCategories()
             } catch (e: Exception) {

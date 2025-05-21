@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.onlinecourse.function.AppBar
+import com.example.onlinecourse.function.FeatureButton
 import com.example.onlinecourse.network.DailyStatisticsViewModel
 import com.example.onlinecourse.ui.theme.OnlineCursesTheme
 
@@ -244,7 +245,7 @@ fun MainPage(navController: NavHostController, userId: String, role: String) {
                         FeatureButton(
                             text = "Администрирование",
                             icon = R.drawable.settings,
-                            onClick = { navController.navigate("") }
+                            onClick = { navController.navigate("administration/${userId}/${role}") }
                         )
 
                         FeatureButton(
@@ -275,33 +276,5 @@ fun MainPage(navController: NavHostController, userId: String, role: String) {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun FeatureButton(
-    text: String,
-    icon: Int,
-    onClick: () -> Unit
-) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier
-            .padding(vertical = 10.dp)
-            .fillMaxWidth()
-            .height(70.dp),
-        shape = MaterialTheme.shapes.medium,
-        elevation = ButtonDefaults.buttonElevation(
-            defaultElevation = 6.dp,
-            pressedElevation = 2.dp
-        )
-    ) {
-        Icon(
-            painter = painterResource(id = icon),
-            contentDescription = text,
-            modifier = Modifier.padding(8.dp).size(30.dp)
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(text = text, style = MaterialTheme.typography.titleMedium)
     }
 }

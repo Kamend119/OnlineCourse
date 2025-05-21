@@ -4,18 +4,23 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.onlinecourse.account.ChangeProfileData
 import com.example.onlinecourse.account.PageView
+import com.example.onlinecourse.administration.Administration
+import com.example.onlinecourse.administration.courseCategories.CourseCategoriesAdd
+import com.example.onlinecourse.administration.courseCategories.CourseCategoriesEdit
+import com.example.onlinecourse.administration.courseCategories.CourseCategoriesView
+import com.example.onlinecourse.administration.topicsAppeals.AppealTopicEdit
+import com.example.onlinecourse.administration.topicsAppeals.AppealTopicsAdd
+import com.example.onlinecourse.administration.topicsAppeals.AppealTopicsView
 import com.example.onlinecourse.appeal.AppealAdd
 import com.example.onlinecourse.appeal.AppealView
 import com.example.onlinecourse.appeal.AppealsView
@@ -47,6 +52,10 @@ fun MyApp() {
     var subjectId by remember { mutableStateOf("-1") }
     var courseId by remember { mutableStateOf("-1") }
     var stepId by remember { mutableStateOf("-1") }
+    var topicId by remember { mutableStateOf("-1") }
+    var categoryId by remember { mutableStateOf("-1") }
+    var categoryName by remember { mutableStateOf("-1") }
+    var categoryDescription by remember { mutableStateOf("-1") }
     var viewId by remember { mutableStateOf("-1") }
     var appealId by remember { mutableStateOf("-1") }
     var sertificateId by remember { mutableStateOf("-1") }
@@ -69,6 +78,22 @@ fun MyApp() {
         }
 
         // администрирование
+        composable("administration/{userId}/{role}") { Administration(navController,userId,role) }
+        composable("courseCategoriesView/{userId}/{role}") { CourseCategoriesView(navController,userId,role) }
+        composable("courseCategoriesAdd/{userId}/{role}") { CourseCategoriesAdd(navController,userId,role) }
+        composable("courseCategoriesEdit/{userId}/{role}/{categoryId}/{categoryName}/{categoryDescription}") { backStackEntry ->
+            categoryId = backStackEntry.arguments?.getString("categoryId") ?: "-1"
+            categoryName = backStackEntry.arguments?.getString("categoryName") ?: "-1"
+            categoryDescription = backStackEntry.arguments?.getString("categoryDescription") ?: "-1"
+            CourseCategoriesEdit(navController,userId,role,categoryId,categoryName,categoryDescription)
+        }
+        composable("appealTopicsView/{userId}/{role}") { AppealTopicsView(navController,userId,role) }
+        composable("appealTopicsAdd/{userId}/{role}") { AppealTopicsAdd(navController,userId,role) }
+        composable("appealTopicsEdit/{userId}/{role}/{topicId}") { backStackEntry ->
+            topicId = backStackEntry.arguments?.getString("topicId") ?: "-1"
+            AppealTopicEdit(navController,userId,role, topicId)
+        }
+
 
         // обращения
         composable("appealAdd/{userId}/{role}") { AppealAdd(navController,userId,role) }
