@@ -110,7 +110,7 @@ fun Settings(navController: NavHostController, userId: String, role: String) {
 
                     Button(
                         onClick = {
-                            navController.navigate("support/$userId/$role")
+                            navController.navigate("appealsView/$userId/$role")
                         },
                         Modifier.align(Alignment.CenterHorizontally)
                     ) {

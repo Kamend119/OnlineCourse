@@ -16,6 +16,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.onlinecourse.account.ChangeProfileData
 import com.example.onlinecourse.account.PageView
+import com.example.onlinecourse.appeal.AppealAdd
+import com.example.onlinecourse.appeal.AppealView
+import com.example.onlinecourse.appeal.AppealsView
 import com.example.onlinecourse.certificate.ViewCertificate
 import com.example.onlinecourse.certificate.ViewYourCertificates
 import com.example.onlinecourse.entrance.Authorization
@@ -45,6 +48,7 @@ fun MyApp() {
     var courseId by remember { mutableStateOf("-1") }
     var stepId by remember { mutableStateOf("-1") }
     var viewId by remember { mutableStateOf("-1") }
+    var appealId by remember { mutableStateOf("-1") }
     var sertificateId by remember { mutableStateOf("-1") }
     var notificationId by remember { mutableStateOf("-1") }
     var userId by remember { mutableStateOf("-1") }
@@ -67,6 +71,12 @@ fun MyApp() {
         // администрирование
 
         // обращения
+        composable("appealAdd/{userId}/{role}") { AppealAdd(navController,userId,role) }
+        composable("appealsView/{userId}/{role}") { AppealsView(navController,userId,role) }
+        composable("appealView/{userId}/{role}/{appealId}") { backStackEntry ->
+            appealId = backStackEntry.arguments?.getString("appealId") ?: "-1"
+            AppealView(navController,userId,role,appealId)
+        }
 
         // сертификаты
         composable("viewYourCertificates/{userId}/{role}") { ViewYourCertificates(navController,userId,role) }

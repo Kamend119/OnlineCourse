@@ -323,7 +323,6 @@ class UserProfileViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 errorMessage = "Ошибка загрузки профиля: ${e.message}"
-                Log.e("UserProfileViewModel", "Ошибка", e)
             } finally {
                 isLoading = false
             }
@@ -361,7 +360,6 @@ class UserProfileViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 deletionResult = "Ошибка при удалении: ${e.message}"
-                Log.e("UserProfileViewModel", "Ошибка удаления", e)
             } finally {
                 isLoading = false
             }
@@ -440,8 +438,9 @@ class AppealViewModel : ViewModel() {
     var topics by mutableStateOf<List<AppealTopicResponse>>(emptyList())
         private set
     var operationSuccess by mutableStateOf<Boolean?>(null)
-        private set
     var errorMessage by mutableStateOf<String?>(null)
+        private set
+    var fileResponse by mutableStateOf<Response<ResponseBody>?>(null)
         private set
 
     fun loadUserAppeals(userId: Long) {

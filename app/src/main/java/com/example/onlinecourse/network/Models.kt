@@ -14,7 +14,7 @@ data class AuthorizeResponse(
 
 //3.	просмотр своих обращений
 data class UserAppealsResponse(
-    @SerializedName("appeal_id") val appealId: Long,
+    @SerializedName("appeal_id") val id: Long,
     @SerializedName("heading_appeal") val headingAppeal: String,
     @SerializedName("topic_name") val topicName: String,
     @SerializedName("status_name") val statusName: String
