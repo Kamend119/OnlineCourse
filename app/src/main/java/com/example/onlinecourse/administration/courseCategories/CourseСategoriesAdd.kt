@@ -30,7 +30,6 @@ import com.example.onlinecourse.function.AppBar
 import com.example.onlinecourse.network.CourseCategoryViewModel
 import com.example.onlinecourse.ui.theme.OnlineCursesTheme
 
-
 @Composable
 fun CourseCategoriesAdd(navController: NavHostController, userId: String, role: String) {
     val viewModel: CourseCategoryViewModel = viewModel()
