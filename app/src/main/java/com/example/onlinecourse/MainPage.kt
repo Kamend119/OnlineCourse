@@ -258,7 +258,7 @@ fun MainPage(navController: NavHostController, userId: String, role: String) {
                         FeatureButton(
                             text = "Пользователи",
                             icon = R.drawable.user,
-                            onClick = { navController.navigate("users/${userId}/${role}") }
+                            onClick = { navController.navigate("allUsersView/${userId}/${role}") }
                         )
 
                         FeatureButton(

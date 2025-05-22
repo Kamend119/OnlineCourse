@@ -39,8 +39,6 @@ import com.example.onlinecourse.statistics.PlatformStatisticsView
 import com.example.onlinecourse.statistics.Statistic
 import com.example.onlinecourse.statistics.UserActivityStatsView
 import com.example.onlinecourse.user.AllUsersView
-import com.example.onlinecourse.user.NewUsersView
-import com.example.onlinecourse.user.Users
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -147,10 +145,8 @@ fun MyApp() {
         composable("appealStatisticsView/{userId}/{role}") { AppealStatisticsView(navController,userId,role) }
         composable("userActivityStatsView/{userId}/{role}") { UserActivityStatsView(navController,userId,role) }
 
-        // пользователь
-        composable("users/{userId}/{role}") { Users(navController,userId,role) }
+        // пользователи
         composable("AllUsersView/{userId}/{role}") { AllUsersView(navController,userId,role) }
-        composable("NewUsersView/{userId}/{role}") { NewUsersView(navController,userId,role) }
 
         // главная страница
         composable("main/{userId}/{role}") {backStackEntry ->
