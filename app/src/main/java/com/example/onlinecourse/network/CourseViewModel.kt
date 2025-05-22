@@ -386,22 +386,26 @@ class UserProfileViewModel : ViewModel() {
                 isLoading = true
                 val rb = { str: String -> str.toRequestBody("text/plain".toMediaTypeOrNull()) }
 
+                // Если файл есть, используем его размер. Если нет — 0.
+                val fileSize = sizeBytes?.toString() ?: "0"
+
                 val response = RetrofitClient.instance.updateUserProfile(
                     userId = rb(userId.toString()),
                     email = rb(email),
                     lastName = rb(lastName),
                     firstName = rb(firstName),
-                    patronymic = rb(patronymic),
-                    fileType = fileType?.toRequestBody("text/plain".toMediaTypeOrNull()),
-                    originalName = originalName?.toRequestBody("text/plain".toMediaTypeOrNull()),
-                    mimeType = mimeType?.toRequestBody("text/plain".toMediaTypeOrNull()),
-                    sizeBytes = sizeBytes.toString().toRequestBody("text/plain".toMediaTypeOrNull()),
+                    patronymic = patronymic?.let { rb(it) },
+                    fileType = fileType?.let { rb(it) },
+                    originalName = originalName?.let { rb(it) },
+                    mimeType = mimeType?.let { rb(it) },
+                    sizeBytes = rb(fileSize),  // Теперь это строка с числом (например, "0")
                     file = file
                 )
                 saveResult = response.body() == true
+                isLoading = false
             } catch (e: Exception) {
                 saveResult = false
-                errorMessage = "Ошибка при обновлении: ${e.message}"
+                errorMessage = "Ошибка при обновлении: ${e.message ?: "неизвестная ошибка"}"
             } finally {
                 isLoading = false
             }
