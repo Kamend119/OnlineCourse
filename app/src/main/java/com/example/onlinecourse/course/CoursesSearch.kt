@@ -156,16 +156,7 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Курсы", style = MaterialTheme.typography.headlineSmall)
-                        Button(onClick = { scope.launch { drawerState.open() } }) {
-                            Icon(Icons.Default.FilterList, contentDescription = "Фильтры")
-                            Text("Фильтры", modifier = Modifier.padding(start = 8.dp))
-                        }
-                    }
-
-                    if (role == "Студент") {
-                        Text("Статус")
-                        Spacer(modifier = Modifier.height(8.dp))
+                        if (role == "Студент") {
                         DropdownMenuBox(
                             label = "Статус",
                             options = listOf("Новые", "В прохождении", "Отложен"),
@@ -174,6 +165,13 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
                             selectedStatus = it
                         }
                     }
+                        Button(onClick = { scope.launch { drawerState.open() } }) {
+                            Icon(Icons.Default.FilterList, contentDescription = "Фильтры")
+                            Text("Фильтры", modifier = Modifier.padding(start = 8.dp))
+                        }
+                    }
+
+
 
                     Spacer(modifier = Modifier.height(12.dp))
 
