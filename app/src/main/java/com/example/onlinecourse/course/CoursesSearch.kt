@@ -28,8 +28,9 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
     val scope = rememberCoroutineScope()
     val drawerState = remember { DrawerState(initialValue = DrawerValue.Closed) }
 
-    // Основные применённые фильтры (используются для фильтрации и отображения)
     var selectedStatus by remember { mutableStateOf<String?>(null) }
+    var tempSelectedStatus by remember { mutableStateOf<String?>(null) }
+
     var selectedCategories by remember { mutableStateOf<List<String>>(emptyList()) }
     val tempSelectedCategories = remember { mutableStateListOf<String>() }
 
@@ -162,12 +163,16 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
                         }
                     }
 
-                    // Статусный селектор (для студента)
                     if (role == "Студент") {
-                        Spacer(modifier = Modifier.height(12.dp))
-                        StatusSelector(selectedStatus = selectedStatus, onStatusSelected = {
+                        Text("Статус")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        DropdownMenuBox(
+                            label = "Статус",
+                            options = listOf("Новые", "В прохождении", "Отложен"),
+                            selectedOption = selectedStatus
+                        ) {
                             selectedStatus = it
-                        })
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -272,6 +277,24 @@ fun CourseItem(
             }
             Text("Категория: $category", style = MaterialTheme.typography.bodySmall)
             Text("Дата публикации: $date", style = MaterialTheme.typography.bodySmall)
+        }
+    }
+}
+
+@Composable
+fun DropdownMenuBox(label: String, options: List<String?>, selectedOption: String?, onSelected: (String?) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    Box {
+        OutlinedButton(onClick = { expanded = true }) {
+            Text(text = selectedOption ?: label)
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            options.forEach { option ->
+                DropdownMenuItem(text = { Text(option ?: "Все") }, onClick = {
+                    onSelected(option)
+                    expanded = false
+                })
+            }
         }
     }
 }
