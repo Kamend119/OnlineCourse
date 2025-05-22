@@ -110,25 +110,18 @@ fun AppBar(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 if (role == "Студент"){
-                                    IconButton(onClick = { navController.navigate("") }) {
+                                    IconButton(onClick = { navController.navigate("coursesSearch/${userId}/${role}") }) {
                                         Icon(
                                             painter = painterResource(id = R.drawable.search),
                                             contentDescription = "Поиск",
                                             modifier = Modifier.size(30.dp)
                                         )
                                     }
-                                    IconButton(onClick = { navController.navigate("") }) {
+                                    IconButton(onClick = { navController.navigate("main/${userId}/${role}") }) {
                                         Icon(
                                             painter = painterResource(id = R.drawable.home),
                                             contentDescription = "Главная",
                                             modifier = Modifier.size(35.dp)
-                                        )
-                                    }
-                                    IconButton(onClick = { navController.navigate("") }) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.book),
-                                            contentDescription = "Мои курсы",
-                                            modifier = Modifier.size(30.dp)
                                         )
                                     }
                                 }

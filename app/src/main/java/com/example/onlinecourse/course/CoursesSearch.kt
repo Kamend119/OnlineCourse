@@ -28,8 +28,10 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
     val scope = rememberCoroutineScope()
     val drawerState = remember { DrawerState(initialValue = DrawerValue.Closed) }
 
-    var selectedCategory by remember { mutableStateOf<String?>(null) }
+    // Основные применённые фильтры (используются для фильтрации и отображения)
     var selectedStatus by remember { mutableStateOf<String?>(null) }
+    var selectedCategories by remember { mutableStateOf<List<String>>(emptyList()) }
+    val tempSelectedCategories = remember { mutableStateListOf<String>() }
 
     val categories = viewModel.courseCategories
     val isLoading = viewModel.isLoading
@@ -48,15 +50,27 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
         }
     }
 
-    val filteredCourses = remember(courses, selectedCategory) {
-        if (selectedCategory == null) courses
-        else courses.filter {
-            when (it) {
-                is CourseResponse -> it.categoryName == selectedCategory
-                is UserCourseResponse -> it.categoryName == selectedCategory
-                is CourseByTeacherResponse -> it.courseCategoryName == selectedCategory
-                else -> false
+    LaunchedEffect(selectedStatus) {
+        if (role == "Студент") {
+            if (selectedStatus != null && selectedStatus != "Новые") {
+                viewModel.loadCoursesByUserAndStatus(userId.toLong(), selectedStatus!!)
+            } else {
+                viewModel.loadAllCourses()
             }
+        }
+    }
+
+    // Фильтрация курсов по выбранным категориям (основной список)
+    val filteredCourses = remember(courses, selectedCategories) {
+        if (selectedCategories.isEmpty()) courses
+        else courses.filter { course ->
+            val category = when (course) {
+                is CourseResponse -> course.categoryName
+                is UserCourseResponse -> course.categoryName
+                is CourseByTeacherResponse -> course.courseCategoryName
+                else -> null
+            }
+            category != null && selectedCategories.contains(category)
         }
     }
 
@@ -82,31 +96,53 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
                         Column(modifier = Modifier.padding(24.dp)) {
                             Text("Фильтры", style = MaterialTheme.typography.titleMedium)
                             Spacer(modifier = Modifier.height(20.dp))
-                            Text("Категория")
-                            DropdownMenuBox(
-                                label = "Категория",
-                                options = listOf(null) + categories.map { it.categoryName },
-                                selectedOption = selectedCategory
-                            ) {
-                                selectedCategory = it
+                            Text("Категории")
+
+                            // При открытии drawer копируем выбранные категории в temp
+                            LaunchedEffect(drawerState.currentValue) {
+                                if (drawerState.currentValue == DrawerValue.Open) {
+                                    tempSelectedCategories.clear()
+                                    tempSelectedCategories.addAll(selectedCategories)
+                                }
                             }
 
-                            if (role == "Студент") {
-                                Spacer(modifier = Modifier.height(16.dp))
-                                Text("Статус")
-                                DropdownMenuBox(
-                                    label = "Статус",
-                                    options = listOf("Новые", "В прохождении", "Отложен"),
-                                    selectedOption = selectedStatus
-                                ) {
-                                    selectedStatus = it
-                                    if (it == "Новые") viewModel.loadAllCourses()
-                                    else viewModel.loadCoursesByUserAndStatus(userId.toLong(), it ?: "")
+                            LazyColumn(
+                                Modifier.height(400.dp)
+                            ) {
+                                item {
+                                    categories.forEach { category ->
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(vertical = 4.dp)
+                                                .clickable {
+                                                    if (tempSelectedCategories.contains(category.categoryName)) {
+                                                        tempSelectedCategories.remove(category.categoryName)
+                                                    } else {
+                                                        tempSelectedCategories.add(category.categoryName)
+                                                    }
+                                                }
+                                        ) {
+                                            Checkbox(
+                                                checked = tempSelectedCategories.contains(category.categoryName),
+                                                onCheckedChange = { checked ->
+                                                    if (checked) tempSelectedCategories.add(category.categoryName)
+                                                    else tempSelectedCategories.remove(category.categoryName)
+                                                }
+                                            )
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                            Text(text = category.categoryName)
+                                        }
+                                    }
                                 }
                             }
 
                             Spacer(modifier = Modifier.height(20.dp))
-                            Button(onClick = { scope.launch { drawerState.close() } }) {
+                            Button(onClick = {
+                                selectedCategories = tempSelectedCategories.toList()
+                                scope.launch { drawerState.close() }
+                            }) {
                                 Text("Применить")
                             }
                         }
@@ -125,6 +161,16 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
                             Text("Фильтры", modifier = Modifier.padding(start = 8.dp))
                         }
                     }
+
+                    // Статусный селектор (для студента)
+                    if (role == "Студент") {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        StatusSelector(selectedStatus = selectedStatus, onStatusSelected = {
+                            selectedStatus = it
+                        })
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     if (isLoading) {
                         Box(
@@ -182,6 +228,28 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
 }
 
 @Composable
+fun StatusSelector(selectedStatus: String?, onStatusSelected: (String?) -> Unit) {
+    val statuses = listOf("Новые", "В прохождении", "Отложен")
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        statuses.forEach { status ->
+            FilterChip(
+                selected = selectedStatus == status,
+                onClick = {
+                    onStatusSelected(if (selectedStatus == status) null else status)
+                },
+                label = { Text(status) }
+            )
+        }
+    }
+}
+
+@Composable
 fun CourseItem(
     id: Long,
     name: String,
@@ -204,24 +272,6 @@ fun CourseItem(
             }
             Text("Категория: $category", style = MaterialTheme.typography.bodySmall)
             Text("Дата публикации: $date", style = MaterialTheme.typography.bodySmall)
-        }
-    }
-}
-
-@Composable
-fun DropdownMenuBox(label: String, options: List<String?>, selectedOption: String?, onSelected: (String?) -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
-    Box {
-        OutlinedButton(onClick = { expanded = true }) {
-            Text(text = selectedOption ?: label)
-        }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            options.forEach { option ->
-                DropdownMenuItem(text = { Text(option ?: "Все") }, onClick = {
-                    onSelected(option)
-                    expanded = false
-                })
-            }
         }
     }
 }
