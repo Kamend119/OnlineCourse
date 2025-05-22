@@ -212,7 +212,7 @@ fun MainPage(navController: NavHostController, userId: String, role: String) {
                         FeatureButton(
                             text = "Проверка выполнения",
                             icon = R.drawable.check_mark,
-                            onClick = { navController.navigate("") }
+                            onClick = { navController.navigate("estimation/${userId}/${role}") }
                         )
                     }
                 }

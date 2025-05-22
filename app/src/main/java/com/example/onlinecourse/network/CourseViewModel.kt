@@ -309,9 +309,6 @@ class UserProfileViewModel : ViewModel() {
     fun clearSaveResult() {
         saveResult = null
     }
-    fun clearWarningResult() {
-        warningResult = null
-    }
 
     fun loadUserProfile(userId: Long) {
         viewModelScope.launch {
@@ -1489,12 +1486,21 @@ class StepCreationViewModel : ViewModel() {
 class StepAnswersViewModel : ViewModel() {
     var isLoading by mutableStateOf(false)
         private set
+    var stepDetails by mutableStateOf<List<StepDetailResponse>>(emptyList())
+        private set
+    var fileResponse by mutableStateOf<Response<ResponseBody>?>(null)
+        private set
     var answersForStep by mutableStateOf<List<AnswersForStepResponse>>(emptyList())
         private set
     var selectedAnswer by mutableStateOf<AnswerForStepResponse?>(null)
         private set
-    var operationSuccess by mutableStateOf<Boolean?>(null)
+    var teacherCourses by mutableStateOf<List<CourseByTeacherResponse>>(emptyList())
         private set
+    var lessonsByCourse by mutableStateOf<List<LessonResponse>>(emptyList())
+        private set
+    var steps by mutableStateOf<List<StepsByLessons>>(emptyList())
+        private set
+    var operationSuccess by mutableStateOf<Boolean?>(null)
     var errorMessage by mutableStateOf<String?>(null)
         private set
 
@@ -1506,6 +1512,26 @@ class StepAnswersViewModel : ViewModel() {
                 errorMessage = null
             } catch (e: Exception) {
                 errorMessage = "Ошибка при загрузке ответов: ${e.message}"
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
+    fun getStepDetails(
+        stepId: Long,
+        userId: Long,
+        onSuccess: (List<StepDetailResponse>) -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            isLoading = true
+            try {
+                val response = RetrofitClient.instance.getStepDetails(stepId, userId)
+                stepDetails = response
+                errorMessage = null
+                onSuccess(response)
+            } catch (e: Exception) {
+                errorMessage = "Ошибка при получении деталей шага: ${e.message}"
             } finally {
                 isLoading = false
             }
@@ -1537,6 +1563,66 @@ class StepAnswersViewModel : ViewModel() {
             } catch (e: Exception) {
                 operationSuccess = false
                 errorMessage = "Ошибка при оценивании ответа: ${e.message}"
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
+    fun downloadFile(filePath: String) {
+        viewModelScope.launch {
+            isLoading = true
+            try {
+                val response = RetrofitClient.instance.getFile(filePath)
+                fileResponse = response
+                if (!response.isSuccessful) {
+                    errorMessage = "Ошибка при загрузке файла: ${response.message()}"
+                }
+            } catch (e: Exception) {
+                errorMessage = "Ошибка при получении файла: ${e.message}"
+                Log.e("UserProfileViewModel", "Ошибка загрузки файла", e)
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
+    fun loadCoursesByTeacher(teacherId: Long) {
+        viewModelScope.launch {
+            isLoading = true
+            try {
+                teacherCourses = RetrofitClient.instance.getCoursesByTeacher(teacherId)
+                errorMessage = null
+            } catch (e: Exception) {
+                errorMessage = "Ошибка при загрузке курсов преподавателя: ${e.message}"
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
+    fun loadLessonsByCourse(courseId: Long) {
+        viewModelScope.launch {
+            isLoading = true
+            try {
+                lessonsByCourse = RetrofitClient.instance.getLessonsByCourse(courseId)
+                errorMessage = null
+            } catch (e: Exception) {
+                errorMessage = "Ошибка при загрузке уроков курса: ${e.message}"
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
+    fun loadStepsByLesson(lessonId: Long) {
+        viewModelScope.launch {
+            isLoading = true
+            try {
+                steps = RetrofitClient.instance.getStepsByLesson(lessonId)
+                errorMessage = null
+            } catch (e: Exception) {
+                errorMessage = "Ошибка при загрузке шагов: ${e.message}"
             } finally {
                 isLoading = false
             }

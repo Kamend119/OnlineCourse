@@ -134,13 +134,14 @@ fun MyApp() {
 
         // оценка знаний
         composable("estimation/{userId}/{role}") { Estimation(navController,userId,role) }
-        composable("userActivityStatsView/{userId}/{role}/{stepId}") { backStackEntry ->
+        composable("answersForStepView/{userId}/{role}/{stepId}") { backStackEntry ->
             stepId = backStackEntry.arguments?.getString("stepId") ?: "-1"
             AnswersForStepView(navController,userId,role,stepId)
         }
-        composable("AnswerForStepView/{userId}/{role}/{answerId}") { backStackEntry ->
+        composable("answerForStepView/{userId}/{role}/{answerId}/{stepId}") { backStackEntry ->
             answerId = backStackEntry.arguments?.getString("answerId") ?: "-1"
-            AnswerForStepView(navController,userId,role,answerId)
+            stepId = backStackEntry.arguments?.getString("stepId") ?: "-1"
+            AnswerForStepView(navController,userId,role,answerId,stepId)
         }
 
         // уведомления
