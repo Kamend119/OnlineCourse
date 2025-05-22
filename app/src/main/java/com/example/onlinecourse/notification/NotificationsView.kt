@@ -88,7 +88,7 @@ fun NotificationsView(navController: NavHostController, userId: String, role: St
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .clickable {
-                                                //navController.navigate("notificationView/${userId}/${role}/${notification.notificationId}")
+                                                navController.navigate("notificationView/${userId}/${role}/${notification.id}")
                                             }
                                             .padding(vertical = 8.dp),
                                         elevation = CardDefaults.cardElevation(2.dp),

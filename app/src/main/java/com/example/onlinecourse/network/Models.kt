@@ -65,6 +65,7 @@ data class UserProfileResponse(
 
 //12.	просмотр уведомлений
 data class NotificationResponse(
+    @SerializedName("not_id") val id: Long,
     @SerializedName("heading_notification") val headingNotification: String,
     @SerializedName("date_create") val dateCreate: String
 )
