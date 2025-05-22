@@ -47,6 +47,12 @@ fun Administration(navController: NavHostController, userId: String, role: Strin
                     icon = R.drawable.book,
                     onClick = { navController.navigate("courseCategoriesView/${userId}/${role}") }
                 )
+
+                FeatureButton(
+                    text = "Зарегистрировать преподавателя",
+                    icon = R.drawable.user,
+                    onClick = { navController.navigate("registrationTeacher/${userId}/${role}") }
+                )
             }
         }
     }

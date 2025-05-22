@@ -254,8 +254,11 @@ class NotificationDetailViewModel : ViewModel() {
 class RegisterTeacherViewModel : ViewModel() {
     var isLoading by mutableStateOf(false)
         private set
-    var registrationResult by mutableStateOf<String?>(null)
+    var registrationResult by mutableStateOf<Long?>(null)
         private set
+    fun clearResult() {
+        registrationResult = null
+    }
 
     fun registerTeacher(
         login: String,
@@ -269,20 +272,18 @@ class RegisterTeacherViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
-                val userId = RetrofitClient.instance.registerTeacher(
-                    login = login,
-                    mail = mail,
-                    password = password,
-                    lastName = lastName,
-                    firstName = firstName,
-                    patronymic = patronymic
+                val response = RetrofitClient.instance.registerTeacher(
+                    login, mail, password, lastName, firstName, patronymic
                 )
-                registrationResult = "Преподаватель успешно зарегистрирован. ID: $userId"
-                onSuccess(userId.id)
-                Log.d("RegisterTeacherViewModel", "Преподаватель зарегистрирован с ID: $userId")
+                if (response.isSuccessful) {
+                    val id = response.body() ?: -1L
+                    registrationResult = id
+                    onSuccess(id)
+                } else {
+                    registrationResult = -1L
+                }
             } catch (e: Exception) {
-                registrationResult = "Ошибка регистрации: ${e.message}"
-                Log.e("RegisterTeacherViewModel", "Ошибка регистрации", e)
+                registrationResult = -1L
             } finally {
                 isLoading = false
             }

@@ -15,6 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.onlinecourse.account.ChangeProfileData
 import com.example.onlinecourse.account.PageView
 import com.example.onlinecourse.administration.Administration
+import com.example.onlinecourse.administration.RegistrationTeacher
 import com.example.onlinecourse.administration.courseCategories.CourseCategoriesAdd
 import com.example.onlinecourse.administration.courseCategories.CourseCategoriesEdit
 import com.example.onlinecourse.administration.courseCategories.CourseCategoriesView
@@ -102,7 +103,7 @@ fun MyApp() {
             topicDescription = backStackEntry.arguments?.getString("topicDescription") ?: "-1"
             AppealTopicEdit(navController,userId,role, topicId, topicName, topicDescription)
         }
-
+        composable("registrationTeacher/{userId}/{role}") { RegistrationTeacher(navController,userId,role) }
 
         // обращения
         composable("appealAdd/{userId}/{role}") { AppealAdd(navController,userId,role) }

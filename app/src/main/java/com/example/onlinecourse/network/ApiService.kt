@@ -516,7 +516,7 @@ interface ApiService {
         @Query("last_name") lastName: String,
         @Query("first_name") firstName: String,
         @Query("patronymic") patronymic: String
-    ): LongResponse
+    ): Response<Long>
 
     //55.	Общая статистика платформы
     @GET("get_platform_statistics")
