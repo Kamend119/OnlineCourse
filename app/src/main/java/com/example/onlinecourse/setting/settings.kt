@@ -151,7 +151,10 @@ fun Settings(navController: NavHostController, userId: String, role: String) {
                     onClick = {
                         val userPreferences = UserPreferences(context)
                         userPreferences.deleteUser()
-                        navController.navigate("entrance")
+                        navController.navigate("entrance") {
+                            popUpTo(0) { inclusive = true }
+                            launchSingleTop = true
+                        }
                     },
                     Modifier.align(Alignment.CenterHorizontally)
                 ) {

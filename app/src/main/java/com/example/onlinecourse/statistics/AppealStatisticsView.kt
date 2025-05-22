@@ -37,7 +37,7 @@ fun AppealStatisticsView(navController: NavHostController, userId: String, role:
 
     OnlineCursesTheme {
         AppBar(
-            title = "Статистика по обращениям",
+            title = "Обращения",
             showTopBar = true,
             showBottomBar = false,
             navController = navController,
