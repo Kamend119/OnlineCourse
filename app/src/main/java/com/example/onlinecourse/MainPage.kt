@@ -194,13 +194,13 @@ fun MainPage(navController: NavHostController, userId: String, role: String) {
                         FeatureButton(
                             text = "Мои курсы",
                             icon = R.drawable.book,
-                            onClick = { navController.navigate("") }
+                            onClick = { navController.navigate("coursesSearch/${userId}/${role}") }
                         )
 
                         FeatureButton(
                             text = "Создать курс",
                             icon = R.drawable.add,
-                            onClick = { navController.navigate("") }
+                            onClick = { navController.navigate("courseCreate/${userId}/${role}") }
                         )
 
                         FeatureButton(
@@ -264,7 +264,7 @@ fun MainPage(navController: NavHostController, userId: String, role: String) {
                         FeatureButton(
                             text = "Курсы",
                             icon = R.drawable.book,
-                            onClick = { navController.navigate("") }
+                            onClick = { navController.navigate("coursesSearch/${userId}/${role}") }
                         )
 
                     }

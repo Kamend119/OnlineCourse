@@ -27,6 +27,11 @@ import com.example.onlinecourse.appeal.AppealView
 import com.example.onlinecourse.appeal.AppealsView
 import com.example.onlinecourse.certificate.ViewCertificate
 import com.example.onlinecourse.certificate.ViewYourCertificates
+import com.example.onlinecourse.course.CourseCreate
+import com.example.onlinecourse.course.CourseView
+import com.example.onlinecourse.course.CoursesSearch
+import com.example.onlinecourse.course.lesson.LessonCreate
+import com.example.onlinecourse.course.lesson.LessonView
 import com.example.onlinecourse.entrance.Authorization
 import com.example.onlinecourse.entrance.Entrance
 import com.example.onlinecourse.entrance.Registration
@@ -59,7 +64,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MyApp() {
     val navController = rememberNavController()
-    var subjectId by remember { mutableStateOf("-1") }
     var courseId by remember { mutableStateOf("-1") }
     var stepId by remember { mutableStateOf("-1") }
     var answerId by remember { mutableStateOf("-1") }
@@ -126,6 +130,26 @@ fun MyApp() {
         }
 
         // курсы
+        composable("coursesSearch/{userId}/{role}") { CoursesSearch(navController,userId,role) }
+        composable("courseView/{userId}/{role}/{courseId}") { backStackEntry ->
+            courseId = backStackEntry.arguments?.getString("courseId") ?: "-1"
+            CourseView(navController,userId,role,courseId)
+        }
+        composable("courseCreate/{userId}/{role}") { CourseCreate(navController,userId,role) }
+
+        // уроки
+        composable("lessonView/{userId}/{role}/{courseId}") { backStackEntry ->
+            courseId = backStackEntry.arguments?.getString("courseId") ?: "-1"
+            LessonView(navController,userId,role,courseId)
+        }
+        composable("lessonCreate/{userId}/{role}/{courseId}") { backStackEntry ->
+            courseId = backStackEntry.arguments?.getString("courseId") ?: "-1"
+            LessonCreate(navController,userId,role,courseId)
+        }
+
+        // шаги
+
+
 
         // первый вход
         composable("entrance") { Entrance(navController) }
