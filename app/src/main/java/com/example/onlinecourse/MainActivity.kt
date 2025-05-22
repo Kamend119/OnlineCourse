@@ -34,6 +34,13 @@ import com.example.onlinecourse.notification.NotificationView
 import com.example.onlinecourse.notification.NotificationsView
 import com.example.onlinecourse.setting.ChangingThePassword
 import com.example.onlinecourse.setting.Settings
+import com.example.onlinecourse.statistics.AppealStatisticsView
+import com.example.onlinecourse.statistics.PlatformStatisticsView
+import com.example.onlinecourse.statistics.Statistic
+import com.example.onlinecourse.statistics.UserActivityStatsView
+import com.example.onlinecourse.user.AllUsersView
+import com.example.onlinecourse.user.NewUsersView
+import com.example.onlinecourse.user.Users
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -135,8 +142,15 @@ fun MyApp() {
         composable("settings/{userId}/{role}") { Settings(navController,userId,role) }
 
         // статистика
+        composable("statistic/{userId}/{role}") { Statistic(navController,userId,role) }
+        composable("platformStatisticsView/{userId}/{role}") { PlatformStatisticsView(navController,userId,role) }
+        composable("appealStatisticsView/{userId}/{role}") { AppealStatisticsView(navController,userId,role) }
+        composable("userActivityStatsView/{userId}/{role}") { UserActivityStatsView(navController,userId,role) }
 
         // пользователь
+        composable("users/{userId}/{role}") { Users(navController,userId,role) }
+        composable("AllUsersView/{userId}/{role}") { AllUsersView(navController,userId,role) }
+        composable("NewUsersView/{userId}/{role}") { NewUsersView(navController,userId,role) }
 
         // главная страница
         composable("main/{userId}/{role}") {backStackEntry ->
