@@ -1580,7 +1580,7 @@ class PlatformStatisticsViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
-                statistics = RetrofitClient.instance.getPlatformStatistics()
+                statistics = RetrofitClient.instance.getPlatformStatistics().firstOrNull()
                 errorMessage = null
             } catch (e: Exception) {
                 errorMessage = "Ошибка при загрузке статистики: ${e.message}"
@@ -1675,27 +1675,10 @@ class UserActivityStatsViewModel : ViewModel() {
 class UserStatisticsViewModel : ViewModel() {
     var isLoading by mutableStateOf(false)
         private set
-    var newUsers by mutableStateOf<List<NewUserResponse>>(emptyList())
-        private set
     var allUsers by mutableStateOf<List<AllUserResponse>>(emptyList())
         private set
     var errorMessage by mutableStateOf<String?>(null)
         private set
-
-
-    fun loadNewUsers() {
-        viewModelScope.launch {
-            isLoading = true
-            try {
-                newUsers = RetrofitClient.instance.getNewUsers()
-                errorMessage = null
-            } catch (e: Exception) {
-                errorMessage = "Ошибка загрузки новых пользователей: ${e.message}"
-            } finally {
-                isLoading = false
-            }
-        }
-    }
 
     fun loadAllUsers() {
         viewModelScope.launch {

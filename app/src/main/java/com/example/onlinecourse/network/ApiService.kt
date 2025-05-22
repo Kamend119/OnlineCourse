@@ -268,10 +268,6 @@ interface ApiService {
         @Query("course_id") courseId: Long
     ): List<ViewCourseStatisticsResponse>
 
-    //35.	новые пользователи
-    @GET("get_new_users")
-    suspend fun getNewUsers(): List<NewUserResponse>
-
     //36.	просмотр всех пользователей
     @GET("/get_all_users")
     suspend fun getAllUsers(): List<AllUserResponse>
@@ -524,7 +520,7 @@ interface ApiService {
 
     //55.	Общая статистика платформы
     @GET("get_platform_statistics")
-    suspend fun getPlatformStatistics(): GetPlatformStatisticsResponse
+    suspend fun getPlatformStatistics(): List<GetPlatformStatisticsResponse>
 
     //56.	Активность пользователей
     @GET("get_user_activity_stats")

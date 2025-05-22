@@ -212,15 +212,6 @@ data class ViewCourseStatisticsResponse(
     @SerializedName("average_score") val averageScore: Double
 )
 
-//35.	новые пользователи
-data class NewUserResponse(
-    @SerializedName("user_id") val userId: Long,
-    @SerializedName("last_name") val lastName: String,
-    @SerializedName("first_name") val firstName: String,
-    @SerializedName("patronymic") val patronymic: String?,
-    @SerializedName("date_registration") val dateRegistration: String
-)
-
 //36.	просмотр всех пользователей
 data class AllUserResponse(
     @SerializedName("user_id") val userId: Long,

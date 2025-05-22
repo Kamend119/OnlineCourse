@@ -5,7 +5,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 
-
 fun saveFileToDownloads(fileName: String, mimeType: String, byteStream: InputStream) {
     try {
         val downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
