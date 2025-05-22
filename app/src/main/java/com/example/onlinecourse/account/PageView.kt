@@ -1,6 +1,7 @@
 package com.example.onlinecourse.account
 
 import android.graphics.BitmapFactory
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -38,6 +40,15 @@ fun PageView(navController: NavHostController, userId: String, role: String, vie
     val userProfile = viewModel.userProfile
     val fileResponse = viewModel.fileResponse
     val errorMessage = viewModel.errorMessage
+    val context = LocalContext.current
+    val warningResult = viewModel.warningResult
+
+    LaunchedEffect(warningResult) {
+        warningResult?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            viewModel.warningResult = null
+        }
+    }
 
     LaunchedEffect(viewId) {
         viewModel.loadUserProfile(viewId.toLong())

@@ -300,16 +300,16 @@ class UserProfileViewModel : ViewModel() {
         private set
     var deletionResult by mutableStateOf<String?>(null)
         private set
-    var updateResult by mutableStateOf<String?>(null)
-        private set
     var warningResult by mutableStateOf<String?>(null)
-        private set
     var errorMessage by mutableStateOf<String?>(null)
         private set
     var saveResult by mutableStateOf<Boolean?>(null)
         private set
     fun clearSaveResult() {
         saveResult = null
+    }
+    fun clearWarningResult() {
+        warningResult = null
     }
 
     fun loadUserProfile(userId: Long) {
@@ -394,7 +394,7 @@ class UserProfileViewModel : ViewModel() {
                     email = rb(email),
                     lastName = rb(lastName),
                     firstName = rb(firstName),
-                    patronymic = patronymic?.let { rb(it) },
+                    patronymic = patronymic.let { rb(it) },
                     fileType = fileType?.let { rb(it) },
                     originalName = originalName?.let { rb(it) },
                     mimeType = mimeType?.let { rb(it) },
@@ -418,6 +418,8 @@ class UserProfileViewModel : ViewModel() {
             try {
                 val result = RetrofitClient.instance.issueWarning(userId)
                 warningResult = if (result.body() == true) {
+                    loadUserProfile(userId)
+                    userProfile?.filePath?.let { downloadFile(it) }
                     "Предупреждение успешно выдано"
                 } else {
                     "Не удалось выдать предупреждение"
