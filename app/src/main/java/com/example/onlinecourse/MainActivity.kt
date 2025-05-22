@@ -30,6 +30,9 @@ import com.example.onlinecourse.certificate.ViewYourCertificates
 import com.example.onlinecourse.entrance.Authorization
 import com.example.onlinecourse.entrance.Entrance
 import com.example.onlinecourse.entrance.Registration
+import com.example.onlinecourse.estimation.AnswerForStepView
+import com.example.onlinecourse.estimation.AnswersForStepView
+import com.example.onlinecourse.estimation.Estimation
 import com.example.onlinecourse.function.Loading
 import com.example.onlinecourse.notification.NotificationView
 import com.example.onlinecourse.notification.NotificationsView
@@ -38,6 +41,7 @@ import com.example.onlinecourse.setting.Settings
 import com.example.onlinecourse.statistics.AppealStatisticsView
 import com.example.onlinecourse.statistics.PlatformStatisticsView
 import com.example.onlinecourse.statistics.Statistic
+import com.example.onlinecourse.statistics.TeacherCoursesView
 import com.example.onlinecourse.statistics.UserActivityStatsView
 import com.example.onlinecourse.user.AllUsersView
 
@@ -58,6 +62,7 @@ fun MyApp() {
     var subjectId by remember { mutableStateOf("-1") }
     var courseId by remember { mutableStateOf("-1") }
     var stepId by remember { mutableStateOf("-1") }
+    var answerId by remember { mutableStateOf("-1") }
     var topicId by remember { mutableStateOf("-1") }
     var topicName by remember { mutableStateOf("-1") }
     var topicDescription by remember { mutableStateOf("-1") }
@@ -128,6 +133,15 @@ fun MyApp() {
         composable("registration") { Registration(navController) }
 
         // оценка знаний
+        composable("estimation/{userId}/{role}") { Estimation(navController,userId,role) }
+        composable("userActivityStatsView/{userId}/{role}/{stepId}") { backStackEntry ->
+            stepId = backStackEntry.arguments?.getString("stepId") ?: "-1"
+            AnswersForStepView(navController,userId,role,stepId)
+        }
+        composable("AnswerForStepView/{userId}/{role}/{answerId}") { backStackEntry ->
+            answerId = backStackEntry.arguments?.getString("answerId") ?: "-1"
+            AnswerForStepView(navController,userId,role,answerId)
+        }
 
         // уведомления
         composable("notificationsView/{userId}/{role}") { NotificationsView(navController,userId,role) }
@@ -145,6 +159,7 @@ fun MyApp() {
         composable("platformStatisticsView/{userId}/{role}") { PlatformStatisticsView(navController,userId,role) }
         composable("appealStatisticsView/{userId}/{role}") { AppealStatisticsView(navController,userId,role) }
         composable("userActivityStatsView/{userId}/{role}") { UserActivityStatsView(navController,userId,role) }
+        composable("teacherCoursesView/{userId}/{role}") { TeacherCoursesView(navController,userId,role) }
 
         // пользователи
         composable("AllUsersView/{userId}/{role}") { AllUsersView(navController,userId,role) }

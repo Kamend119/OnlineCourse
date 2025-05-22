@@ -5,6 +5,7 @@ import android.net.Uri
 import android.widget.Toast
 import com.example.onlinecourse.network.AppealStatisticsItemResponse
 import com.example.onlinecourse.network.UserActivityStatsItemResponse
+import com.example.onlinecourse.network.ViewCourseStatisticsResponse
 import org.apache.poi.ss.usermodel.CellStyle
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
@@ -141,6 +142,50 @@ fun saveUserActivityStatsToExcelWithUri(
         for (i in headers.indices) {
             sheet.setColumnWidth(i, 20 * 256)
         }
+
+        context.contentResolver.openOutputStream(uri)?.use { output ->
+            workbook.write(output)
+        }
+
+        workbook.close()
+        Toast.makeText(context, "Файл успешно сохранён", Toast.LENGTH_LONG).show()
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Toast.makeText(context, "Ошибка при сохранении: ${e.message}", Toast.LENGTH_LONG).show()
+    }
+}
+
+fun saveCourseStatisticsToExcelWithUri(
+    context: Context,
+    stats: List<ViewCourseStatisticsResponse>,
+    courseName: String,
+    uri: Uri
+) {
+    try {
+        val workbook: Workbook = XSSFWorkbook()
+        val sheet = workbook.createSheet("Статистика $courseName")
+
+        val headerStyle: CellStyle = workbook.createCellStyle().apply {
+            setFont(workbook.createFont().apply { bold = true })
+        }
+
+        val headerRow = sheet.createRow(0)
+        val headers = listOf("ФИО", "Выполнено заданий", "Средняя оценка")
+        headers.forEachIndexed { index, title ->
+            headerRow.createCell(index).apply {
+                setCellValue(title)
+                cellStyle = headerStyle
+            }
+        }
+
+        stats.forEachIndexed { index, stat ->
+            val row = sheet.createRow(index + 1)
+            row.createCell(0).setCellValue(stat.studentFullName)
+            row.createCell(1).setCellValue(stat.completedTasksCount.toDouble())
+            row.createCell(2).setCellValue(stat.averageScore)
+        }
+
+        headers.indices.forEach { sheet.setColumnWidth(it, 20 * 256) }
 
         context.contentResolver.openOutputStream(uri)?.use { output ->
             workbook.write(output)
