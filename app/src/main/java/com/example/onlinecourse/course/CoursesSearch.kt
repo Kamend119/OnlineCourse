@@ -29,7 +29,6 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
     val drawerState = remember { DrawerState(initialValue = DrawerValue.Closed) }
 
     var selectedStatus by remember { mutableStateOf<String?>(null) }
-    var tempSelectedStatus by remember { mutableStateOf<String?>(null) }
 
     var selectedCategories by remember { mutableStateOf<List<String>>(emptyList()) }
     val tempSelectedCategories = remember { mutableStateListOf<String>() }
@@ -192,7 +191,6 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
                                 when (course) {
                                     is CourseResponse -> {
                                         CourseItem(
-                                            id = course.id,
                                             name = course.name,
                                             category = course.categoryName,
                                             teacher = "${course.teacherLastName} ${course.teacherFirstName} ${course.teacherPatronymic.orEmpty()}".trim(),
@@ -202,7 +200,6 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
                                     }
                                     is UserCourseResponse -> {
                                         CourseItem(
-                                            id = course.courseId,
                                             name = course.courseName,
                                             category = course.categoryName,
                                             teacher = "${course.teacherLastName} ${course.teacherFirstName} ${course.teacherPatronymic.orEmpty()}".trim(),
@@ -212,7 +209,6 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
                                     }
                                     is CourseByTeacherResponse -> {
                                         CourseItem(
-                                            id = course.courseId,
                                             name = course.courseName,
                                             category = course.courseCategoryName,
                                             teacher = null,
@@ -231,30 +227,7 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
 }
 
 @Composable
-fun StatusSelector(selectedStatus: String?, onStatusSelected: (String?) -> Unit) {
-    val statuses = listOf("Новые", "В прохождении", "Отложен")
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        statuses.forEach { status ->
-            FilterChip(
-                selected = selectedStatus == status,
-                onClick = {
-                    onStatusSelected(if (selectedStatus == status) null else status)
-                },
-                label = { Text(status) }
-            )
-        }
-    }
-}
-
-@Composable
 fun CourseItem(
-    id: Long,
     name: String,
     category: String,
     teacher: String?,
