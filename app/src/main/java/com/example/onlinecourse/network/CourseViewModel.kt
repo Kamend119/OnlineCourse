@@ -1542,7 +1542,7 @@ class StepAnswersViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
-                selectedAnswer = RetrofitClient.instance.getAnswerForStep(answerId)
+                selectedAnswer = RetrofitClient.instance.getAnswerForStep(answerId).firstOrNull()
                 errorMessage = null
             } catch (e: Exception) {
                 errorMessage = "Ошибка при загрузке ответа: ${e.message}"
@@ -1686,7 +1686,7 @@ class TeacherCoursesViewModel : ViewModel() {
         private set
     var selectedCourseStatistics by mutableStateOf<List<ViewCourseStatisticsResponse>>(emptyList())
         private set
-    var issuedCertificate by mutableStateOf<List<IssueCertificateResponse>>(emptyList())
+    var issuedCertificate by mutableStateOf(false)
         private set
     var errorMessage by mutableStateOf<String?>(null)
         private set
@@ -1723,7 +1723,7 @@ class TeacherCoursesViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
-                issuedCertificate = RetrofitClient.instance.issueCertificate(userId, courseId)
+                issuedCertificate = RetrofitClient.instance.issueCertificate(userId, courseId).body() == true
                 errorMessage = null
             } catch (e: Exception) {
                 errorMessage = "Ошибка при выдаче сертификата: ${e.message}"
@@ -1731,6 +1731,14 @@ class TeacherCoursesViewModel : ViewModel() {
                 isLoading = false
             }
         }
+    }
+
+    fun resetCertificateState() {
+        issuedCertificate = false
+    }
+
+    fun clearError() {
+        errorMessage = null
     }
 }
 

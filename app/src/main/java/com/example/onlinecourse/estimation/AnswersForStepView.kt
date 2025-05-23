@@ -94,7 +94,7 @@ fun AnswersForStepView(navController: NavHostController, userId: String, role: S
                                         navController.navigate("answerForStepView/$userId/$role/${answer.answerId}/${stepId}")
                                     },
                                 elevation = cardElevation(4.dp),
-                                colors = cardColors(containerColor = Color.White)
+                                colors = cardColors(containerColor = MaterialTheme.colorScheme.surface)
                             ) {
                                 Column(modifier = Modifier.padding(16.dp)) {
                                     Text(

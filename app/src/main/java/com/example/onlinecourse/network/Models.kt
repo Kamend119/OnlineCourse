@@ -207,6 +207,7 @@ data class AnswerForStepResponse(
 
 //34.	просмотр статистики на курсе
 data class ViewCourseStatisticsResponse(
+    @SerializedName("user_id") val userId: Long,
     @SerializedName("student_full_name") val studentFullName: String,
     @SerializedName("completed_tasks_count") val completedTasksCount: Long,
     @SerializedName("average_score") val averageScore: Double

@@ -252,7 +252,7 @@ interface ApiService {
     @GET("get_answer_for_step")
     suspend fun getAnswerForStep(
         @Query("answer_id") answerId: Long
-    ): AnswerForStepResponse
+    ): List<AnswerForStepResponse>
 
     //33.	оценить ответ на шаг
     @POST("evaluate_answer_on_step")
@@ -537,5 +537,5 @@ interface ApiService {
     suspend fun issueCertificate(
         @Query("user_id") userId: Long,
         @Query("course_id") courseId: Long
-    ): List<IssueCertificateResponse>
+    ): Response<Boolean>
 }
