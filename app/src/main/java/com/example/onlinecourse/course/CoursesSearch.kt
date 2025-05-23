@@ -60,7 +60,6 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
         }
     }
 
-    // Фильтрация курсов по выбранным категориям (основной список)
     val filteredCourses = remember(courses, selectedCategories) {
         if (selectedCategories.isEmpty()) courses
         else courses.filter { course ->
@@ -158,7 +157,7 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
                         if (role == "Студент") {
                         DropdownMenuBox(
                             label = "Статус",
-                            options = listOf("Новые", "В прохождении", "Отложен"),
+                            options = listOf("Новые", "В прохождении", "Отложен", "Завершен"),
                             selectedOption = selectedStatus
                         ) {
                             selectedStatus = it
