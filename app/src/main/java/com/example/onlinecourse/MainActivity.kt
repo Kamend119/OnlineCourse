@@ -141,7 +141,7 @@ fun MyApp() {
         composable("courseCreate/{userId}/{role}") { CourseCreate(navController,userId,role) }
 
         // уроки
-        composable("lessonView/{userId}/{role}/{courseId}") { backStackEntry ->
+        composable("lessonView/{userId}/{role}/{courseId}/{lessonId}") { backStackEntry ->
             courseId = backStackEntry.arguments?.getString("courseId") ?: "-1"
             lessonId = backStackEntry.arguments?.getString("lessonId") ?: "-1"
             LessonView(navController,userId,role,courseId,lessonId)
