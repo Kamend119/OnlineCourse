@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -18,7 +19,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -72,7 +72,7 @@ fun AnswerForStepView(navController: NavHostController, userId: String, role: St
                 loadedAnswer.score?.let {
                     scoreInput = TextFieldValue(it.toString())
                 }
-                commentInput = TextFieldValue(loadedAnswer.commentTeacher ?: "")
+                commentInput = TextFieldValue(loadedAnswer.commentTeacher.orEmpty())
             }
         }
     }
@@ -129,8 +129,10 @@ fun AnswerForStepView(navController: NavHostController, userId: String, role: St
                         Text("Содержание шага:", style = MaterialTheme.typography.titleMedium)
                         Text(step.stepContent, modifier = Modifier.padding(bottom = 16.dp))
 
-                        if (step.stepTypeName == "Вопрос с вариантами ответа" &&
-                            step.answerOptionTexts != null && step.answerOptionScores != null
+                        if (!step.answerOptionTexts.isNullOrEmpty()
+                            && !step.answerOptionScores.isNullOrEmpty()
+                            && step.answerOptionTexts.size == step.answerOptionScores.size
+                            && step.stepTypeName == "Вопрос с вариантами ответа"
                         ) {
                             Text("Варианты ответов:", style = MaterialTheme.typography.titleMedium)
                             step.answerOptionTexts.forEachIndexed { idx, optionText ->
@@ -143,9 +145,14 @@ fun AnswerForStepView(navController: NavHostController, userId: String, role: St
                                 ) {
                                     Row(
                                         modifier = Modifier.padding(12.dp),
-                                        horizontalArrangement = Arrangement.SpaceBetween
+                                        horizontalArrangement = Arrangement.Start,
+                                        verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Text(optionText)
+                                        Text(
+                                            text = optionText,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
                                         Text("Баллы: $score")
                                     }
                                 }
@@ -177,8 +184,9 @@ fun AnswerForStepView(navController: NavHostController, userId: String, role: St
                         }
                     }
 
-                    if (stepDetails?.stepTypeName == "Вопрос с вариантами ответа" &&
-                        ans.optionText != null && ans.optionScore != null
+                    if (stepDetails?.stepTypeName == "Вопрос с вариантами ответа"
+                        && !ans.optionText.isNullOrEmpty()
+                        && !ans.optionScore.isNullOrEmpty()
                     ) {
                         item {
                             Text("Ответ студента (варианты):", style = MaterialTheme.typography.titleMedium)
@@ -193,9 +201,13 @@ fun AnswerForStepView(navController: NavHostController, userId: String, role: St
                             ) {
                                 Row(
                                     modifier = Modifier.padding(12.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text(option)
+                                    Text(
+                                        text = option,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
                                     Text("Баллы: $score")
                                 }
                             }
@@ -203,8 +215,8 @@ fun AnswerForStepView(navController: NavHostController, userId: String, role: St
                         item { Spacer(modifier = Modifier.height(16.dp)) }
                     }
 
-                    if (stepDetails?.stepTypeName == "Вопрос с приложением" &&
-                        ans.filePath != null && ans.filePath.isNotEmpty()
+                    if (stepDetails?.stepTypeName == "Вопрос с приложением"
+                        && !ans.filePath.isNullOrEmpty()
                     ) {
                         item {
                             Text("Приложенные файлы:", style = MaterialTheme.typography.titleMedium)
@@ -258,6 +270,10 @@ fun AnswerForStepView(navController: NavHostController, userId: String, role: St
                                 Toast.makeText(context, "Введите корректное число для оценки", Toast.LENGTH_SHORT).show()
                                 return@Button
                             }
+                            if (commentInput.text.isBlank()) {
+                                Toast.makeText(context, "Введите комментарий", Toast.LENGTH_SHORT).show()
+                                return@Button
+                            }
                             val answerUserId = answerId.toLong()
                             coroutineScope.launch {
                                 viewModel.evaluateAnswer(
@@ -278,3 +294,4 @@ fun AnswerForStepView(navController: NavHostController, userId: String, role: St
         }
     }
 }
+
