@@ -94,11 +94,14 @@ fun AppealTopicEdit(navController: NavHostController, userId: String, role: Stri
 
                 if (isLoading) {
                     Box(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 32.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator(
                             color = MaterialTheme.colorScheme.primary,
+                            strokeWidth = 4.dp,
                             modifier = Modifier.size(48.dp)
                         )
                     }

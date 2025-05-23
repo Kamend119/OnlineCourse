@@ -76,10 +76,18 @@ fun PageView(navController: NavHostController, userId: String, role: String, vie
                 verticalArrangement = Arrangement.Top
             ) {
                 if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(48.dp),
-                        strokeWidth = 4.dp
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.primary,
+                            strokeWidth = 4.dp,
+                            modifier = Modifier.size(48.dp)
+                        )
+                    }
                 } else if (errorMessage != null) {
                     Text("Ошибка: $errorMessage", color = MaterialTheme.colorScheme.error)
                 } else {

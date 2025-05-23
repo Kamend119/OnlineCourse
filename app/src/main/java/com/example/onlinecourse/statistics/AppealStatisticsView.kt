@@ -50,7 +50,19 @@ fun AppealStatisticsView(navController: NavHostController, userId: String, role:
                     .padding(16.dp)
             ) {
                 when {
-                    isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                    isLoading ->
+                        Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 32.dp),
+                        contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                color = MaterialTheme.colorScheme.primary,
+                                strokeWidth = 4.dp,
+                                modifier = Modifier.size(48.dp)
+                            )
+                        }
                     !errorMessage.isNullOrEmpty() -> Text(
                         text = errorMessage,
                         color = Color.Red,

@@ -77,7 +77,9 @@ fun ViewCertificate(navController: NavHostController, userId: String, role: Stri
                 when {
                     isLoading -> {
                         Box(
-                            modifier = Modifier.fillMaxWidth().padding(top = 32.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 32.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             CircularProgressIndicator(
@@ -98,13 +100,15 @@ fun ViewCertificate(navController: NavHostController, userId: String, role: Stri
 
                     isFileLoading -> {
                         Box(
-                            modifier = Modifier.fillMaxWidth().padding(top = 32.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 32.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             CircularProgressIndicator(
                                 color = MaterialTheme.colorScheme.primary,
-                                strokeWidth = 3.dp,
-                                modifier = Modifier.size(36.dp)
+                                strokeWidth = 4.dp,
+                                modifier = Modifier.size(48.dp)
                             )
                         }
                     }
