@@ -16,6 +16,7 @@ import androidx.navigation.NavHostController
 import com.example.onlinecourse.function.AppBar
 import com.example.onlinecourse.ui.theme.OnlineCursesTheme
 import androidx.compose.runtime.Composable
+import com.example.onlinecourse.function.DropdownMenuBox
 import com.example.onlinecourse.network.CourseByTeacherResponse
 import com.example.onlinecourse.network.CourseDataViewModel
 import com.example.onlinecourse.network.CourseResponse
@@ -28,7 +29,7 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
     val scope = rememberCoroutineScope()
     val drawerState = remember { DrawerState(initialValue = DrawerValue.Closed) }
 
-    var selectedStatus by remember { mutableStateOf<String?>(null) }
+    var selectedStatus by remember { mutableStateOf<String?>("Новые") }
 
     var selectedCategories by remember { mutableStateOf<List<String>>(emptyList()) }
     val tempSelectedCategories = remember { mutableStateListOf<String>() }
@@ -97,7 +98,6 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
                             Spacer(modifier = Modifier.height(20.dp))
                             Text("Категории")
 
-                            // При открытии drawer копируем выбранные категории в temp
                             LaunchedEffect(drawerState.currentValue) {
                                 if (drawerState.currentValue == DrawerValue.Open) {
                                     tempSelectedCategories.clear()
@@ -169,8 +169,6 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
                         }
                     }
 
-
-
                     Spacer(modifier = Modifier.height(12.dp))
 
                     if (isLoading) {
@@ -194,7 +192,7 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
                                             category = course.categoryName,
                                             teacher = "${course.teacherLastName} ${course.teacherFirstName} ${course.teacherPatronymic.orEmpty()}".trim(),
                                             date = course.datePublication,
-                                            onClick = { navController.navigate("courseView/$userId/$role/${course.id}") }
+                                            onClick = { navController.navigate("courseView/$userId/$role/${course.id}/${selectedStatus}") }
                                         )
                                     }
                                     is UserCourseResponse -> {
@@ -203,7 +201,8 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
                                             category = course.categoryName,
                                             teacher = "${course.teacherLastName} ${course.teacherFirstName} ${course.teacherPatronymic.orEmpty()}".trim(),
                                             date = course.datePublication,
-                                            onClick = { navController.navigate("courseView/$userId/$role/${course.courseId}") }
+                                            dateFinishing = course.dateFinishing,
+                                            onClick = { navController.navigate("courseView/$userId/$role/${course.courseId}/${selectedStatus}") }
                                         )
                                     }
                                     is CourseByTeacherResponse -> {
@@ -212,7 +211,7 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
                                             category = course.courseCategoryName,
                                             teacher = null,
                                             date = course.datePublication,
-                                            onClick = { navController.navigate("courseView/$userId/$role/${course.courseId}") }
+                                            onClick = { navController.navigate("courseView/$userId/$role/${course.courseId}/${selectedStatus}") }
                                         )
                                     }
                                 }
@@ -227,10 +226,11 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
 
 @Composable
 fun CourseItem(
-    name: String,
-    category: String,
+    name: String?,
+    category: String?,
     teacher: String?,
-    date: String,
+    date: String?,
+    dateFinishing: String? = null,
     onClick: () -> Unit
 ) {
     Card(
@@ -247,23 +247,8 @@ fun CourseItem(
             }
             Text("Категория: $category", style = MaterialTheme.typography.bodySmall)
             Text("Дата публикации: $date", style = MaterialTheme.typography.bodySmall)
-        }
-    }
-}
-
-@Composable
-fun DropdownMenuBox(label: String, options: List<String?>, selectedOption: String?, onSelected: (String?) -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
-    Box {
-        OutlinedButton(onClick = { expanded = true }) {
-            Text(text = selectedOption ?: label)
-        }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            options.forEach { option ->
-                DropdownMenuItem(text = { Text(option ?: "Все") }, onClick = {
-                    onSelected(option)
-                    expanded = false
-                })
+            dateFinishing?.let {
+                Text("Дата завершения: $dateFinishing", style = MaterialTheme.typography.bodySmall)
             }
         }
     }

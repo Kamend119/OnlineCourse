@@ -638,6 +638,8 @@ class CourseDataViewModel : ViewModel() {
 class CourseDetailsViewModel : ViewModel() {
     var isLoading by mutableStateOf(false)
         private set
+    var categories by mutableStateOf<List<CourseCategory>>(emptyList())
+        private set
     var courseDetail by mutableStateOf<CourseDetailResponse?>(null)
         private set
     var lessons by mutableStateOf<List<LessonResponse>>(emptyList())
@@ -652,6 +654,20 @@ class CourseDetailsViewModel : ViewModel() {
         private set
     var errorMessage by mutableStateOf<String?>(null)
         private set
+
+    fun loadCourseCategories() {
+        viewModelScope.launch {
+            isLoading = true
+            try {
+                categories = RetrofitClient.instance.getCourseCategories()
+                errorMessage = null
+            } catch (e: Exception) {
+                errorMessage = "Ошибка при загрузке категорий: ${e.message}"
+            } finally {
+                isLoading = false
+            }
+        }
+    }
 
     fun loadCourseDetails(courseId: Long) {
         viewModelScope.launch {

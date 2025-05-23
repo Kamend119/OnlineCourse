@@ -101,8 +101,8 @@ data class CourseDetailResponse(
 
 //16.	просмотр курсов
 data class UserCourseResponse(
-    @SerializedName("course_id") val courseId: Long,
-    @SerializedName("course_name") val courseName: String,
+    @SerializedName("id") val courseId: Long,
+    @SerializedName("name") val courseName: String,
     @SerializedName("date_publication") val datePublication: String,
     @SerializedName("category_name") val categoryName: String,
     @SerializedName("teacher_last_name") val teacherLastName: String,

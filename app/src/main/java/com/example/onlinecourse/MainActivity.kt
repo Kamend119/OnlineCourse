@@ -65,6 +65,8 @@ class MainActivity : ComponentActivity() {
 fun MyApp() {
     val navController = rememberNavController()
     var courseId by remember { mutableStateOf("-1") }
+    var statusName by remember { mutableStateOf("Новый") }
+    var lessonId by remember { mutableStateOf("-1") }
     var stepId by remember { mutableStateOf("-1") }
     var answerId by remember { mutableStateOf("-1") }
     var topicId by remember { mutableStateOf("-1") }
@@ -131,16 +133,18 @@ fun MyApp() {
 
         // курсы
         composable("coursesSearch/{userId}/{role}") { CoursesSearch(navController,userId,role) }
-        composable("courseView/{userId}/{role}/{courseId}") { backStackEntry ->
+        composable("courseView/{userId}/{role}/{courseId}/{statusName}") { backStackEntry ->
             courseId = backStackEntry.arguments?.getString("courseId") ?: "-1"
-            CourseView(navController,userId,role,courseId)
+            statusName = backStackEntry.arguments?.getString("statusName") ?: "Новый"
+            CourseView(navController,userId,role,courseId,statusName)
         }
         composable("courseCreate/{userId}/{role}") { CourseCreate(navController,userId,role) }
 
         // уроки
         composable("lessonView/{userId}/{role}/{courseId}") { backStackEntry ->
             courseId = backStackEntry.arguments?.getString("courseId") ?: "-1"
-            LessonView(navController,userId,role,courseId)
+            lessonId = backStackEntry.arguments?.getString("lessonId") ?: "-1"
+            LessonView(navController,userId,role,courseId,lessonId)
         }
         composable("lessonCreate/{userId}/{role}/{courseId}") { backStackEntry ->
             courseId = backStackEntry.arguments?.getString("courseId") ?: "-1"
