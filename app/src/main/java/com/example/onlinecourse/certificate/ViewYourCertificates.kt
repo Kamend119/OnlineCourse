@@ -117,8 +117,7 @@ fun ViewYourCertificates(navController: NavHostController, userId: String, role:
                                                 navController.navigate("viewCertificate/${userId}/${role}/${certificate.sertificateId}")
                                             }
                                             .padding(vertical = 8.dp),
-                                        elevation = CardDefaults.cardElevation(2.dp),
-                                        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                                        elevation = CardDefaults.cardElevation(4.dp)
                                     ) {
                                         Column(modifier = Modifier.padding(16.dp)) {
                                             Text(

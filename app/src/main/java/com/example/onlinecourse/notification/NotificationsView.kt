@@ -91,8 +91,7 @@ fun NotificationsView(navController: NavHostController, userId: String, role: St
                                                 navController.navigate("notificationView/${userId}/${role}/${notification.id}")
                                             }
                                             .padding(vertical = 8.dp),
-                                        elevation = CardDefaults.cardElevation(2.dp),
-                                        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                                        elevation = CardDefaults.cardElevation(4.dp)
                                     ) {
                                         Column(modifier = Modifier.padding(16.dp)) {
                                             Text(

@@ -12,6 +12,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -33,6 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.onlinecourse.function.AppBar
 import com.example.onlinecourse.function.DropdownMenuBox
+import com.example.onlinecourse.function.InfoSection
 import com.example.onlinecourse.network.CourseDetailsViewModel
 import com.example.onlinecourse.ui.theme.OnlineCursesTheme
 import kotlinx.coroutines.launch
@@ -133,11 +136,26 @@ fun CourseView(navController: NavHostController, userId: String, role: String, c
                                         Text("Сохранить изменения")
                                     }
                                 } else {
-                                    Text("Название: ${it.name}", style = MaterialTheme.typography.titleLarge)
-                                    Text("Описание: ${it.description}", style = MaterialTheme.typography.bodyMedium)
-                                }
+                                    Card(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(8.dp),
+                                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                                    ) {
+                                        Column(modifier = Modifier.padding(16.dp)) {
+                                            Text(
+                                                text = course.name,
+                                                style = MaterialTheme.typography.headlineSmall,
+                                                color = MaterialTheme.colorScheme.primary
+                                            )
+                                            Spacer(modifier = Modifier.height(8.dp))
 
-                                Text("Дата публикации: ${it.datePublication}", style = MaterialTheme.typography.bodySmall)
+                                            InfoSection(label = "Описание", value = course.description)
+                                            InfoSection(label = "Категория", value = course.categoryName)
+                                            InfoSection(label = "Дата публикации", value = course.datePublication)
+                                        }
+                                    }
+                                }
 
                                 Spacer(Modifier.height(16.dp))
                                 if (role != "Студент" || statusName == "В прохождении") {
@@ -273,3 +291,4 @@ fun CourseView(navController: NavHostController, userId: String, role: String, c
         }
     }
 }
+

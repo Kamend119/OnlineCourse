@@ -112,8 +112,7 @@ fun AppealsView(navController: NavHostController, userId: String, role: String) 
                                             .clickable {
                                                 navController.navigate("appealView/${userId}/${role}/${appeal.id}")
                                             },
-                                        elevation = CardDefaults.cardElevation(1.dp),
-                                        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                                        elevation = CardDefaults.cardElevation(4.dp)
                                     ) {
                                         Column(
                                             modifier = Modifier.padding(16.dp),
@@ -137,8 +136,7 @@ fun AppealsView(navController: NavHostController, userId: String, role: String) 
                                             .clickable {
                                                 navController.navigate("appealView/${userId}/${role}/${appeal.id}")
                                             },
-                                        elevation = CardDefaults.cardElevation(1.dp),
-                                        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                                        elevation = CardDefaults.cardElevation(4.dp)
                                     ) {
                                         Column(
                                             modifier = Modifier.padding(16.dp),
