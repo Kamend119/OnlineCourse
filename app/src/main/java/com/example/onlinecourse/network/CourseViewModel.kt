@@ -794,8 +794,6 @@ class LessonDetailsViewModel : ViewModel() {
         private set
     var updateResult by mutableStateOf<String?>(null)
         private set
-    var deleteResult by mutableStateOf<String?>(null)
-        private set
     var errorMessage by mutableStateOf<String?>(null)
         private set
 
@@ -1323,24 +1321,26 @@ class StepCreationViewModel : ViewModel() {
         name: String,
         content: String,
         sequenceNumber: Long,
-        obligatory: String,
+        obligatory: Boolean,
         originalName: String? = null,
         mimeType: String? = null,
         sizeBytes: Long? = null,
         file: MultipartBody.Part? = null,
-        onSuccess: () -> Unit = {}
+        onSuccess: () -> Unit = {},
+        onError: () -> Unit
     ) {
         viewModelScope.launch {
             isLoading = true
             try {
                 val rb = { str: String -> str.toRequestBody("text/plain".toMediaTypeOrNull()) }
+                val obligatoryValue = if (obligatory) "1" else "0"
 
                 val result = RetrofitClient.instance.createLectureStep(
                     lessonId = rb(lessonId.toString()),
                     name = rb(name),
                     content = rb(content),
                     sequenceNumber = rb(sequenceNumber.toString()),
-                    obligatory = rb(obligatory.toString()),
+                    obligatory = rb(obligatoryValue),
                     originalName = originalName?.let { rb(it) },
                     mimeType = mimeType?.let { rb(it) },
                     sizeBytes = sizeBytes?.toString()?.let { rb(it) },
@@ -1352,9 +1352,11 @@ class StepCreationViewModel : ViewModel() {
                     onSuccess()
                 } else {
                     errorMessage = "Не удалось создать шаг «Лекция»"
+                    onError()
                 }
             } catch (e: Exception) {
                 errorMessage = "Ошибка при создании шага «Лекция»: ${e.message}"
+                onError()
             } finally {
                 isLoading = false
             }
@@ -1367,15 +1369,18 @@ class StepCreationViewModel : ViewModel() {
         content: String,
         sequenceNumber: Long,
         timePasses: String,
-        obligatory: String,
+        obligatory: Boolean,
         maxScore: Long? = null,
-        onSuccess: () -> Unit = {}
+        onSuccess: () -> Unit = {},
+        onError: () -> Unit
     ) {
         viewModelScope.launch {
             isLoading = true
             try {
+                val obligatoryValue = if (obligatory) "1" else "0"
+
                 val result = RetrofitClient.instance.createOpenQuestionStep(
-                    lessonId, name, content, sequenceNumber, timePasses, obligatory, maxScore
+                    lessonId, name, content, sequenceNumber, timePasses, obligatoryValue, maxScore
                 )
                 creationResult = result.body()
                 if (result.body() == true) {
@@ -1383,9 +1388,11 @@ class StepCreationViewModel : ViewModel() {
                     onSuccess()
                 } else {
                     errorMessage = "Не удалось создать шаг «Открытый вопрос»"
+                    onError()
                 }
             } catch (e: Exception) {
                 errorMessage = "Ошибка при создании шага «Открытый вопрос»: ${e.message}"
+                onError()
             } finally {
                 isLoading = false
             }
@@ -1398,19 +1405,22 @@ class StepCreationViewModel : ViewModel() {
         content: String,
         sequenceNumber: Long,
         timePasses: String,
-        obligatory: String,
+        obligatory: Boolean,
         maxScore: Long,
         textOptions: List<String>,
         correct: List<Boolean>,
         scores: List<Long>,
-        onSuccess: () -> Unit = {}
+        onSuccess: () -> Unit = {},
+        onError: () -> Unit
     ) {
         viewModelScope.launch {
             isLoading = true
             try {
+                val obligatoryValue = if (obligatory) "1" else "0"
+
                 val result = RetrofitClient.instance.createMultipleChoiceQuestionStep(
                     lessonId, name, content, sequenceNumber, timePasses,
-                    obligatory, maxScore, textOptions, correct, scores
+                    obligatoryValue, maxScore, textOptions, correct, scores
                 )
                 creationResult = result.body()
                 if (result.body() == true) {
@@ -1418,9 +1428,11 @@ class StepCreationViewModel : ViewModel() {
                     onSuccess()
                 } else {
                     errorMessage = "Не удалось создать шаг «Множественный выбор»"
+                    onError()
                 }
             } catch (e: Exception) {
                 errorMessage = "Ошибка при создании шага «Множественный выбор»: ${e.message}"
+                onError()
             } finally {
                 isLoading = false
             }
@@ -1433,18 +1445,22 @@ class StepCreationViewModel : ViewModel() {
         content: String,
         sequenceNumber: Long,
         timePasses: String,
-        obligatory: String,
+        obligatory: Boolean,
         maxScore: Long,
         originalName: String,
         mimeType: String,
         sizeBytes: Long,
         file: MultipartBody.Part?,
-        onSuccess: () -> Unit = {}
+        onSuccess: () -> Unit = {},
+        onError: () -> Unit
     ) {
+        Log.d("StepCreate 2", "Params: lessonId=$lessonId, name=$name, content=$content, sequenceNumber=$sequenceNumber, timePasses=$timePasses, obligatory=$obligatory, maxScore=$maxScore, originalName=$originalName, mimeType=$mimeType, sizeBytes=$sizeBytes, filePart=$file")
+
         viewModelScope.launch {
             isLoading = true
             try {
                 val rb = { str: String -> str.toRequestBody("text/plain".toMediaTypeOrNull()) }
+                val obligatoryValue = if (obligatory) "1" else "0"
 
                 val result = file?.let {
                     RetrofitClient.instance.createFileUploadQuestionStep(
@@ -1453,7 +1469,7 @@ class StepCreationViewModel : ViewModel() {
                         content = rb(content),
                         sequenceNumber = rb(sequenceNumber.toString()),
                         timePasses = rb(timePasses),
-                        obligatory = rb(obligatory),
+                        obligatory = rb(obligatoryValue),
                         maxScore = rb(maxScore.toString()),
                         originalName = rb(originalName),
                         mimeType = rb(mimeType),
@@ -1467,10 +1483,12 @@ class StepCreationViewModel : ViewModel() {
                         onSuccess()
                     } else {
                         errorMessage = "Не удалось создать шаг"
+                        onError()
                     }
                 }
             } catch (e: Exception) {
                 errorMessage = "Ошибка: ${e.message}"
+                onError()
             } finally {
                 isLoading = false
             }

@@ -18,12 +18,12 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,7 +39,6 @@ import com.example.onlinecourse.ui.theme.OnlineCursesTheme
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
 import java.io.IOException
 
 
@@ -53,7 +52,7 @@ enum class StepType(val displayName: String) {
 data class AnswerOption(
     var text: String,
     var isCorrect: Boolean,
-    var score: String // для удобства ввода в текстовом поле, потом конвертим в Long
+    var score: String
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,7 +77,7 @@ fun StepCreate(navController: NavHostController, userId: String, role: String, c
 
     var selectedFileUri by remember { mutableStateOf<Uri?>(null) }
     var selectedFileName by remember { mutableStateOf("") }
-    var selectedFileSize by remember { mutableStateOf(0L) }
+    var selectedFileSize by remember { mutableLongStateOf(0L) }
     var selectedFileMimeType by remember { mutableStateOf("") }
 
     val filePickerLauncher = rememberLauncherForActivityResult(
@@ -86,16 +85,21 @@ fun StepCreate(navController: NavHostController, userId: String, role: String, c
     ) { uri: Uri? ->
         uri?.let {
             selectedFileUri = it
-            selectedFileName = it.lastPathSegment ?: "Выбран файл"
             val contentResolver = context.contentResolver
-            selectedFileMimeType = contentResolver.getType(it) ?: ""
             val cursor = contentResolver.query(it, null, null, null, null)
             cursor?.use { c ->
+                val nameIndex = c.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+                if (c.moveToFirst() && nameIndex >= 0) {
+                    selectedFileName = c.getString(nameIndex)
+                } else {
+                    selectedFileName = "Выбран файл"
+                }
                 val sizeIndex = c.getColumnIndex(android.provider.OpenableColumns.SIZE)
                 if (c.moveToFirst() && sizeIndex >= 0) {
                     selectedFileSize = c.getLong(sizeIndex)
                 }
             }
+            selectedFileMimeType = contentResolver.getType(it) ?: ""
         }
     }
 
@@ -140,7 +144,7 @@ fun StepCreate(navController: NavHostController, userId: String, role: String, c
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false }
                             ) {
-                                StepType.values().forEach { type ->
+                                StepType.entries.forEach { type ->
                                     DropdownMenuItem(
                                         text = { Text(type.displayName) },
                                         onClick = {
@@ -231,7 +235,9 @@ fun StepCreate(navController: NavHostController, userId: String, role: String, c
                                     OutlinedTextField(
                                         value = option.text,
                                         onValueChange = { newText ->
-                                            answerOptions[index] = option.copy(text = newText)
+                                            answerOptions = answerOptions.toMutableList().apply {
+                                                this[index] = this[index].copy(text = newText)
+                                            }
                                         },
                                         label = { Text("Текст варианта ${index + 1}") },
                                         modifier = Modifier.fillMaxWidth()
@@ -241,7 +247,9 @@ fun StepCreate(navController: NavHostController, userId: String, role: String, c
                                         value = option.score,
                                         onValueChange = { newScore ->
                                             if (newScore.all { it.isDigit() }) {
-                                                answerOptions[index] = option.copy(score = newScore)
+                                                answerOptions = answerOptions.toMutableList().apply {
+                                                    this[index] = this[index].copy(score = newScore)
+                                                }
                                             }
                                         },
                                         label = { Text("Баллы за вариант") },
@@ -253,10 +261,22 @@ fun StepCreate(navController: NavHostController, userId: String, role: String, c
                                         Checkbox(
                                             checked = option.isCorrect,
                                             onCheckedChange = { checked ->
-                                                answerOptions[index] = option.copy(isCorrect = checked)
+                                                answerOptions = answerOptions.toMutableList().apply {
+                                                    this[index] = this[index].copy(isCorrect = checked)
+                                                }
                                             }
                                         )
                                         Text("Правильный", modifier = Modifier.padding(start = 8.dp))
+
+                                        Spacer(modifier = Modifier.weight(1f))
+
+                                        Button(onClick = {
+                                            answerOptions = answerOptions.toMutableList().apply {
+                                                removeAt(index)
+                                            }
+                                        }) {
+                                            Text("Удалить")
+                                        }
                                     }
                                 }
 
@@ -290,31 +310,35 @@ fun StepCreate(navController: NavHostController, userId: String, role: String, c
                                 onClick = {
                                     when (selectedStepType) {
                                         StepType.LECTURE -> {
-                                            val obligatoryInt = if (obligatory) 1 else 0
                                             viewModel.createLectureStep(
                                                 lessonId = lessonId.toLong(),
                                                 name = name,
                                                 content = content,
                                                 sequenceNumber = parsedSequence!!,
-                                                obligatory = obligatoryInt.toString(),
+                                                obligatory = obligatory,
                                                 onSuccess = {
                                                     Toast.makeText(context, "Шаг «Лекция» создан", Toast.LENGTH_SHORT).show()
                                                     navController.popBackStack()
+                                                },
+                                                onError = {
+                                                    Toast.makeText(context, "Ошибка создания шага", Toast.LENGTH_SHORT).show()
                                                 }
                                             )
                                         }
                                         StepType.OPEN_QUESTION -> {
-                                            val obligatoryInt = if (obligatory) 1 else 0
                                             viewModel.createOpenQuestionStep(
                                                 lessonId = lessonId.toLong(),
                                                 name = name,
                                                 content = content,
                                                 sequenceNumber = parsedSequence!!,
                                                 timePasses = timePasses,
-                                                obligatory = obligatoryInt.toString(),
+                                                obligatory = obligatory,
                                                 onSuccess = {
                                                     Toast.makeText(context, "Открытый вопрос создан", Toast.LENGTH_SHORT).show()
                                                     navController.popBackStack()
+                                                },
+                                                onError = {
+                                                    Toast.makeText(context, "Ошибка создания шага", Toast.LENGTH_SHORT).show()
                                                 }
                                             )
                                         }
@@ -329,14 +353,13 @@ fun StepCreate(navController: NavHostController, userId: String, role: String, c
                                                 return@Button
                                             }
 
-                                            val obligatoryInt = if (obligatory) 1 else 0
                                             viewModel.createMultipleChoiceQuestionStep(
                                                 lessonId = lessonId.toLong(),
                                                 name = name,
                                                 content = content,
                                                 sequenceNumber = parsedSequence!!,
                                                 timePasses = timePasses,
-                                                obligatory = obligatoryInt.toString(),
+                                                obligatory = obligatory,
                                                 maxScore = parsedMaxScore!!,
                                                 textOptions = answerOptions.map { it.text },
                                                 correct = answerOptions.map { it.isCorrect },
@@ -344,6 +367,9 @@ fun StepCreate(navController: NavHostController, userId: String, role: String, c
                                                 onSuccess = {
                                                     Toast.makeText(context, "Вопрос с вариантами создан", Toast.LENGTH_SHORT).show()
                                                     navController.popBackStack()
+                                                },
+                                                onError = {
+                                                    Toast.makeText(context, "Ошибка создания шага", Toast.LENGTH_SHORT).show()
                                                 }
                                             )
                                         }
@@ -363,14 +389,13 @@ fun StepCreate(navController: NavHostController, userId: String, role: String, c
                                                 )
                                             }
 
-                                            val obligatoryInt = if (obligatory) 1 else 0
                                             viewModel.createFileUploadStep(
                                                 lessonId = lessonId.toLong(),
                                                 name = name,
                                                 content = content,
                                                 sequenceNumber = parsedSequence!!,
                                                 timePasses = timePasses,
-                                                obligatory = obligatoryInt.toString(),
+                                                obligatory = obligatory,
                                                 maxScore = parsedMaxScore!!,
                                                 originalName = selectedFileName,
                                                 mimeType = selectedFileMimeType,
@@ -379,6 +404,9 @@ fun StepCreate(navController: NavHostController, userId: String, role: String, c
                                                 onSuccess = {
                                                     Toast.makeText(context, "Шаг с загрузкой файла создан", Toast.LENGTH_SHORT).show()
                                                     navController.popBackStack()
+                                                },
+                                                onError = {
+                                                    Toast.makeText(context, "Ошибка создания шага", Toast.LENGTH_SHORT).show()
                                                 }
                                             )
                                         }
