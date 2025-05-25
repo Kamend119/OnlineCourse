@@ -120,7 +120,6 @@ fun AnswerForStepView(navController: NavHostController, userId: String, role: St
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(16.dp)
                 )
-                Log.d("Ошибка при загрузке ответа", it)
             }
 
             LazyColumn(

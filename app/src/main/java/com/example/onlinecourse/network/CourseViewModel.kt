@@ -178,7 +178,6 @@ class ChangePasswordViewModel : ViewModel() {
             } catch (e: Exception) {
                 errorMessage.value = "Ошибка при смене пароля: ${e.message}"
                 passwordUpdated.value = false
-                Log.e("ChangePasswordViewModel", "Ошибка смены пароля", e)
             } finally {
                 isLoading.value = false
             }
@@ -206,10 +205,8 @@ class UserNotificationsViewModel : ViewModel() {
                 } else {
                     "Уведомлений нет"
                 }
-                Log.d("UserNotificationsViewModel", "Загружено уведомлений: ${response.size}")
             } catch (e: Exception) {
                 loadResult = "Ошибка загрузки уведомлений: ${e.message}"
-                Log.e("UserNotificationsViewModel", "Ошибка загрузки", e)
             } finally {
                 isLoading = false
             }
@@ -238,10 +235,8 @@ class NotificationDetailViewModel : ViewModel() {
                     loadResult = "Уведомление не найдено"
                     notificationDetail = null
                 }
-                Log.d("NotificationDetailViewModel", "Загружено уведомление id=$notifId")
             } catch (e: Exception) {
                 loadResult = "Ошибка загрузки уведомления: ${e.message}"
-                Log.e("NotificationDetailViewModel", "Ошибка загрузки", e)
                 notificationDetail = null
             } finally {
                 isLoading = false
@@ -318,7 +313,6 @@ class UserProfileViewModel : ViewModel() {
                 userProfile = response.firstOrNull()
                 if (userProfile != null) {
                     errorMessage = null
-                    Log.d("UserProfileViewModel", "Профиль пользователя загружен")
                 } else {
                     errorMessage = "Профиль пользователя не найден"
                 }
@@ -341,7 +335,6 @@ class UserProfileViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 errorMessage = "Ошибка при получении файла: ${e.message}"
-                Log.e("UserProfileViewModel", "Ошибка загрузки файла", e)
             } finally {
                 isLoading = false
             }
@@ -424,7 +417,6 @@ class UserProfileViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 warningResult = "Ошибка при выдаче предупреждения: ${e.message}"
-                Log.e("UserProfileViewModel", "Ошибка предупреждения", e)
             } finally {
                 isLoading = false
             }
@@ -1454,8 +1446,6 @@ class StepCreationViewModel : ViewModel() {
         onSuccess: () -> Unit = {},
         onError: () -> Unit
     ) {
-        Log.d("StepCreate 2", "Params: lessonId=$lessonId, name=$name, content=$content, sequenceNumber=$sequenceNumber, timePasses=$timePasses, obligatory=$obligatory, maxScore=$maxScore, originalName=$originalName, mimeType=$mimeType, sizeBytes=$sizeBytes, filePart=$file")
-
         viewModelScope.launch {
             isLoading = true
             try {
@@ -1594,7 +1584,6 @@ class StepAnswersViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 errorMessage = "Ошибка при получении файла: ${e.message}"
-                Log.e("UserProfileViewModel", "Ошибка загрузки файла", e)
             } finally {
                 isLoading = false
             }
