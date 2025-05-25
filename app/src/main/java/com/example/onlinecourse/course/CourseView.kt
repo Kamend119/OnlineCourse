@@ -179,6 +179,18 @@ fun CourseView(navController: NavHostController, userId: String, role: String, c
                                             )
                                         }
                                     }
+
+                                    if (role == "Учитель") {
+                                        Spacer(Modifier.height(16.dp))
+                                        Button(
+                                            onClick = {
+                                                navController.navigate("lessonCreate/$userId/$role/$courseId")
+                                            },
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            Text("Добавить урок")
+                                        }
+                                    }
                                 }
 
                                 if (role == "Администратор") {
