@@ -1453,7 +1453,7 @@ class StepCreationViewModel : ViewModel() {
                         content = rb(content),
                         sequenceNumber = rb(sequenceNumber.toString()),
                         timePasses = rb(timePasses),
-                        obligatory = rb(obligatory.toString()),
+                        obligatory = rb(obligatory),
                         maxScore = rb(maxScore.toString()),
                         originalName = rb(originalName),
                         mimeType = rb(mimeType),
@@ -1464,6 +1464,7 @@ class StepCreationViewModel : ViewModel() {
                 if (result != null) {
                     if (result.body() == true) {
                         errorMessage = "Шаг успешно создан"
+                        onSuccess()
                     } else {
                         errorMessage = "Не удалось создать шаг"
                     }
