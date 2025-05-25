@@ -1321,9 +1321,9 @@ class LessonCreateViewModel : ViewModel() {
                     description = description,
                     sequenceNumber = sequenceNumber
                 )
-                createLessonResult = lessonId.id
+                createLessonResult = lessonId.body()
                 errorMessage = null
-                onSuccess(lessonId.id)
+                lessonId.body()?.let { onSuccess(it) }
             } catch (e: Exception) {
                 errorMessage = "Ошибка при создании урока: ${e.message}"
             } finally {

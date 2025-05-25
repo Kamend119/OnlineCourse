@@ -199,7 +199,7 @@ interface ApiService {
         @Query("name") name: String,
         @Query("description") description: String,
         @Query("sequence_number") sequenceNumber: Long
-    ): LongResponse
+    ): Response<Long>
 
     //26.	изменение курса
     @POST("update_course")
