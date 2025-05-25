@@ -763,21 +763,23 @@ class CourseDetailsViewModel : ViewModel() {
         }
     }
 
-    fun deleteCourse(courseId: Long, userId: Long) {
-        viewModelScope.launch {
-            isLoading = true
-            try {
-                val result = RetrofitClient.instance.deleteCourse(courseId, userId)
-                deleteResult = if (result.body() == true) {
-                    "Курс успешно удалён"
-                } else {
-                    "Не удалось удалить курс"
-                }
-            } catch (e: Exception) {
-                deleteResult = "Ошибка при удалении курса: ${e.message}"
-            } finally {
-                isLoading = false
+    suspend fun deleteCourse(courseId: Long, userId: Long): String {
+        isLoading = true
+        return try {
+            val result = RetrofitClient.instance.deleteCourse(courseId, userId)
+            val message = if (result.body() == true) {
+                "Курс успешно удалён"
+            } else {
+                "Не удалось удалить курс"
             }
+            deleteResult = message
+            message
+        } catch (e: Exception) {
+            val message = "Ошибка при удалении курса: ${e.message}"
+            deleteResult = message
+            message
+        } finally {
+            isLoading = false
         }
     }
 }

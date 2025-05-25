@@ -163,16 +163,21 @@ fun CourseView(navController: NavHostController, userId: String, role: String, c
                                 if (role != "Студент" || statusName == "В прохождении") {
                                     Text("Уроки:", style = MaterialTheme.typography.titleMedium)
 
-                                    lessons.forEach { lesson ->
-                                        CourseItem(
-                                            name = lesson.lessonName,
-                                            category = "",
-                                            teacher = null,
-                                            date = lesson.datePublication,
-                                            onClick = {
-                                                navController.navigate("lessonView/$userId/$role/$courseId/${lesson.lessonId}")
-                                            }
-                                        )
+                                    if (lessons.isEmpty()) {
+                                        Spacer(Modifier.height(8.dp))
+                                        Text("Уроков ещё нет", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    } else {
+                                        lessons.forEach { lesson ->
+                                            CourseItem(
+                                                name = lesson.lessonName,
+                                                category = "",
+                                                teacher = null,
+                                                date = lesson.datePublication,
+                                                onClick = {
+                                                    navController.navigate("lessonView/$userId/$role/$courseId/${lesson.lessonId}")
+                                                }
+                                            )
+                                        }
                                     }
                                 }
 
@@ -194,7 +199,7 @@ fun CourseView(navController: NavHostController, userId: String, role: String, c
                                         Text("Выдать предупреждение")
                                     }
 
-                                    Spacer(Modifier.height(8.dp))
+                                    Spacer(Modifier.height(16.dp))
                                     Button(
                                         onClick = { openDialog.value = true },
                                         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error),
@@ -205,7 +210,7 @@ fun CourseView(navController: NavHostController, userId: String, role: String, c
                                 }
 
                                 if (role == "Учитель") {
-                                    Spacer(Modifier.height(8.dp))
+                                    Spacer(Modifier.height(16.dp))
                                     Button(
                                         onClick = { openDialog.value = true },
                                         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error),
@@ -271,12 +276,8 @@ fun CourseView(navController: NavHostController, userId: String, role: String, c
                         TextButton(onClick = {
                             openDialog.value = false
                             coroutineScope.launch {
-                                viewModel.deleteCourse(courseId.toLong(), userId.toLong())
-                                Toast.makeText(
-                                    context,
-                                    viewModel.deleteResult ?: "Ошибка удаления",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                val resultMessage = viewModel.deleteCourse(courseId.toLong(), userId.toLong())
+                                Toast.makeText(context, resultMessage, Toast.LENGTH_SHORT).show()
                                 navController.popBackStack()
                             }
                         }) {
