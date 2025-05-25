@@ -32,6 +32,8 @@ import com.example.onlinecourse.course.CourseView
 import com.example.onlinecourse.course.CoursesSearch
 import com.example.onlinecourse.course.lesson.LessonCreate
 import com.example.onlinecourse.course.lesson.LessonView
+import com.example.onlinecourse.course.step.StepCreate
+import com.example.onlinecourse.course.step.StepView
 import com.example.onlinecourse.entrance.Authorization
 import com.example.onlinecourse.entrance.Entrance
 import com.example.onlinecourse.entrance.Registration
@@ -152,8 +154,17 @@ fun MyApp() {
         }
 
         // шаги
-
-
+        composable("stepView/{userId}/{role}/{courseId}/{lessonId}/{stepId}") { backStackEntry ->
+            courseId = backStackEntry.arguments?.getString("courseId") ?: "-1"
+            lessonId = backStackEntry.arguments?.getString("lessonId") ?: "-1"
+            stepId = backStackEntry.arguments?.getString("stepId") ?: "-1"
+            StepView(navController,userId,role,courseId,lessonId,stepId)
+        }
+        composable("stepCreate/{userId}/{role}/{courseId}/{lessonId}") { backStackEntry ->
+            courseId = backStackEntry.arguments?.getString("courseId") ?: "-1"
+            lessonId = backStackEntry.arguments?.getString("lessonId") ?: "-1"
+            StepCreate(navController,userId,role,courseId,lessonId)
+        }
 
         // первый вход
         composable("entrance") { Entrance(navController) }

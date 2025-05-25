@@ -794,8 +794,6 @@ class LessonDetailsViewModel : ViewModel() {
         private set
     var updateResult by mutableStateOf<String?>(null)
         private set
-    var warningResult by mutableStateOf<String?>(null)
-        private set
     var deleteResult by mutableStateOf<String?>(null)
         private set
     var errorMessage by mutableStateOf<String?>(null)
@@ -834,69 +832,47 @@ class LessonDetailsViewModel : ViewModel() {
         }
     }
 
-    fun updateLesson(
+    suspend fun updateLesson(
         lessonId: Long,
         courseId: Long,
         name: String,
         description: String,
         sequenceNumber: Long
     ) {
-        viewModelScope.launch {
-            isLoading = true
-            try {
-                val result = RetrofitClient.instance.updateLesson(
-                    lessonId = lessonId,
-                    courseId = courseId,
-                    name = name,
-                    description = description,
-                    sequenceNumber = sequenceNumber
-                )
-                updateResult = if (result.body() == true) {
-                    "Урок успешно обновлён"
-                } else {
-                    "Не удалось обновить урок"
-                }
-            } catch (e: Exception) {
-                updateResult = "Ошибка при обновлении урока: ${e.message}"
-            } finally {
-                isLoading = false
+        isLoading = true
+        try {
+            val result = RetrofitClient.instance.updateLesson(
+                lessonId = lessonId,
+                courseId = courseId,
+                name = name,
+                description = description,
+                sequenceNumber = sequenceNumber
+            )
+            updateResult = if (result.body() == true) {
+                "Урок успешно обновлён"
+            } else {
+                "Не удалось обновить урок"
             }
+        } catch (e: Exception) {
+            updateResult = "Ошибка при обновлении урока: ${e.message}"
+        } finally {
+            isLoading = false
         }
     }
 
-    fun warnOnStep(stepId: Long) {
-        viewModelScope.launch {
-            isLoading = true
-            try {
-                val result = RetrofitClient.instance.warnOnStep(stepId)
-                warningResult = if (result.body() == true) {
-                    "Предупреждение по шагу выдано"
-                } else {
-                    "Не удалось выдать предупреждение"
-                }
-            } catch (e: Exception) {
-                warningResult = "Ошибка при выдаче предупреждения: ${e.message}"
-            } finally {
-                isLoading = false
+    suspend fun deleteLesson(lessonId: Long, userId: Long): String {
+        isLoading = true
+        return try {
+            val result = RetrofitClient.instance.deleteLesson(lessonId, userId)
+            if (result.body() == true) {
+                "Урок успешно удалён"
+            } else {
+                "Не удалось удалить урок"
             }
-        }
-    }
-
-    fun deleteLesson(lessonId: Long, userId: Long) {
-        viewModelScope.launch {
-            isLoading = true
-            try {
-                val result = RetrofitClient.instance.deleteLesson(lessonId, userId)
-                deleteResult = if (result.body() == true) {
-                    "Урок успешно удалён"
-                } else {
-                    "Не удалось удалить урок"
-                }
-            } catch (e: Exception) {
-                deleteResult = "Ошибка при удалении урока: ${e.message}"
-            } finally {
-                isLoading = false
-            }
+        } catch (e: Exception) {
+            "Ошибка при удалении урока: ${e.message}"
+        } finally {
+            isLoading = false
         }
     }
 }
