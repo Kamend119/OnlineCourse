@@ -122,7 +122,8 @@ data class LessonResponse(
 data class LessonDetailResponse(
     @SerializedName("lesson_name") val lessonName: String,
     @SerializedName("lesson_description") val lessonDescription: String,
-    @SerializedName("date_publication") val datePublication: String
+    @SerializedName("date_publication") val datePublication: String,
+    @SerializedName("sequence_number") val sequenceNumber: Long
 )
 
 //19.	просмотр шагов урока
