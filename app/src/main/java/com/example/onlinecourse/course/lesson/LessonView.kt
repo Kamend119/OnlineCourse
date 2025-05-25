@@ -1,6 +1,7 @@
 package com.example.onlinecourse.course.lesson
 
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -157,7 +158,10 @@ fun LessonView(navController: NavHostController, userId: String, role: String, c
                                     Card(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(vertical = 4.dp),
+                                            .padding(vertical = 4.dp)
+                                            .clickable {
+                                                navController.navigate("stepView/${userId}/${role}/${courseId}/${lessonId}/${step.stepId}")
+                                            },
                                         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                                     ) {
                                         Column(modifier = Modifier.padding(12.dp)) {
