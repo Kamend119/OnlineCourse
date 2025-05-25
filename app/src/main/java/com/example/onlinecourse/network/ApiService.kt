@@ -186,7 +186,7 @@ interface ApiService {
         @Query("user_id") userId: Long,
         @Query("name") name: String,
         @Query("description") description: String
-    ): LongResponse
+    ): Response<Long>
 
     //24.	просмотр категорий курсов
     @GET("get_course_categories")

@@ -1282,9 +1282,9 @@ class CourseCreateViewModel : ViewModel() {
                     name = name,
                     description = description
                 )
-                createCourseResult = courseId.id
+                createCourseResult = courseId.body()
                 errorMessage = null
-                onSuccess(courseId.id)
+                courseId.body()?.let { onSuccess(it) }
             } catch (e: Exception) {
                 errorMessage = "Ошибка при создании курса: ${e.message}"
             } finally {
