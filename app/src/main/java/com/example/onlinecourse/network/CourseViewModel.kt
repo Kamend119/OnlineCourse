@@ -1323,7 +1323,7 @@ class StepCreationViewModel : ViewModel() {
         name: String,
         content: String,
         sequenceNumber: Long,
-        obligatory: Boolean,
+        obligatory: String,
         originalName: String? = null,
         mimeType: String? = null,
         sizeBytes: Long? = null,
@@ -1367,7 +1367,7 @@ class StepCreationViewModel : ViewModel() {
         content: String,
         sequenceNumber: Long,
         timePasses: String,
-        obligatory: Boolean,
+        obligatory: String,
         maxScore: Long? = null,
         onSuccess: () -> Unit = {}
     ) {
@@ -1398,7 +1398,7 @@ class StepCreationViewModel : ViewModel() {
         content: String,
         sequenceNumber: Long,
         timePasses: String,
-        obligatory: Boolean,
+        obligatory: String,
         maxScore: Long,
         textOptions: List<String>,
         correct: List<Boolean>,
@@ -1433,12 +1433,13 @@ class StepCreationViewModel : ViewModel() {
         content: String,
         sequenceNumber: Long,
         timePasses: String,
-        obligatory: Boolean,
+        obligatory: String,
         maxScore: Long,
         originalName: String,
         mimeType: String,
         sizeBytes: Long,
-        file: MultipartBody.Part?
+        file: MultipartBody.Part?,
+        onSuccess: () -> Unit = {}
     ) {
         viewModelScope.launch {
             isLoading = true

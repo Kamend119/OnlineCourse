@@ -370,7 +370,7 @@ interface ApiService {
         @Query("content") content: String,
         @Query("sequence_number") sequenceNumber: Long,
         @Query("time_passes") timePasses: String,
-        @Query("obligatory") obligatory: Boolean,
+        @Query("obligatory") obligatory: String,
         @Query("max_score") maxScore: Long? = null
     ): Response<Boolean>
 
@@ -382,7 +382,7 @@ interface ApiService {
         @Query("content") content: String,
         @Query("sequence_number") sequenceNumber: Long,
         @Query("time_passes") timePasses: String,
-        @Query("obligatory") obligatory: Boolean,
+        @Query("obligatory") obligatory: String,
         @Query("max_score") maxScore: Long,
         @Query("text_options") textOptions: List<String>,
         @Query("correct") correct: List<Boolean>,
