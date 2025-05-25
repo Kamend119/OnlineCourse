@@ -270,14 +270,3 @@ data class AppealStatisticsItemResponse(
     @SerializedName("most_common_topic") val mostCommonTopic: String,
     @SerializedName("avg_files_per_appeal") val avgFilesPerAppeal: Double
 )
-
-//58.	выдать сертификат студенту
-data class IssueCertificateResponse(
-    @SerializedName("student_name") val studentName: String,
-    @SerializedName("course_name") val courseName: String,
-    @SerializedName("teacher_name") val teacherName: String,
-    @SerializedName("average_score") val averageScore: Double,
-    @SerializedName("completion_percent") val completionPercent: Double,
-    @SerializedName("issue_date") val issueDate: String,
-    @SerializedName("cert_id") val certId: Long
-)
