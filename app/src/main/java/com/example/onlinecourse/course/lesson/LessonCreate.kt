@@ -3,11 +3,13 @@ package com.example.onlinecourse.course.lesson
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -25,6 +27,9 @@ fun LessonCreate(navController: NavHostController, userId: String, role: String,
     var description by remember { mutableStateOf("") }
     var sequenceNumber by remember { mutableStateOf("") }
 
+    val parsedSequence = sequenceNumber.toLongOrNull()
+    val allFieldsValid = name.isNotBlank() && description.isNotBlank() && parsedSequence != null
+
     OnlineCursesTheme {
         AppBar(
             title = "Создание урока",
@@ -39,7 +44,8 @@ fun LessonCreate(navController: NavHostController, userId: String, role: String,
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Название урока") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -55,34 +61,32 @@ fun LessonCreate(navController: NavHostController, userId: String, role: String,
 
                 OutlinedTextField(
                     value = sequenceNumber,
-                    onValueChange = { sequenceNumber = it },
+                    onValueChange = { input ->
+                        if (input.all { it.isDigit() }) {
+                            sequenceNumber = input
+                        }
+                    },
                     label = { Text("Номер по порядку") },
                     modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
                     onClick = {
-                        val parsedSequence = sequenceNumber.toLongOrNull()
-                        if (parsedSequence == null) {
-                            Toast.makeText(context, "Введите корректный номер по порядку", Toast.LENGTH_SHORT).show()
-                        } else if (name.isBlank() || description.isBlank()) {
-                            Toast.makeText(context, "Заполните все поля", Toast.LENGTH_SHORT).show()
-                        } else {
-                            viewModel.createLesson(
-                                courseId = courseId.toLong(),
-                                name = name,
-                                description = description,
-                                sequenceNumber = parsedSequence
-                            ) { lessonId ->
-                                navController.navigate("lessonView/$userId/$role/$courseId/$lessonId")
-                            }
+                        viewModel.createLesson(
+                            courseId = courseId.toLong(),
+                            name = name,
+                            description = description,
+                            sequenceNumber = parsedSequence!!
+                        ) { lessonId ->
+                            navController.navigate("lessonView/$userId/$role/$courseId/$lessonId")
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = !viewModel.isLoading
+                    enabled = allFieldsValid && !viewModel.isLoading
                 ) {
                     Text("Создать урок")
                 }
