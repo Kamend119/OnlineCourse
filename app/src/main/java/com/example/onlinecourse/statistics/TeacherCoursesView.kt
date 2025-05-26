@@ -110,7 +110,7 @@ fun TeacherCoursesView(navController: NavHostController, userId: String, role: S
         AppBar(
             title = "Статистика курса",
             showTopBar = true,
-            showBottomBar = false,
+            showBottomBar = true,
             navController = navController,
             userId = userId,
             role = role

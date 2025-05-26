@@ -59,7 +59,7 @@ fun Estimation(navController: NavHostController, userId: String, role: String) {
         AppBar(
             title = "Оценка знаний",
             showTopBar = true,
-            showBottomBar = false,
+            showBottomBar = true,
             navController = navController,
             userId = userId,
             role = role

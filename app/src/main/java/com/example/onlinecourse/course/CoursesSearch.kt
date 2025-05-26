@@ -78,7 +78,7 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
         AppBar(
             title = "Поиск курсов",
             showTopBar = true,
-            showBottomBar = false,
+            showBottomBar = true,
             navController = navController,
             userId = userId,
             role = role

@@ -68,7 +68,7 @@ fun CourseCategoriesView(navController: NavHostController, userId: String, role:
         AppBar(
             title = "Категории курсов",
             showTopBar = true,
-            showBottomBar = false,
+            showBottomBar = true,
             navController = navController,
             userId = userId,
             role = role

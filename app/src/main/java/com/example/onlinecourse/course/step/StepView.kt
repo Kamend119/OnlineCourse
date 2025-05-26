@@ -72,7 +72,7 @@ fun StepView(navController: NavHostController, userId: String, role: String, cou
         AppBar(
             title = "Просмотр шага",
             showTopBar = true,
-            showBottomBar = false,
+            showBottomBar = true,
             navController = navController,
             userId = userId,
             role = role

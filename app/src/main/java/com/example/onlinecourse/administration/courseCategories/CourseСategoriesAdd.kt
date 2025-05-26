@@ -57,7 +57,7 @@ fun CourseCategoriesAdd(navController: NavHostController, userId: String, role: 
         AppBar(
             title = "Добавить категорию",
             showTopBar = true,
-            showBottomBar = false,
+            showBottomBar = true,
             navController,
             userId = userId,
             role = role

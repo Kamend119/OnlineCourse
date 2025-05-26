@@ -22,7 +22,7 @@ fun Statistic(navController: NavHostController, userId: String, role: String) {
         AppBar(
             title = "Статистика",
             showTopBar = true,
-            showBottomBar = false,
+            showBottomBar = true,
             navController,
             userId = userId,
             role = role

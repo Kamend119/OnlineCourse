@@ -77,7 +77,7 @@ fun CourseView(navController: NavHostController, userId: String, role: String, c
         AppBar(
             title = "Просмотр курса",
             showTopBar = true,
-            showBottomBar = false,
+            showBottomBar = true,
             navController = navController,
             userId = userId,
             role = role

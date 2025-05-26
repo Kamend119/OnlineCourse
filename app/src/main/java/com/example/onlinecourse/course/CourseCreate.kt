@@ -62,7 +62,7 @@ fun CourseCreate(navController: NavHostController, userId: String, role: String)
         AppBar(
             title = "Создание курса",
             showTopBar = true,
-            showBottomBar = false,
+            showBottomBar = true,
             navController = navController,
             userId = userId,
             role = role

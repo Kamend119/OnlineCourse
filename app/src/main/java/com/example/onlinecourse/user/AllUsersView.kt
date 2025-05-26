@@ -59,7 +59,7 @@ fun AllUsersView(navController: NavHostController, userId: String, role: String)
         AppBar(
             title = "Все пользователи",
             showTopBar = true,
-            showBottomBar = false,
+            showBottomBar = true,
             navController = navController,
             userId = userId,
             role = role

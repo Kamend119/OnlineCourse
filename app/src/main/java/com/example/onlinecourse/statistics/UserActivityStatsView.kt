@@ -52,7 +52,7 @@ fun UserActivityStatsView(navController: NavHostController, userId: String, role
         AppBar(
             title = "Пользователи",
             showTopBar = true,
-            showBottomBar = false,
+            showBottomBar = true,
             navController = navController,
             userId = userId,
             role = role

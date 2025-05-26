@@ -61,7 +61,7 @@ fun ViewCertificate(navController: NavHostController, userId: String, role: Stri
         AppBar(
             title = "Сертификат",
             showTopBar = true,
-            showBottomBar = false,
+            showBottomBar = true,
             navController = navController,
             userId = userId,
             role = role

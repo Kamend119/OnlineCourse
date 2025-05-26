@@ -22,7 +22,7 @@ fun Administration(navController: NavHostController, userId: String, role: Strin
         AppBar(
             title = "Администрирование",
             showTopBar = true,
-            showBottomBar = false,
+            showBottomBar = true,
             navController,
             userId = userId,
             role = role

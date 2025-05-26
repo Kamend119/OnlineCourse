@@ -39,7 +39,7 @@ fun AppealStatisticsView(navController: NavHostController, userId: String, role:
         AppBar(
             title = "Обращения",
             showTopBar = true,
-            showBottomBar = false,
+            showBottomBar = true,
             navController = navController,
             userId = userId,
             role = role

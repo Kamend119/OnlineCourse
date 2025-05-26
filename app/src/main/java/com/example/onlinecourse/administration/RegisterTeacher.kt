@@ -57,7 +57,7 @@ fun RegistrationTeacher(navController: NavHostController, userId: String, role: 
         AppBar(
             title = "Регистрация",
             showTopBar = true,
-            showBottomBar = false,
+            showBottomBar = true,
             navController,
             userId = userId,
             role = role
@@ -77,7 +77,7 @@ fun RegistrationTeacher(navController: NavHostController, userId: String, role: 
             ) {
                 item {
                     registrationResult?.let { result ->
-                        if (result.toLong() > 0) {
+                        if (result > 0) {
                             Toast.makeText(context, "Преподаватель зарегистрирован (ID: $result)", Toast.LENGTH_SHORT).show()
                             viewModel.clearResult()
                             navController.popBackStack()

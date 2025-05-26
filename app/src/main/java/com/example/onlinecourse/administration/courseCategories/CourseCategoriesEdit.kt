@@ -63,7 +63,7 @@ fun CourseCategoriesEdit(navController: NavHostController, userId: String, role:
         AppBar(
             title = "Редактировать категорию",
             showTopBar = true,
-            showBottomBar = false,
+            showBottomBar = true,
             navController = navController,
             userId = userId,
             role = role

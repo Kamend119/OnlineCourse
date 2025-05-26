@@ -178,7 +178,7 @@ fun MainPage(navController: NavHostController, userId: String, role: String) {
                 AppBar(
                     title = "Главная",
                     showTopBar = true,
-                    showBottomBar = false,
+                    showBottomBar = true,
                     navController,
                     userId = userId,
                     role = role
@@ -223,7 +223,7 @@ fun MainPage(navController: NavHostController, userId: String, role: String) {
                 AppBar(
                     title = "Главная",
                     showTopBar = true,
-                    showBottomBar = false,
+                    showBottomBar = true,
                     navController,
                     userId = userId,
                     role = role

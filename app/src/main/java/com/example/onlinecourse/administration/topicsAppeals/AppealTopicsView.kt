@@ -4,7 +4,6 @@ package com.example.onlinecourse.administration.topicsAppeals
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -71,7 +70,7 @@ fun AppealTopicsView(navController: NavHostController, userId: String, role: Str
         AppBar(
             title = "Темы обращений",
             showTopBar = true,
-            showBottomBar = false,
+            showBottomBar = true,
             navController = navController,
             userId = userId,
             role = role

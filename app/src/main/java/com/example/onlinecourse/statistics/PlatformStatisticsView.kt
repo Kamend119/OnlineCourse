@@ -51,7 +51,7 @@ fun PlatformStatisticsView(navController: NavHostController, userId: String, rol
         AppBar(
             title = "Статистика платформы",
             showTopBar = true,
-            showBottomBar = false,
+            showBottomBar = true,
             navController = navController,
             userId = userId,
             role = role

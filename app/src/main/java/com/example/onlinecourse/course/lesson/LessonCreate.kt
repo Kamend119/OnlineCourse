@@ -32,7 +32,7 @@ fun LessonCreate(navController: NavHostController, userId: String, role: String,
         AppBar(
             title = "Создание урока",
             showTopBar = true,
-            showBottomBar = false,
+            showBottomBar = true,
             navController = navController,
             userId = userId,
             role = role

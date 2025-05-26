@@ -65,7 +65,7 @@ fun AppealTopicEdit(navController: NavHostController, userId: String, role: Stri
         AppBar(
             title = "Редактировать тему",
             showTopBar = true,
-            showBottomBar = false,
+            showBottomBar = true,
             navController = navController,
             userId = userId,
             role = role

@@ -125,6 +125,15 @@ fun AppBar(
                                         )
                                     }
                                 }
+                                else{
+                                    IconButton(onClick = { navController.navigate("main/${userId}/${role}") }) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.home),
+                                            contentDescription = "Главная",
+                                            modifier = Modifier.size(35.dp)
+                                        )
+                                    }
+                                }
                             }
                         }
                     }

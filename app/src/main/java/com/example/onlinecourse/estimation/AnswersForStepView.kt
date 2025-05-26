@@ -55,7 +55,7 @@ fun AnswersForStepView(navController: NavHostController, userId: String, role: S
         AppBar(
             title = "Ответы на шаг",
             showTopBar = true,
-            showBottomBar = false,
+            showBottomBar = true,
             navController = navController,
             userId = userId,
             role = role
