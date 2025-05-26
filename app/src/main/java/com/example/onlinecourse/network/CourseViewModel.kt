@@ -883,6 +883,7 @@ class LessonStepAnswerViewModel : ViewModel() {
         private set
     var deleteResult by mutableStateOf<String?>(null)
         private set
+    var warningResult by mutableStateOf<String?>(null)
 
     fun answerLessonStep(
         userId: Long,
@@ -1202,6 +1203,24 @@ class LessonStepAnswerViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 deleteResult = "Ошибка при удалении шага: ${e.message}"
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
+    fun warnOnStep(stepId: Long) {
+        viewModelScope.launch {
+            isLoading = true
+            try {
+                val result = RetrofitClient.instance.warnOnStep(stepId)
+                warningResult = if (result.body() == true) {
+                    "Предупреждение выдано"
+                } else {
+                    "Не удалось выдать предупреждение"
+                }
+            } catch (e: Exception) {
+                warningResult = "Ошибка при выдаче предупреждения: ${e.message}"
             } finally {
                 isLoading = false
             }

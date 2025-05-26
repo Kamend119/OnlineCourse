@@ -140,12 +140,12 @@ fun AnswerForStepView(navController: NavHostController, userId: String, role: St
 
                         if (!step.answerOptionTexts.isNullOrEmpty()
                             && !step.answerOptionScores.isNullOrEmpty()
-                            && step.answerOptionTexts.size == step.answerOptionScores.size
+                            && step.answerOptionTexts!!.size == step.answerOptionScores!!.size
                             && step.stepTypeName == "Вопрос с вариантами ответа"
                         ) {
                             Text("Варианты ответов:", style = MaterialTheme.typography.titleMedium)
-                            step.answerOptionTexts.forEachIndexed { idx, optionText ->
-                                val score = step.answerOptionScores.getOrNull(idx) ?: 0
+                            step.answerOptionTexts!!.forEachIndexed { idx, optionText ->
+                                val score = step.answerOptionScores!!.getOrNull(idx) ?: 0
                                 Card(
                                     modifier = Modifier
                                         .fillMaxWidth()
