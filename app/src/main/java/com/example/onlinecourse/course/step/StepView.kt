@@ -49,13 +49,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.core.content.FileProvider
 import com.example.onlinecourse.function.getFileName
 import com.example.onlinecourse.function.uriToMultipartBody
 import com.example.onlinecourse.network.EditableAnswerOption
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
 
 @Composable
 fun StepView(navController: NavHostController, userId: String, role: String, courseId: String, lessonId: String, stepId: String){
