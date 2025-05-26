@@ -641,12 +641,17 @@ class CourseDetailsViewModel : ViewModel() {
         private set
     var updateResult by mutableStateOf<String?>(null)
         private set
-    var warningResult by mutableStateOf<String?>(null)
-        private set
     var deleteResult by mutableStateOf<String?>(null)
         private set
     var errorMessage by mutableStateOf<String?>(null)
         private set
+
+    private val _warnResult = MutableStateFlow<Boolean?>(null)
+    val warnResult: StateFlow<Boolean?> = _warnResult
+
+    fun resetWarnResult() {
+        _warnResult.value = null
+    }
 
     fun loadCourseCategories() {
         viewModelScope.launch {
@@ -743,13 +748,13 @@ class CourseDetailsViewModel : ViewModel() {
             isLoading = true
             try {
                 val result = RetrofitClient.instance.warnOnCourse(courseId)
-                warningResult = if (result.body() == true) {
-                    "Предупреждение выдано"
+                if (result.body() == true) {
+                    _warnResult.value = true
                 } else {
-                    "Не удалось выдать предупреждение"
+                    _warnResult.value = false
                 }
             } catch (e: Exception) {
-                warningResult = "Ошибка при выдаче предупреждения: ${e.message}"
+                _warnResult.value = false
             } finally {
                 isLoading = false
             }

@@ -160,8 +160,7 @@ fun AllUsersView(navController: NavHostController, userId: String, role: String)
                                         navController.navigate("pageView/$userId/$role/${user.userId}")
                                     }
                                     .padding(vertical = 6.dp),
-                                elevation = CardDefaults.cardElevation(2.dp),
-                                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                                elevation = CardDefaults.cardElevation(4.dp)
                             ) {
                                 Column(modifier = Modifier.padding(16.dp)) {
                                     val fullName = listOfNotNull(user.lastName, user.firstName, user.patronymic)

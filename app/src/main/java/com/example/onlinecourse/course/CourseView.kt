@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +48,14 @@ fun CourseView(navController: NavHostController, userId: String, role: String, c
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val openDialog = remember { mutableStateOf(false) }
+    val warnResult by viewModel.warnResult.collectAsState()
+
+    LaunchedEffect(warnResult) {
+        warnResult?.let {
+            Toast.makeText(context, if (it) "Предупреждение выдано" else "Произошла ошибка", Toast.LENGTH_SHORT).show()
+            viewModel.resetWarnResult()
+        }
+    }
 
     LaunchedEffect(courseId) {
         viewModel.loadCourseDetails(courseId.toLong())
@@ -199,11 +208,6 @@ fun CourseView(navController: NavHostController, userId: String, role: String, c
                                         onClick = {
                                             coroutineScope.launch {
                                                 viewModel.warnOnCourse(courseId.toLong())
-                                                Toast.makeText(
-                                                    context,
-                                                    viewModel.warningResult ?: "Ошибка",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
                                             }
                                         },
                                         modifier = Modifier.fillMaxWidth()

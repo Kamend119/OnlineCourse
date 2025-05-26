@@ -550,7 +550,7 @@ fun AdministratorStepView( stepDetail: StepDetailResponse, viewModel: LessonStep
         ) {
             Button(
                 onClick = { showWarningDialog = true },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow)
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
             ) {
                 Text("Выдать предупреждение")
             }
