@@ -49,11 +49,18 @@ fun CourseView(navController: NavHostController, userId: String, role: String, c
     val coroutineScope = rememberCoroutineScope()
     val openDialog = remember { mutableStateOf(false) }
     val warnResult by viewModel.warnResult.collectAsState()
+    val enrollmentResult by viewModel.enrollmentResult.collectAsState()
 
     LaunchedEffect(warnResult) {
         warnResult?.let {
             Toast.makeText(context, if (it) "Предупреждение выдано" else "Произошла ошибка", Toast.LENGTH_SHORT).show()
             viewModel.resetWarnResult()
+        }
+    }
+    LaunchedEffect(enrollmentResult) {
+        enrollmentResult?.let {
+            Toast.makeText(context, if (it) "Курс добавлен" else "Произошла ошибка", Toast.LENGTH_SHORT).show()
+            viewModel.resetEnrollmentResult()
         }
     }
 
@@ -242,11 +249,6 @@ fun CourseView(navController: NavHostController, userId: String, role: String, c
                                         onClick = {
                                             coroutineScope.launch {
                                                 viewModel.enrollOrDeferCourse(userId.toLong(), courseId.toLong(), "В прохождении")
-                                                Toast.makeText(
-                                                    context,
-                                                    viewModel.enrollmentResult ?: "Ошибка",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
                                             }
                                         },
                                         modifier = Modifier.fillMaxWidth()
@@ -259,11 +261,6 @@ fun CourseView(navController: NavHostController, userId: String, role: String, c
                                         onClick = {
                                             coroutineScope.launch {
                                                 viewModel.enrollOrDeferCourse(userId.toLong(), courseId.toLong(), "Отложен")
-                                                Toast.makeText(
-                                                    context,
-                                                    viewModel.enrollmentResult ?: "Ошибка",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
                                             }
                                         },
                                         modifier = Modifier.fillMaxWidth()

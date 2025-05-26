@@ -637,8 +637,6 @@ class CourseDetailsViewModel : ViewModel() {
         private set
     var lessons by mutableStateOf<List<LessonResponse>>(emptyList())
         private set
-    var enrollmentResult by mutableStateOf<String?>(null)
-        private set
     var updateResult by mutableStateOf<String?>(null)
         private set
     var deleteResult by mutableStateOf<String?>(null)
@@ -648,9 +646,14 @@ class CourseDetailsViewModel : ViewModel() {
 
     private val _warnResult = MutableStateFlow<Boolean?>(null)
     val warnResult: StateFlow<Boolean?> = _warnResult
+    private val _enrollmentResult = MutableStateFlow<Boolean?>(null)
+    val enrollmentResult: StateFlow<Boolean?> = _enrollmentResult
 
     fun resetWarnResult() {
         _warnResult.value = null
+    }
+    fun resetEnrollmentResult() {
+        _enrollmentResult.value = null
     }
 
     fun loadCourseCategories() {
@@ -705,14 +708,13 @@ class CourseDetailsViewModel : ViewModel() {
             isLoading = true
             try {
                 val result = RetrofitClient.instance.enrollOrDeferCourse(userId, courseId, statusName)
-                enrollmentResult = if (result.body() == true) {
-                    if (statusName == "поступление") "Вы успешно записались на курс"
-                    else "Курс отложен"
+                if (result.body() == true) {
+                    _enrollmentResult.value = true
                 } else {
-                    "Не удалось выполнить действие"
+                    _enrollmentResult.value = false
                 }
             } catch (e: Exception) {
-                enrollmentResult = "Ошибка при выполнении действия: ${e.message}"
+                _enrollmentResult.value = false
             } finally {
                 isLoading = false
             }
