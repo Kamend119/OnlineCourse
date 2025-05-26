@@ -1,12 +1,13 @@
 package com.example.onlinecourse.network
 
 import RetrofitClient
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -881,15 +882,33 @@ class LessonStepAnswerViewModel : ViewModel() {
         private set
     var fileDownloadError by mutableStateOf<String?>(null)
         private set
-    var deleteResult by mutableStateOf<String?>(null)
-        private set
-    var warningResult by mutableStateOf<String?>(null)
+    private val _updateResult = MutableStateFlow<Boolean?>(null)
+    val updateResult: StateFlow<Boolean?> = _updateResult
+    private val _deleteResult = MutableStateFlow<Boolean?>(null)
+    val deleteResult: StateFlow<Boolean?> = _deleteResult
+    private val _warnResult = MutableStateFlow<Boolean?>(null)
+    val warnResult: StateFlow<Boolean?> = _warnResult
+    private val _answerResult = MutableStateFlow<Boolean?>(null)
+    val answerResult: StateFlow<Boolean?> = _answerResult
+
+    fun resetUpdateResult() {
+        _updateResult.value = null
+    }
+    fun resetDeleteResult() {
+        _deleteResult.value = null
+    }
+    fun resetWarnResult() {
+        _warnResult.value = null
+    }
+    fun resetAnswerResult() {
+        _answerResult.value = null
+    }
 
     fun answerLessonStep(
         userId: Long,
         stepLessonId: Long,
         answerText: String? = null,
-        selectedOptionIds: List<Long>? = null,
+        selectedOptionIds: List<Long> = emptyList(),
         originalName: String? = null,
         mimeType: String? = null,
         sizeBytes: Long? = null,
@@ -901,7 +920,7 @@ class LessonStepAnswerViewModel : ViewModel() {
             isLoading = true
             try {
                 val rb = { str: String -> str.toRequestBody("text/plain".toMediaTypeOrNull()) }
-                val selectedOptionsString = selectedOptionIds?.joinToString(separator = ",")
+                val selectedOptionsString = selectedOptionIds.joinToString(separator = ",")
                 val response = RetrofitClient.instance.answerLessonStep(
                     userId = rb(userId.toString()),
                     stepLessonId = rb(stepLessonId.toString()),
@@ -915,13 +934,16 @@ class LessonStepAnswerViewModel : ViewModel() {
                 )
                 result = response.body()
                 if (response.body() == true) {
+                    _answerResult.value = true
                     errorMessage = null
                     onSuccess()
                 } else {
                     errorMessage = "Не удалось отправить ответ на шаг урока"
+                    _answerResult.value = false
                 }
             } catch (e: Exception) {
                 errorMessage = "Ошибка при отправке ответа: ${e.message}"
+                _answerResult.value = false
             } finally {
                 isLoading = false
             }
@@ -933,7 +955,7 @@ class LessonStepAnswerViewModel : ViewModel() {
         userId: Long,
         stepLessonId: Long,
         answerText: String? = null,
-        selectedOptionIds: List<Long>? = null,
+        selectedOptionIds: List<Long> = emptyList(),
         originalName: String? = null,
         mimeType: String? = null,
         sizeBytes: Long? = null,
@@ -945,7 +967,7 @@ class LessonStepAnswerViewModel : ViewModel() {
             isLoading = true
             try {
                 val rb = { str: String -> str.toRequestBody("text/plain".toMediaTypeOrNull()) }
-                val selectedOptionsString = selectedOptionIds?.joinToString(",") ?: ""
+                val selectedOptionsString = selectedOptionIds.joinToString(",")
 
                 val response = RetrofitClient.instance.updateLessonStepAnswer(
                     answerId = rb(answerId.toString()),
@@ -961,13 +983,16 @@ class LessonStepAnswerViewModel : ViewModel() {
                 )
                 result = response.body()
                 if (response.body() == true) {
-                    errorMessage = null
+                    _answerResult.value = true
+                        errorMessage = null
                     onSuccess()
                 } else {
                     errorMessage = "Не удалось обновить ответ на шаг урока"
+                    _answerResult.value = false
                 }
             } catch (e: Exception) {
                 errorMessage = "Ошибка при обновлении ответа: ${e.message}"
+                _answerResult.value = false
             } finally {
                 isLoading = false
             }
@@ -1004,13 +1029,16 @@ class LessonStepAnswerViewModel : ViewModel() {
                 )
                 result = response.body()
                 if (response.body() == true) {
+                    _updateResult.value = true
                     errorMessage = null
                     onSuccess()
                 } else {
                     errorMessage = "Не удалось обновить шаг «Лекция»"
+                    _updateResult.value = false
                 }
             } catch (e: Exception) {
                 errorMessage = "Ошибка при обновлении шага «Лекция»: ${e.message}"
+                _updateResult.value = false
             } finally {
                 isLoading = false
             }
@@ -1041,13 +1069,16 @@ class LessonStepAnswerViewModel : ViewModel() {
                 )
                 result = response.body()
                 if (response.body() == true) {
+                    _updateResult.value = true
                     errorMessage = null
                     onSuccess()
                 } else {
                     errorMessage = "Не удалось обновить шаг «Открытый вопрос»"
+                    _updateResult.value = false
                 }
             } catch (e: Exception) {
                 errorMessage = "Ошибка при обновлении шага «Открытый вопрос»: ${e.message}"
+                _updateResult.value = false
             } finally {
                 isLoading = false
             }
@@ -1084,13 +1115,16 @@ class LessonStepAnswerViewModel : ViewModel() {
                 )
                 result = response.body()
                 if (response.body() == true) {
+                    _updateResult.value = true
                     errorMessage = null
                     onSuccess()
                 } else {
                     errorMessage = "Не удалось обновить шаг «Вопрос с вариантами ответа»"
+                    _updateResult.value = false
                 }
             } catch (e: Exception) {
                 errorMessage = "Ошибка при обновлении шага «Вопрос с вариантами ответа»: ${e.message}"
+                _updateResult.value = false
             } finally {
                 isLoading = false
             }
@@ -1131,13 +1165,16 @@ class LessonStepAnswerViewModel : ViewModel() {
                 )
                 result = response.body()
                 if (response.body() == true) {
+                    _updateResult.value = true
                     errorMessage = null
                     onSuccess()
                 } else {
                     errorMessage = "Не удалось обновить шаг «Вопрос с приложением»"
+                    _updateResult.value = false
                 }
             } catch (e: Exception) {
                 errorMessage = "Ошибка при обновлении шага «Вопрос с приложением»: ${e.message}"
+                _updateResult.value = false
             } finally {
                 isLoading = false
             }
@@ -1196,13 +1233,13 @@ class LessonStepAnswerViewModel : ViewModel() {
             isLoading = true
             try {
                 val response = RetrofitClient.instance.deleteStep(stepId, userId)
-                deleteResult = if (response.body() == true) {
-                    "Шаг успешно удалён"
+                _deleteResult.value = if (response.body() == true) {
+                   true
                 } else {
-                    "Не удалось удалить шаг"
+                   false
                 }
             } catch (e: Exception) {
-                deleteResult = "Ошибка при удалении шага: ${e.message}"
+                _deleteResult.value = false
             } finally {
                 isLoading = false
             }
@@ -1214,13 +1251,13 @@ class LessonStepAnswerViewModel : ViewModel() {
             isLoading = true
             try {
                 val result = RetrofitClient.instance.warnOnStep(stepId)
-                warningResult = if (result.body() == true) {
-                    "Предупреждение выдано"
+                _warnResult.value = if (result.body() == true) {
+                    true
                 } else {
-                    "Не удалось выдать предупреждение"
+                    false
                 }
             } catch (e: Exception) {
-                warningResult = "Ошибка при выдаче предупреждения: ${e.message}"
+                _warnResult.value = false
             } finally {
                 isLoading = false
             }
@@ -1509,7 +1546,7 @@ class StepCreationViewModel : ViewModel() {
 class StepAnswersViewModel : ViewModel() {
     var isLoading by mutableStateOf(false)
         private set
-    var stepDetails by mutableStateOf<List<StepDetailResponse>>(emptyList())
+    var stepDetails by mutableStateOf<StepDetailResponse?>(null)
         private set
     var fileResponse by mutableStateOf<Response<ResponseBody>?>(null)
         private set
@@ -1544,12 +1581,12 @@ class StepAnswersViewModel : ViewModel() {
     fun getStepDetails(
         stepId: Long,
         userId: Long,
-        onSuccess: (List<StepDetailResponse>) -> Unit = {}
+        onSuccess: (StepDetailResponse?) -> Unit = {}
     ) {
         viewModelScope.launch {
             isLoading = true
             try {
-                val response = RetrofitClient.instance.getStepDetails(stepId, userId)
+                val response = RetrofitClient.instance.getStepDetails(stepId, userId).firstOrNull()
                 stepDetails = response
                 errorMessage = null
                 onSuccess(response)

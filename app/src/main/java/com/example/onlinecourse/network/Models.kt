@@ -136,29 +136,36 @@ data class StepsByLessons(
 
 //20.	просмотр шага урока
 data class StepDetailResponse(
-    @SerializedName("step_name") var stepName: String,
-    @SerializedName("step_content") var stepContent: String,
-    @SerializedName("sequence_number") var sequenceNumber: Long,
-    @SerializedName("time_passes") var timePasses: String,
-    @SerializedName("obligatory") var obligatory: Boolean,
-    @SerializedName("date_publication") var datePublication: String,
-    @SerializedName("step_type_name") var stepTypeName: String,
-    @SerializedName("file_id") var fileId: Long?,
-    @SerializedName("file_type") var fileType: String?,
-    @SerializedName("file_path") var filePath: String?,
-    @SerializedName("original_name") var originalName: String?,
-    @SerializedName("mime_type") var mimeType: String?,
-    @SerializedName("size_bytes") var sizeBytes: Long?,
-    @SerializedName("upload_date") var uploadDate: String?,
-    @SerializedName("answer_option_ids") var answerOptionIds: List<Long>?,
-    @SerializedName("answer_option_texts") var answerOptionTexts: List<String>?,
-    @SerializedName("answer_option_scores") var answerOptionScores: List<Long>?,
-    @SerializedName("user_answer_id") var userAnswerId: Long?,
-    @SerializedName("user_answer_text") var userAnswerText: String?,
-    @SerializedName("user_score") var userScore: Long?,
-    @SerializedName("user_comment_student") var userCommentStudent: String?,
-    @SerializedName("user_comment_ticher") var userCommentTeacher: String?,
-    @SerializedName("user_date_answer") var userDateAnswer: String?
+    @SerializedName("step_name") val stepName: String,
+    @SerializedName("step_content") val stepContent: String,
+    @SerializedName("sequence_number") val sequenceNumber: Long,
+    @SerializedName("time_passes") val timePasses: String,
+    @SerializedName("max_score") val maxScore: Long,
+    @SerializedName("obligatory") val obligatory: Boolean,
+    @SerializedName("date_publication") val datePublication: String,
+    @SerializedName("step_type_name") val stepTypeName: String,
+    @SerializedName("answer_options") val answerOptions: List<AnswerOption>?,
+    @SerializedName("task_file_name") val taskFileName: String?,
+    @SerializedName("task_file_type") val taskFileType: String?,
+    @SerializedName("task_file_size") val taskFileSize: Long?,
+    @SerializedName("task_file_path") val taskFilePath: String?,
+    @SerializedName("user_answer_id") val userAnswerId: Long?,
+    @SerializedName("user_answer_text") val userAnswerText: String?,
+    @SerializedName("selected_options") val selectedOptions: List<AnswerOption>?,
+    @SerializedName("answer_file_name") val answerFileName: String?,
+    @SerializedName("answer_file_type") val answerFileType: String?,
+    @SerializedName("answer_file_size") val answerFileSize: Long?,
+    @SerializedName("answer_file_path") val answerFilePath: String?,
+    @SerializedName("user_comment_student") val userCommentStudent: String?,
+    @SerializedName("user_comment_teacher") val userCommentTeacher: String?,
+    @SerializedName("user_score") val userScore: Long?,
+    @SerializedName("user_date_answer") val userDateAnswer: String?
+)
+data class AnswerOption(
+    @SerializedName("id") val id: Long,
+    @SerializedName("text") val text: String,
+    @SerializedName("correct") val correct: Boolean,
+    @SerializedName("score") val score: Long
 )
 
 //21.	просмотр статистики по дням
