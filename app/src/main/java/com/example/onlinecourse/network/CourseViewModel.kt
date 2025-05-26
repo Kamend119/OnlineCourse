@@ -1565,9 +1565,14 @@ class StepAnswersViewModel : ViewModel() {
         private set
     var steps by mutableStateOf<List<StepsByLessons>>(emptyList())
         private set
-    var operationSuccess by mutableStateOf<Boolean?>(null)
     var errorMessage by mutableStateOf<String?>(null)
         private set
+    private val _operationSuccess = MutableStateFlow<Boolean?>(null)
+    val operationSuccess: StateFlow<Boolean?> = _operationSuccess
+
+    fun resetOperationSuccess() {
+        _operationSuccess.value = null
+    }
 
     fun loadAnswersForStep(stepId: Long) {
         viewModelScope.launch {
@@ -1621,12 +1626,12 @@ class StepAnswersViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
-                operationSuccess = RetrofitClient.instance.evaluateAnswerOnStep(
+                _operationSuccess.value = RetrofitClient.instance.evaluateAnswerOnStep(
                     answerUserId, score, commentTeacher
                 ).body()
                 errorMessage = null
             } catch (e: Exception) {
-                operationSuccess = false
+                _operationSuccess.value = false
                 errorMessage = "Ошибка при оценивании ответа: ${e.message}"
             } finally {
                 isLoading = false

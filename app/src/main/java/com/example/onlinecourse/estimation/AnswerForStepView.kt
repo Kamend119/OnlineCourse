@@ -1,5 +1,6 @@
 package com.example.onlinecourse.estimation
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,26 +49,22 @@ fun AnswerForStepView(navController: NavHostController, userId: String, role: St
     var commentInput by remember { mutableStateOf(TextFieldValue("")) }
 
     val isLoading by remember { viewModel::isLoading }
-    val operationSuccess by remember { viewModel::operationSuccess }
+    val operationSuccess by viewModel.operationSuccess.collectAsState()
 
     LaunchedEffect(stepId) {
-        viewModel.getStepDetails(stepId.toLong(), userId.toLong()) { result ->
+        viewModel.getStepDetails(stepId.toLong(), answerId.toLong()) { result ->
             step = result
             result?.userScore?.let {
                 scoreInput = TextFieldValue(it.toString())
             }
-            commentInput = TextFieldValue(result?.userCommentTeacher.orEmpty())
+            commentInput = TextFieldValue(result?.userCommentTeacher.toString())
         }
     }
 
     LaunchedEffect(operationSuccess) {
-        if (operationSuccess == true) {
-            Toast.makeText(context, "Ответ оценен", Toast.LENGTH_SHORT).show()
-            navController.popBackStack()
-            viewModel.operationSuccess = null
-        } else if (operationSuccess == false) {
-            Toast.makeText(context, "Ошибка при оценивании", Toast.LENGTH_SHORT).show()
-            viewModel.operationSuccess = null
+        operationSuccess?.let {
+            Toast.makeText(context, if (it) "Ответ оценен" else "Ошибка при оценивании", Toast.LENGTH_SHORT).show()
+            viewModel.resetOperationSuccess()
         }
     }
 
@@ -100,7 +98,7 @@ fun AnswerForStepView(navController: NavHostController, userId: String, role: St
                         Text("Содержание:", style = MaterialTheme.typography.titleMedium)
                         Text(s.stepContent)
 
-                        if (s.stepTypeName == "Вопрос с вариантами ответов") {
+                        if (s.stepTypeName == "Вопрос с вариантами ответа") {
                             Spacer(modifier = Modifier.height(8.dp))
                             Text("Варианты ответов:", style = MaterialTheme.typography.titleMedium)
                             s.answerOptions?.forEach {
@@ -118,7 +116,7 @@ fun AnswerForStepView(navController: NavHostController, userId: String, role: St
                             Text("Текст ответа: ${s.userAnswerText.orEmpty()}")
                         }
 
-                        if (s.stepTypeName == "Вопрос с вариантами ответов") {
+                        if (s.stepTypeName == "Вопрос с вариантами ответа") {
                             Text("Выбранные опции:", style = MaterialTheme.typography.titleMedium)
                             s.selectedOptions?.forEach {
                                 Text("- ${it.text} (Баллы: ${it.score})")

@@ -157,7 +157,7 @@ data class StepDetailResponse(
     @SerializedName("answer_file_size") val answerFileSize: Long?,
     @SerializedName("answer_file_path") val answerFilePath: String?,
     @SerializedName("user_comment_student") val userCommentStudent: String?,
-    @SerializedName("user_comment_teacher") val userCommentTeacher: String?,
+    @SerializedName("user_comment_ticher") val userCommentTeacher: String?,
     @SerializedName("user_score") val userScore: Long?,
     @SerializedName("user_date_answer") val userDateAnswer: String?
 )
@@ -166,6 +166,12 @@ data class AnswerOption(
     @SerializedName("text") val text: String,
     @SerializedName("correct") val correct: Boolean,
     @SerializedName("score") val score: Long
+)
+
+data class EditableAnswerOption(
+    val text: String,
+    val isCorrect: Boolean,
+    val score: String
 )
 
 //21.	просмотр статистики по дням

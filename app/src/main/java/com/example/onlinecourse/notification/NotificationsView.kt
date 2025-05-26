@@ -57,7 +57,7 @@ fun NotificationsView(navController: NavHostController, userId: String, role: St
                 Column(
                     modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Top
                 ) {
                     if (isLoading) {
                         Box(
