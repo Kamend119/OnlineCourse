@@ -927,7 +927,6 @@ class LessonStepAnswerViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
-                Log.d("OPTIONS", selectedOptionIds.toString())
                 val rb = { str: String -> str.toRequestBody("text/plain".toMediaTypeOrNull()) }
                 val selectedOptionIdsParts = selectedOptionIds.map {
                     it.toString().toRequestBody("text/plain".toMediaTypeOrNull())

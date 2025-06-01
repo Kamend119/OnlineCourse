@@ -100,7 +100,6 @@ fun StepView(navController: NavHostController, userId: String, role: String, cou
                             }
                             "Студент" -> {
                                 stepDetails?.let { StudentStepView(it, viewModel, context, userId.toLong(), stepId.toLong(), navController) }
-                                Log.d("StudentStepView", "userid: $userId stepType: ${stepDetails?.stepName}, score: ${stepDetails?.userScore}, teacherComment: ${stepDetails?.userCommentTeacher}")
                             }
                             "Администратор" -> {
                                 stepDetails?.let { AdministratorStepView(it, viewModel, context, userId.toLong(), stepId.toLong(), navController) }
