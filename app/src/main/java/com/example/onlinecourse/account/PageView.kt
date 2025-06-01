@@ -61,7 +61,7 @@ fun PageView(navController: NavHostController, userId: String, role: String, vie
         AppBar(
             title = "Профиль пользователя",
             showTopBar = true,
-            showBottomBar = if (role == "Администратор" && userId != viewId) true else false,
+            showBottomBar = role == "Администратор" && userId != viewId,
             navController = navController,
             userId = userId,
             role = role

@@ -46,7 +46,7 @@ fun AppealTopicsAdd(navController: NavHostController, userId: String, role: Stri
     LaunchedEffect(operationResult) {
         if (operationResult == true) {
             Toast.makeText(context, "Тема обращения успешно создана", Toast.LENGTH_SHORT).show()
-            navController.popBackStack()  // Возврат назад после создания
+            navController.popBackStack()
             viewModel.operationResult = null
         } else if (operationResult == false) {
             Toast.makeText(context, errorMessage ?: "Ошибка при создании темы", Toast.LENGTH_SHORT).show()

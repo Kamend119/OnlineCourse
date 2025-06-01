@@ -35,8 +35,6 @@ import com.example.onlinecourse.ui.theme.OnlineCursesTheme
 fun CourseCategoriesEdit(navController: NavHostController, userId: String, role: String, categoryId: String, categoryName: String, categoryDescription: String) {
     val viewModel: CourseCategoryViewModel = viewModel()
     val context = LocalContext.current
-
-    // Инициализируем поля из параметров, но только при первом запуске (LaunchedEffect + remember)
     var name by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
 

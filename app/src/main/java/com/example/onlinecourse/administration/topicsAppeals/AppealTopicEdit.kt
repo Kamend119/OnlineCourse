@@ -38,7 +38,6 @@ fun AppealTopicEdit(navController: NavHostController, userId: String, role: Stri
     var name by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
 
-    // Инициализация полей при первом запуске
     LaunchedEffect(Unit) {
         name = topicName
         description = topicDescription

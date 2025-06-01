@@ -85,10 +85,7 @@ fun MyApp() {
     var role by remember { mutableStateOf("Не распознано") }
 
     NavHost(navController = navController, startDestination = "loading") {
-        // загрузка
         composable("loading") { Loading(navController, userId, role) }
-
-        // аккаунт
         composable("pageView/{userId}/{role}/{viewId}") { backStackEntry ->
             viewId = backStackEntry.arguments?.getString("viewId") ?: "-1"
             PageView(navController,userId,role,viewId)
@@ -97,8 +94,6 @@ fun MyApp() {
             viewId = backStackEntry.arguments?.getString("viewId") ?: "-1"
             ChangeProfileData(navController,userId,role, viewId)
         }
-
-        // администрирование
         composable("administration/{userId}/{role}") { Administration(navController,userId,role) }
         composable("courseCategoriesView/{userId}/{role}") { CourseCategoriesView(navController,userId,role) }
         composable("courseCategoriesAdd/{userId}/{role}") { CourseCategoriesAdd(navController,userId,role) }
@@ -117,23 +112,17 @@ fun MyApp() {
             AppealTopicEdit(navController,userId,role, topicId, topicName, topicDescription)
         }
         composable("registrationTeacher/{userId}/{role}") { RegistrationTeacher(navController,userId,role) }
-
-        // обращения
         composable("appealAdd/{userId}/{role}") { AppealAdd(navController,userId,role) }
         composable("appealsView/{userId}/{role}") { AppealsView(navController,userId,role) }
         composable("appealView/{userId}/{role}/{appealId}") { backStackEntry ->
             appealId = backStackEntry.arguments?.getString("appealId") ?: "-1"
             AppealView(navController,userId,role,appealId)
         }
-
-        // сертификаты
         composable("viewYourCertificates/{userId}/{role}") { ViewYourCertificates(navController,userId,role) }
         composable("viewCertificate/{userId}/{role}/{sertificateId}") { backStackEntry ->
             sertificateId = backStackEntry.arguments?.getString("sertificateId") ?: "-1"
             ViewCertificate(navController,userId,role,sertificateId)
         }
-
-        // курсы
         composable("coursesSearch/{userId}/{role}") { CoursesSearch(navController,userId,role) }
         composable("courseView/{userId}/{role}/{courseId}/{statusName}") { backStackEntry ->
             courseId = backStackEntry.arguments?.getString("courseId") ?: "-1"
@@ -141,8 +130,6 @@ fun MyApp() {
             CourseView(navController,userId,role,courseId,statusName)
         }
         composable("courseCreate/{userId}/{role}") { CourseCreate(navController,userId,role) }
-
-        // уроки
         composable("lessonView/{userId}/{role}/{courseId}/{lessonId}") { backStackEntry ->
             courseId = backStackEntry.arguments?.getString("courseId") ?: "-1"
             lessonId = backStackEntry.arguments?.getString("lessonId") ?: "-1"
@@ -152,8 +139,6 @@ fun MyApp() {
             courseId = backStackEntry.arguments?.getString("courseId") ?: "-1"
             LessonCreate(navController,userId,role,courseId)
         }
-
-        // шаги
         composable("stepView/{userId}/{role}/{courseId}/{lessonId}/{stepId}") { backStackEntry ->
             courseId = backStackEntry.arguments?.getString("courseId") ?: "-1"
             lessonId = backStackEntry.arguments?.getString("lessonId") ?: "-1"
@@ -165,13 +150,9 @@ fun MyApp() {
             lessonId = backStackEntry.arguments?.getString("lessonId") ?: "-1"
             StepCreate(navController,userId,role,courseId,lessonId)
         }
-
-        // первый вход
         composable("entrance") { Entrance(navController) }
         composable("authorization") { Authorization(navController) }
         composable("registration") { Registration(navController) }
-
-        // оценка знаний
         composable("estimation/{userId}/{role}") { Estimation(navController,userId,role) }
         composable("answersForStepView/{userId}/{role}/{stepId}") { backStackEntry ->
             stepId = backStackEntry.arguments?.getString("stepId") ?: "-1"
@@ -182,29 +163,19 @@ fun MyApp() {
             stepId = backStackEntry.arguments?.getString("stepId") ?: "-1"
             AnswerForStepView(navController,userId,role,answerId,stepId)
         }
-
-        // уведомления
         composable("notificationsView/{userId}/{role}") { NotificationsView(navController,userId,role) }
         composable("notificationView/{userId}/{role}/{notificationId}") { backStackEntry ->
             notificationId = backStackEntry.arguments?.getString("notificationId") ?: "-1"
             NotificationView(navController,userId,role,notificationId)
         }
-
-        // настройки
         composable("changingThePassword/{userId}/{role}") { ChangingThePassword(navController,userId,role) }
         composable("settings/{userId}/{role}") { Settings(navController,userId,role) }
-
-        // статистика
         composable("statistic/{userId}/{role}") { Statistic(navController,userId,role) }
         composable("platformStatisticsView/{userId}/{role}") { PlatformStatisticsView(navController,userId,role) }
         composable("appealStatisticsView/{userId}/{role}") { AppealStatisticsView(navController,userId,role) }
         composable("userActivityStatsView/{userId}/{role}") { UserActivityStatsView(navController,userId,role) }
         composable("teacherCoursesView/{userId}/{role}") { TeacherCoursesView(navController,userId,role) }
-
-        // пользователи
         composable("AllUsersView/{userId}/{role}") { AllUsersView(navController,userId,role) }
-
-        // главная страница
         composable("main/{userId}/{role}") {backStackEntry ->
             userId = backStackEntry.arguments?.getString("userId") ?: "-1"
             role = backStackEntry.arguments?.getString("role") ?: "-1"
