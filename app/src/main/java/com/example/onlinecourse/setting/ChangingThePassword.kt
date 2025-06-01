@@ -69,7 +69,7 @@ fun ChangingThePassword(navController: NavHostController, userId: String, role: 
             if (isLoading) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxSize()
                         .padding(top = 32.dp),
                     contentAlignment = Alignment.Center
                 ) {

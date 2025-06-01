@@ -180,7 +180,7 @@ fun AppealAdd(navController: NavHostController, userId: String, role: String) {
             if (isLoading) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxSize()
                         .padding(top = 32.dp),
                     contentAlignment = Alignment.Center
                 ) {

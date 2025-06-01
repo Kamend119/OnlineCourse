@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -50,6 +51,8 @@ fun CourseView(navController: NavHostController, userId: String, role: String, c
     val openDialog = remember { mutableStateOf(false) }
     val warnResult by viewModel.warnResult.collectAsState()
     val enrollmentResult by viewModel.enrollmentResult.collectAsState()
+    val course = viewModel.courseDetail
+    val lessons = viewModel.lessons
 
     LaunchedEffect(warnResult) {
         warnResult?.let {
@@ -70,9 +73,6 @@ fun CourseView(navController: NavHostController, userId: String, role: String, c
         viewModel.loadCourseCategories()
     }
 
-    val course = viewModel.courseDetail
-    val lessons = viewModel.lessons
-
     OnlineCursesTheme {
         AppBar(
             title = "Просмотр курса",
@@ -85,7 +85,7 @@ fun CourseView(navController: NavHostController, userId: String, role: String, c
             if (viewModel.isLoading) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxSize()
                         .padding(top = 32.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -147,7 +147,7 @@ fun CourseView(navController: NavHostController, userId: String, role: String, c
                                                     viewModel.loadCourseDetails(courseId.toLong())
                                                 }
                                             } else {
-                                                Toast.makeText(context, "Ошибка: не удалось найти категорию", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, "Произошла ошибка", Toast.LENGTH_SHORT).show()
                                             }
                                         }
                                     ) {
@@ -307,4 +307,3 @@ fun CourseView(navController: NavHostController, userId: String, role: String, c
         }
     }
 }
-

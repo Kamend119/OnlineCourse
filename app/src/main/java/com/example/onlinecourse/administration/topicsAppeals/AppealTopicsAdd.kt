@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,7 +30,6 @@ import androidx.navigation.NavHostController
 import com.example.onlinecourse.function.AppBar
 import com.example.onlinecourse.ui.theme.OnlineCursesTheme
 import com.example.onlinecourse.network.AppealTopicViewModel
-
 
 @Composable
 fun AppealTopicsAdd(navController: NavHostController, userId: String, role: String) {
@@ -89,7 +89,7 @@ fun AppealTopicsAdd(navController: NavHostController, userId: String, role: Stri
                 if (isLoading) {
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .fillMaxSize()
                             .padding(top = 32.dp),
                         contentAlignment = Alignment.Center
                     ) {

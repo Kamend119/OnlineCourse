@@ -1,7 +1,6 @@
 package com.example.onlinecourse.course.step
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -38,17 +37,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.*
 import com.example.onlinecourse.network.StepDetailResponse
-import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.text.input.KeyboardType
+import com.example.onlinecourse.function.TimePickerWithHMS
 import com.example.onlinecourse.function.getFileName
 import com.example.onlinecourse.function.uriToMultipartBody
 import com.example.onlinecourse.network.EditableAnswerOption
@@ -62,7 +64,6 @@ fun StepView(navController: NavHostController, userId: String, role: String, cou
 
     val stepDetails = viewModel.stepDetails.firstOrNull()
     val isLoading = viewModel.isLoading
-    val errorMessage = viewModel.errorMessage
 
     LaunchedEffect(stepId) {
         viewModel.getStepDetails(stepId.toLong(), userId.toLong())
@@ -80,17 +81,29 @@ fun StepView(navController: NavHostController, userId: String, role: String, cou
             LazyColumn {
                 item {
                     if (isLoading) {
-                        CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(top = 32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                color = MaterialTheme.colorScheme.primary,
+                                strokeWidth = 4.dp,
+                                modifier = Modifier.size(48.dp)
+                            )
+                        }
                     }else {
                         when (role) {
                             "Учитель" -> {
-                                stepDetails?.let { StepEditTeacherView(it, viewModel, context, userId.toLong(), stepId.toLong()) }
+                                stepDetails?.let { StepEditTeacherView(it, viewModel, context, userId.toLong(), stepId.toLong(), navController) }
                             }
                             "Студент" -> {
-                                stepDetails?.let { StudentStepView(it, viewModel, context, userId.toLong(), stepId.toLong()) }
+                                stepDetails?.let { StudentStepView(it, viewModel, context, userId.toLong(), stepId.toLong(), navController) }
+                                Log.d("StudentStepView", "userid: $userId stepType: ${stepDetails?.stepName}, score: ${stepDetails?.userScore}, teacherComment: ${stepDetails?.userCommentTeacher}")
                             }
                             "Администратор" -> {
-                                stepDetails?.let { AdministratorStepView(it, viewModel, context, userId.toLong(), stepId.toLong()) }
+                                stepDetails?.let { AdministratorStepView(it, viewModel, context, userId.toLong(), stepId.toLong(), navController) }
                             }
                         }
                     }
@@ -102,11 +115,11 @@ fun StepView(navController: NavHostController, userId: String, role: String, cou
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun StepEditTeacherView( step: StepDetailResponse, viewModel: LessonStepAnswerViewModel, context: Context, userId: Long, stedId: Long) {
+fun StepEditTeacherView( step: StepDetailResponse, viewModel: LessonStepAnswerViewModel, context: Context, userId: Long, stedId: Long, navController: NavHostController) {
     var name by remember { mutableStateOf(step.stepName ?: "") }
     var content by remember { mutableStateOf(step.stepContent ?: "") }
     var sequenceNumber by remember { mutableStateOf(step.sequenceNumber.toString()) }
-    var timePasses by remember { mutableStateOf(step.timePasses ?: "") }
+    var timePasses by remember { mutableStateOf(step.timePasses ?: "00:00:00") }
     var maxScore by remember { mutableStateOf(step.maxScore.toString()) }
     var obligatory by remember { mutableStateOf(step.obligatory) }
     var fileUri by remember { mutableStateOf<Uri?>(null) }
@@ -129,7 +142,6 @@ fun StepEditTeacherView( step: StepDetailResponse, viewModel: LessonStepAnswerVi
             Toast.makeText(context, "Файл сохранён", Toast.LENGTH_SHORT).show()
         }
     }
-
     val answerOptionsState = remember {
         mutableStateOf(
             step.answerOptions?.map {
@@ -141,26 +153,36 @@ fun StepEditTeacherView( step: StepDetailResponse, viewModel: LessonStepAnswerVi
             }?.toMutableList() ?: mutableListOf()
         )
     }
-
-    LaunchedEffect(updateResult) {
-        updateResult?.let { success ->
-            Toast.makeText(
-                context,
-                if (success) "Шаг успешно обновлён" else "Не удалось обновить шаг",
-                Toast.LENGTH_SHORT
-            ).show()
-
-            viewModel.resetUpdateResult()
+    LaunchedEffect(step.taskFilePath) {
+        if (!step.taskFilePath.isNullOrEmpty()) {
+            viewModel.downloadFile(step.taskFilePath,
+                onSuccess = { responseBody ->
+                    downloadedFileBytes = responseBody.bytes()
+                },
+                onFailure = { message ->
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                }
+            )
         }
     }
-
+    LaunchedEffect(updateResult) {
+        updateResult?.let {
+            Toast.makeText(context, if (it) "Шаг успешно обновлён" else "Не удалось обновить шаг", Toast.LENGTH_SHORT).show()
+            viewModel.resetUpdateResult()
+            if (it) {
+                navController.popBackStack()
+            }
+        }
+    }
     LaunchedEffect(deleteResult) {
         deleteResult?.let {
             Toast.makeText(context, if (it) "Шаг удалён" else "Не удалось удалить шаг", Toast.LENGTH_SHORT).show()
             viewModel.resetDeleteResult()
+            if (it) {
+                navController.popBackStack()
+            }
         }
     }
-
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
@@ -182,14 +204,34 @@ fun StepEditTeacherView( step: StepDetailResponse, viewModel: LessonStepAnswerVi
         )
     }
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Название шага") })
-        OutlinedTextField(value = content, onValueChange = { content = it }, label = { Text("Контент") })
-        OutlinedTextField(value = sequenceNumber, onValueChange = { sequenceNumber = it }, label = { Text("Порядковый номер") })
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(16.dp)) {
+        OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Название шага") },
+            modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(value = content, onValueChange = { content = it }, label = { Text("Контент") },
+            modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(
+            value = sequenceNumber,
+            onValueChange = { if (it.isEmpty() || it.all(Char::isDigit)) sequenceNumber = it },
+            label = { Text("Порядковый номер") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.fillMaxWidth()
+        )
 
         if (step.stepTypeName != "Лекция") {
-            OutlinedTextField(value = timePasses, onValueChange = { timePasses = it }, label = { Text("Время прохождения") })
-            OutlinedTextField(value = maxScore, onValueChange = { maxScore = it }, label = { Text("Максимальный балл") })
+            if (step.stepTypeName != "Вопрос с приложением"){
+                TimePickerWithHMS(
+                    timePasses = timePasses,
+                    onTimeSelected = { newTime -> timePasses = newTime }
+                )
+            }
+            OutlinedTextField(
+                value = maxScore,
+                onValueChange = { if (it.isEmpty() || it.all(Char::isDigit)) maxScore = it },
+                label = { Text("Максимальный балл") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth())
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -274,7 +316,7 @@ fun StepEditTeacherView( step: StepDetailResponse, viewModel: LessonStepAnswerVi
                     Text("(будет загружен)", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
                 }
             } else if (!step.taskFileName.isNullOrBlank()) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(Modifier.padding(10.dp)) {
                     Text(step.taskFileName)
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(onClick = {
@@ -299,9 +341,12 @@ fun StepEditTeacherView( step: StepDetailResponse, viewModel: LessonStepAnswerVi
         Button(onClick = {
             when (step.stepTypeName) {
                 "Лекция" -> {
-                    Log.d("StepEditTeacherView", "updateLectureStep: stepId=${step.sequenceNumber}, name=$name, content=$content, sequenceNumber=$sequenceNumber, obligatory=$obligatory")
+                    if (name.isBlank() || content.isBlank() || sequenceNumber.isBlank()) {
+                        Toast.makeText(context, "Заполните все поля", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
                     viewModel.updateLectureStep(
-                        stepId = step.sequenceNumber,
+                        stepId = stedId,
                         name = name,
                         content = content,
                         sequenceNumber = sequenceNumber.toLong(),
@@ -309,9 +354,12 @@ fun StepEditTeacherView( step: StepDetailResponse, viewModel: LessonStepAnswerVi
                     )
                 }
                 "Вопрос без вариантов ответа" -> {
-                    Log.d("StepEditTeacherView", "updateOpenQuestionStep: stepId=${step.sequenceNumber}, name=$name, content=$content, sequenceNumber=$sequenceNumber, timePasses=$timePasses, obligatory=$obligatory, maxScore=$maxScore")
+                    if (name.isBlank() || content.isBlank() || sequenceNumber.isBlank() || sequenceNumber.isBlank() || timePasses.isBlank() || maxScore.isBlank()) {
+                        Toast.makeText(context, "Заполните все поля", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
                     viewModel.updateOpenQuestionStep(
-                        stepId = step.sequenceNumber,
+                        stepId = stedId,
                         name = name,
                         content = content,
                         sequenceNumber = sequenceNumber.toLong(),
@@ -321,9 +369,12 @@ fun StepEditTeacherView( step: StepDetailResponse, viewModel: LessonStepAnswerVi
                     )
                 }
                 "Вопрос с вариантами ответа" -> {
-                    Log.d("StepEditTeacherView", "updateMultipleChoiceQuestionStep: stepId=${step.sequenceNumber}, name=$name, content=$content, sequenceNumber=$sequenceNumber, timePasses=$timePasses, obligatory=$obligatory, maxScore=$maxScore, textOptions=${answerOptionsState.value.map { it.text }}, correct=${answerOptionsState.value.map { it.isCorrect }}, scores=${answerOptionsState.value.map { it.score }}")
+                    if (name.isBlank() || content.isBlank() || sequenceNumber.isBlank() || sequenceNumber.isBlank() || timePasses.isBlank() || maxScore.isBlank() || answerOptionsState.value.isEmpty() || answerOptionsState.value.any { it.text.isBlank() }) {
+                        Toast.makeText(context, "Заполните все поля", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
                     viewModel.updateMultipleChoiceQuestionStep(
-                        stepId = step.sequenceNumber,
+                        stepId = stedId,
                         name = name,
                         content = content,
                         sequenceNumber = sequenceNumber.toLong(),
@@ -336,21 +387,23 @@ fun StepEditTeacherView( step: StepDetailResponse, viewModel: LessonStepAnswerVi
                     )
                 }
                 "Вопрос с приложением" -> {
+                    if (name.isBlank() || content.isBlank() || sequenceNumber.isBlank() || sequenceNumber.isBlank() || timePasses.isBlank() || maxScore.isBlank()) {
+                        Toast.makeText(context, "Заполните все поля", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
                     if (fileUri != null) {
                         val inputStream = context.contentResolver.openInputStream(fileUri!!)
                         val fileBytes = inputStream?.readBytes()
-                        val fileName = fileUri!!.lastPathSegment ?: "file"
-                        Log.d("StepEditTeacherView", "updateFileUploadQuestionStep: stepId=${step.sequenceNumber}, name=$name, content=$content, sequenceNumber=$sequenceNumber, timePasses=$timePasses, obligatory=$obligatory, maxScore=$maxScore, originalName=$fileName, fileBytesSize=${fileBytes?.size}")
+                        val fileName = getFileName(fileUri!!, context.contentResolver) ?: "file"
                         val file = MultipartBody.Part.createFormData(
                             "file", fileName,
                             fileBytes!!.toRequestBody("*/*".toMediaTypeOrNull())
                         )
                         viewModel.updateFileUploadQuestionStep(
-                            stepId = step.sequenceNumber,
+                            stepId = stedId,
                             name = name,
                             content = content,
                             sequenceNumber = sequenceNumber.toLong(),
-                            timePasses = timePasses,
                             obligatory = obligatory,
                             maxScore = maxScore.toLong(),
                             originalName = fileName,
@@ -358,6 +411,26 @@ fun StepEditTeacherView( step: StepDetailResponse, viewModel: LessonStepAnswerVi
                             sizeBytes = fileBytes.size.toLong(),
                             file = file
                         )
+                    } else if (downloadedFileBytes != null) {
+                        val fileName = step.taskFileName ?: "file"
+                        val file = MultipartBody.Part.createFormData(
+                            "file", fileName,
+                            downloadedFileBytes!!.toRequestBody("*/*".toMediaTypeOrNull())
+                        )
+                        viewModel.updateFileUploadQuestionStep(
+                            stepId = stedId,
+                            name = name,
+                            content = content,
+                            sequenceNumber = sequenceNumber.toLong(),
+                            obligatory = obligatory,
+                            maxScore = maxScore.toLong(),
+                            originalName = fileName,
+                            mimeType = "*/*",
+                            sizeBytes = downloadedFileBytes!!.size.toLong(),
+                            file = file
+                        )
+                    } else {
+                        Toast.makeText(context, "Ошибка: файл отсутствует", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -368,7 +441,7 @@ fun StepEditTeacherView( step: StepDetailResponse, viewModel: LessonStepAnswerVi
         Spacer(modifier = Modifier.height(8.dp))
         Button(
             onClick = { showDialog = true },
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
         ) {
             Text("Удалить")
         }
@@ -377,7 +450,7 @@ fun StepEditTeacherView( step: StepDetailResponse, viewModel: LessonStepAnswerVi
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun StudentStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswerViewModel, context: Context, userId: Long, stedId: Long) {
+fun StudentStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswerViewModel, context: Context, userId: Long, stedId: Long, navController: NavHostController) {
     val isEditable = stepDetail.userScore == null
     var answerText by remember { mutableStateOf(stepDetail.userAnswerText ?: "") }
     var comment by remember { mutableStateOf(stepDetail.userCommentStudent ?: "") }
@@ -387,11 +460,30 @@ fun StudentStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswer
         mutableStateOf(stepDetail.selectedOptions?.map { it.id }?.toMutableSet() ?: mutableSetOf<Long>())
     }
     val answerResult by viewModel.answerResult.collectAsState()
-
     LaunchedEffect(answerResult) {
         answerResult?.let {
-            Toast.makeText(context, if (it) "Ответ сохранен" else "Произошла ошибка", Toast.LENGTH_SHORT).show()
+            if (it) {
+                Toast.makeText(context, "Ответ сохранен", Toast.LENGTH_SHORT).show()
+                navController.popBackStack()
+            } else {
+                Toast.makeText(context, "Произошла ошибка при отправке", Toast.LENGTH_SHORT).show()
+            }
             viewModel.resetAnswerResult()
+        }
+    }
+    var fileUri by remember { mutableStateOf<Uri?>(null) }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        fileUri = uri
+    }
+    var downloadedFileBytes by remember { mutableStateOf<ByteArray?>(null) }
+    val saveFileLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument()
+    ) { uri: Uri? ->
+        uri?.let {
+            context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                downloadedFileBytes?.let { outputStream.write(it) }
+            }
+            Toast.makeText(context, "Файл сохранён", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -405,7 +497,7 @@ fun StudentStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswer
         }
 
         when (stepDetail.stepTypeName) {
-            "Открытый вопрос" -> {
+            "Вопрос без вариантов ответа" -> {
                 OutlinedTextField(
                     value = answerText,
                     onValueChange = { answerText = it },
@@ -421,10 +513,10 @@ fun StudentStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswer
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable(enabled = isEditable) {
-                                if (selectedOptionIds.contains(option.id)) {
-                                    selectedOptionIds.remove(option.id)
+                                selectedOptionIds = if (selectedOptionIds.contains(option.id)) {
+                                    (selectedOptionIds - option.id).toMutableSet()
                                 } else {
-                                    selectedOptionIds.add(option.id)
+                                    (selectedOptionIds + option.id).toMutableSet()
                                 }
                             }
                             .padding(vertical = 4.dp)
@@ -433,8 +525,11 @@ fun StudentStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswer
                             checked = selectedOptionIds.contains(option.id),
                             onCheckedChange = { checked ->
                                 if (isEditable) {
-                                    if (checked) selectedOptionIds.add(option.id)
-                                    else selectedOptionIds.remove(option.id)
+                                    selectedOptionIds = if (checked) {
+                                        (selectedOptionIds + option.id).toMutableSet()
+                                    } else {
+                                        (selectedOptionIds - option.id).toMutableSet()
+                                    }
                                 }
                             }
                         )
@@ -445,33 +540,31 @@ fun StudentStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswer
             "Вопрос с приложением" -> {
                 Text("Файл задания: ${stepDetail.taskFileName ?: "нет"}", modifier = Modifier.padding(top = 8.dp))
                 Button(onClick = {
-                    stepDetail.taskFilePath?.let {
-                        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                            addCategory(Intent.CATEGORY_OPENABLE)
-                            type = "*/*"
-                            putExtra(Intent.EXTRA_TITLE, stepDetail.taskFileName)
-                        }
-                        (context as? Activity)?.startActivityForResult(intent, 1001)
-                    }
+                    viewModel.downloadFile(stepDetail.taskFilePath ?: "", onSuccess = { body ->
+                        val bytes = body.bytes()
+                        downloadedFileBytes = bytes
+                        saveFileLauncher.launch(stepDetail.taskFileName ?: "file")
+                    })
                 }) {
-                    Text("Скачать файл")
+                    Text("Скачать")
                 }
 
                 if (isEditable) {
-                    Button(
-                        onClick = {
-                            val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-                                type = "*/*"
-                            }
-                            (context as? Activity)?.startActivityForResult(intent, 1002)
-                        },
-                        modifier = Modifier.padding(top = 8.dp)
-                    ) {
-                        Text("Загрузить файл ответа")
+                    if (fileUri != null) {
+                        val fileName =
+                            getFileName(fileUri!!, context.contentResolver) ?: "Выбран файл"
+                        Row(Modifier.padding(10.dp)) {
+                            Text(fileName)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                "(будет загружен)",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.Gray
+                            )
+                        }
                     }
-
-                    selectedFileUri?.let {
-                        Text("Выбран файл: $it", modifier = Modifier.padding(top = 4.dp))
+                    Button(onClick = { launcher.launch("*/*") }) {
+                        Text(if (stepDetail.answerFileName != null || fileUri != null) "Изменить файл" else "Добавить файл")
                     }
                 }
             }
@@ -482,9 +575,21 @@ fun StudentStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswer
                 value = comment,
                 onValueChange = { comment = it },
                 label = { Text("Комментарий") },
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
                 enabled = isEditable
             )
+
+            stepDetail.userCommentTeacher?.let {
+                if (!stepDetail.userCommentTeacher.isBlank()) {
+                    Text("Комментарий от преподавателя: $it", modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
+            }
+            stepDetail.userScore?.let {
+                Text("Оценка: $it", modifier = Modifier.padding(top = 4.dp))
+            }
 
             if (isEditable) {
                 Button(
@@ -505,7 +610,12 @@ fun StudentStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswer
                     showConfirmDialog = false
 
                     when (stepDetail.stepTypeName) {
-                        "Открытый вопрос" -> {
+                        "Вопрос без вариантов ответа" -> {
+                            if (answerText.isBlank() || comment.isBlank()) {
+                                Toast.makeText(context, "Заполните все поля", Toast.LENGTH_SHORT).show()
+                                return@TextButton
+                            }
+
                             if (stepDetail.userAnswerId != null) {
                                 viewModel.updateLessonStepAnswer(
                                     answerId = stepDetail.userAnswerId,
@@ -524,6 +634,11 @@ fun StudentStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswer
                             }
                         }
                         "Вопрос с вариантами ответа" -> {
+                            if (selectedOptionIds.isEmpty() || comment.isBlank()) {
+                                Toast.makeText(context, "Выберите хотя бы один вариант и заполните комментарий", Toast.LENGTH_SHORT).show()
+                                return@TextButton
+                            }
+
                             if (stepDetail.userAnswerId != null) {
                                 viewModel.updateLessonStepAnswer(
                                     answerId = stepDetail.userAnswerId,
@@ -542,24 +657,36 @@ fun StudentStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswer
                             }
                         }
                         "Вопрос с приложением" -> {
-                            selectedFileUri?.let { uri ->
-                                val file = uriToMultipartBody(uri, context) ?: return@let
-                                if (stepDetail.userAnswerId != null) {
-                                    viewModel.updateLessonStepAnswer(
-                                        answerId = stepDetail.userAnswerId,
-                                        userId = userId,
-                                        stepLessonId = stedId,
-                                        commentStudent = comment,
-                                        file = file
-                                    )
-                                } else {
-                                    viewModel.answerLessonStep(
-                                        userId = userId,
-                                        stepLessonId = stedId,
-                                        commentStudent = comment,
-                                        file = file
-                                    )
-                                }
+                            val inputStream = context.contentResolver.openInputStream(fileUri!!)
+                            val fileBytes = inputStream?.readBytes()
+                            val fileName = getFileName(fileUri!!, context.contentResolver) ?: "file"
+                            val file = fileUri?.let { uriToMultipartBody(it, context) }
+                            if (file == null || comment.isBlank()) {
+                                Toast.makeText(context, "Заполните все поля", Toast.LENGTH_SHORT).show()
+                                return@TextButton
+                            }
+
+                            if (stepDetail.userAnswerId != null) {
+                                viewModel.updateLessonStepAnswer(
+                                    answerId = stepDetail.userAnswerId,
+                                    userId = userId,
+                                    stepLessonId = stedId,
+                                    commentStudent = comment,
+                                    originalName = fileName,
+                                    mimeType = "*/*",
+                                    sizeBytes = fileBytes!!.size.toLong(),
+                                    file = file
+                                )
+                            } else {
+                                viewModel.answerLessonStep(
+                                    userId = userId,
+                                    stepLessonId = stedId,
+                                    commentStudent = comment,
+                                    originalName = fileName,
+                                    mimeType = "*/*",
+                                    sizeBytes = fileBytes!!.size.toLong(),
+                                    file = file
+                                )
                             }
                         }
                     }
@@ -579,17 +706,39 @@ fun StudentStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswer
 }
 
 @Composable
-fun AdministratorStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswerViewModel, context: Context, userId: Long, stedId: Long) {
+fun AdministratorStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswerViewModel, context: Context, userId: Long, stedId: Long, navController: NavHostController) {
     var showWarningDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     val deleteResult by viewModel.deleteResult.collectAsState()
     val warnResult by viewModel.warnResult.collectAsState()
 
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("*/*")
+    ) { uri: Uri? ->
+        uri?.let {
+            viewModel.downloadFile(stepDetail.taskFilePath ?: "", onSuccess = { body ->
+                try {
+                    context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                        outputStream.write(body.bytes())
+                    }
+                    Toast.makeText(context, "Файл сохранён", Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Ошибка записи: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }, onFailure = { errorMsg ->
+                Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show()
+            })
+        }
+    }
+
     LaunchedEffect(deleteResult) {
         deleteResult?.let {
             Toast.makeText(context, if (it) "Шаг удалён" else "Не удалось удалить шаг", Toast.LENGTH_SHORT).show()
             viewModel.resetDeleteResult()
+            if (it) {
+                navController.popBackStack()
+            }
         }
     }
 
@@ -622,12 +771,8 @@ fun AdministratorStepView( stepDetail: StepDetailResponse, viewModel: LessonStep
                     modifier = Modifier.padding(top = 8.dp)
                 )
                 Button(onClick = {
-                    val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                        addCategory(Intent.CATEGORY_OPENABLE)
-                        type = "*/*"
-                        putExtra(Intent.EXTRA_TITLE, stepDetail.taskFileName)
-                    }
-                    (context as? Activity)?.startActivityForResult(intent, 1001)
+                    val filename = stepDetail.taskFileName ?: "task_file"
+                    launcher.launch(filename)
                 }, modifier = Modifier.padding(top = 8.dp)) {
                     Text("Скачать файл")
                 }
@@ -642,13 +787,13 @@ fun AdministratorStepView( stepDetail: StepDetailResponse, viewModel: LessonStep
         ) {
             Button(
                 onClick = { showWarningDialog = true },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
                 Text("Выдать предупреждение")
             }
             Button(
                 onClick = { showDeleteDialog = true },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
             ) {
                 Text("Удалить")
             }

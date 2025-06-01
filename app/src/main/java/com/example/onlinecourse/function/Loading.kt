@@ -1,7 +1,7 @@
 package com.example.onlinecourse.function
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
@@ -32,7 +32,7 @@ fun Loading(navController: NavHostController, userId: String, role: String) {
     if (isLoading) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .padding(top = 32.dp),
             contentAlignment = Alignment.Center
         ) {

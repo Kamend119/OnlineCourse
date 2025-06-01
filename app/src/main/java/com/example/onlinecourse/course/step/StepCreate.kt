@@ -34,13 +34,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.onlinecourse.function.AppBar
+import com.example.onlinecourse.function.TimePickerWithHMS
 import com.example.onlinecourse.network.StepCreationViewModel
 import com.example.onlinecourse.ui.theme.OnlineCursesTheme
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
-
 
 enum class StepType(val displayName: String) {
     LECTURE("Лекция"),
@@ -67,7 +67,7 @@ fun StepCreate(navController: NavHostController, userId: String, role: String, c
     var content by remember { mutableStateOf("") }
     var sequenceNumber by remember { mutableStateOf("") }
     var obligatory by remember { mutableStateOf(false) }
-    var timePasses by remember { mutableStateOf("") }
+    var timePasses by remember { mutableStateOf("00:00:00") }
     var maxScore by remember { mutableStateOf("") }
 
     val parsedSequence = sequenceNumber.toLongOrNull()
@@ -206,11 +206,9 @@ fun StepCreate(navController: NavHostController, userId: String, role: String, c
 
                             if (selectedStepType != StepType.LECTURE) {
                                 Spacer(modifier = Modifier.height(8.dp))
-                                OutlinedTextField(
-                                    value = timePasses,
-                                    onValueChange = { timePasses = it },
-                                    label = { Text("Время выполнения (например, 00:10:00)") },
-                                    modifier = Modifier.fillMaxWidth()
+                                TimePickerWithHMS(
+                                    timePasses = timePasses,
+                                    onTimeSelected = { timePasses = it }
                                 )
                             }
 

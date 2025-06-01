@@ -167,7 +167,6 @@ data class AnswerOption(
     @SerializedName("correct") val correct: Boolean,
     @SerializedName("score") val score: Long
 )
-
 data class EditableAnswerOption(
     val text: String,
     val isCorrect: Boolean,

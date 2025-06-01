@@ -1,10 +1,10 @@
 package com.example.onlinecourse.administration.topicsAppeals
 
-
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,8 +29,6 @@ import androidx.navigation.NavHostController
 import com.example.onlinecourse.function.AppBar
 import com.example.onlinecourse.network.AppealTopicViewModel
 import com.example.onlinecourse.ui.theme.OnlineCursesTheme
-
-
 
 @Composable
 fun AppealTopicEdit(navController: NavHostController, userId: String, role: String, topicId: String, topicName: String, topicDescription: String) {
@@ -95,7 +93,7 @@ fun AppealTopicEdit(navController: NavHostController, userId: String, role: Stri
                 if (isLoading) {
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .fillMaxSize()
                             .padding(top = 32.dp),
                         contentAlignment = Alignment.Center
                     ) {

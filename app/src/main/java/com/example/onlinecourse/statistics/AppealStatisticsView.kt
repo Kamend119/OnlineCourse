@@ -52,10 +52,10 @@ fun AppealStatisticsView(navController: NavHostController, userId: String, role:
                 when {
                     isLoading ->
                         Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 32.dp),
-                        contentAlignment = Alignment.Center
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(top = 32.dp),
+                            contentAlignment = Alignment.Center
                         ) {
                             CircularProgressIndicator(
                                 color = MaterialTheme.colorScheme.primary,

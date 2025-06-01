@@ -1,6 +1,7 @@
 package com.example.onlinecourse.network
 
 import RetrofitClient
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -926,13 +927,16 @@ class LessonStepAnswerViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
+                Log.d("OPTIONS", selectedOptionIds.toString())
                 val rb = { str: String -> str.toRequestBody("text/plain".toMediaTypeOrNull()) }
-                val selectedOptionsString = selectedOptionIds.joinToString(separator = ",")
+                val selectedOptionIdsParts = selectedOptionIds.map {
+                    it.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+                }
                 val response = RetrofitClient.instance.answerLessonStep(
                     userId = rb(userId.toString()),
                     stepLessonId = rb(stepLessonId.toString()),
                     answerText = answerText?.let { rb(it) } ?: rb(""),
-                    selectedOptionIds = selectedOptionsString?.let { rb(it) } ?: rb(""),
+                    selectedOptionIds = selectedOptionIdsParts,
                     originalName = originalName?.let { rb(it) },
                     mimeType = mimeType?.let { rb(it) },
                     sizeBytes = sizeBytes?.toString()?.let { rb(it) },
@@ -974,14 +978,16 @@ class LessonStepAnswerViewModel : ViewModel() {
             isLoading = true
             try {
                 val rb = { str: String -> str.toRequestBody("text/plain".toMediaTypeOrNull()) }
-                val selectedOptionsString = selectedOptionIds.joinToString(",")
+                val selectedOptionIdsParts = selectedOptionIds.map {
+                    it.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+                }
 
                 val response = RetrofitClient.instance.updateLessonStepAnswer(
                     answerId = rb(answerId.toString()),
                     userId = rb(userId.toString()),
                     stepLessonId = rb(stepLessonId.toString()),
                     answerText = answerText?.let { rb(it) } ?: rb(""),
-                    selectedOptionIds = rb(selectedOptionsString),
+                    selectedOptionIds = selectedOptionIdsParts,
                     originalName = originalName?.let { rb(it) },
                     mimeType = mimeType?.let { rb(it) },
                     sizeBytes = sizeBytes?.toString()?.let { rb(it) },
@@ -1143,7 +1149,6 @@ class LessonStepAnswerViewModel : ViewModel() {
         name: String,
         content: String,
         sequenceNumber: Long,
-        timePasses: String,
         obligatory: Boolean,
         maxScore: Long,
         originalName: String,
@@ -1162,7 +1167,6 @@ class LessonStepAnswerViewModel : ViewModel() {
                     name = rb(name),
                     content = rb(content),
                     sequenceNumber = rb(sequenceNumber.toString()),
-                    timePasses = rb(timePasses),
                     obligatory = rb(obligatory.toString()),
                     maxScore = rb(maxScore.toString()),
                     originalName = rb(originalName),
@@ -1604,20 +1608,6 @@ class StepAnswersViewModel : ViewModel() {
                 onSuccess(response)
             } catch (e: Exception) {
                 errorMessage = "Ошибка при получении деталей шага: ${e.message}"
-            } finally {
-                isLoading = false
-            }
-        }
-    }
-
-    fun loadAnswerDetail(answerId: Long) {
-        viewModelScope.launch {
-            isLoading = true
-            try {
-                selectedAnswer = RetrofitClient.instance.getAnswerForStep(answerId).firstOrNull()
-                errorMessage = null
-            } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке ответа: ${e.message}"
             } finally {
                 isLoading = false
             }

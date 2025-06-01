@@ -98,7 +98,7 @@ fun UserActivityStatsView(navController: NavHostController, userId: String, role
                     isLoading ->
                         Box(
                             modifier = Modifier
-                                .fillMaxWidth()
+                                .fillMaxSize()
                                 .padding(top = 32.dp),
                             contentAlignment = Alignment.Center
                         ) {
