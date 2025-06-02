@@ -1558,11 +1558,7 @@ class StepAnswersViewModel : ViewModel() {
         private set
     var stepDetails by mutableStateOf<StepDetailResponse?>(null)
         private set
-    var fileResponse by mutableStateOf<Response<ResponseBody>?>(null)
-        private set
     var answersForStep by mutableStateOf<List<AnswersForStepResponse>>(emptyList())
-        private set
-    var selectedAnswer by mutableStateOf<AnswerForStepResponse?>(null)
         private set
     var teacherCourses by mutableStateOf<List<CourseByTeacherResponse>>(emptyList())
         private set
@@ -1574,6 +1570,10 @@ class StepAnswersViewModel : ViewModel() {
         private set
     private val _operationSuccess = MutableStateFlow<Boolean?>(null)
     val operationSuccess: StateFlow<Boolean?> = _operationSuccess
+    var fileDownloadLoading by mutableStateOf(false)
+        private set
+    var fileDownloadError by mutableStateOf<String?>(null)
+        private set
 
     fun resetOperationSuccess() {
         _operationSuccess.value = null
@@ -1630,19 +1630,29 @@ class StepAnswersViewModel : ViewModel() {
         }
     }
 
-    fun downloadFile(filePath: String) {
+    fun downloadFile(
+        filePath: String,
+        onSuccess: (ResponseBody) -> Unit,
+        onFailure: (String) -> Unit = {}
+    ) {
         viewModelScope.launch {
-            isLoading = true
+            fileDownloadLoading = true
+            fileDownloadError = null
             try {
                 val response = RetrofitClient.instance.getFile(filePath)
-                fileResponse = response
-                if (!response.isSuccessful) {
-                    errorMessage = "Ошибка при загрузке файла: ${response.message()}"
+                if (response.isSuccessful && response.body() != null) {
+                    onSuccess(response.body()!!)
+                } else {
+                    val message = "Ошибка при скачивании файла: ${response.code()} ${response.message()}"
+                    fileDownloadError = message
+                    onFailure(message)
                 }
             } catch (e: Exception) {
-                errorMessage = "Ошибка при получении файла: ${e.message}"
+                val message = "Ошибка при скачивании файла: ${e.message}"
+                fileDownloadError = message
+                onFailure(message)
             } finally {
-                isLoading = false
+                fileDownloadLoading = false
             }
         }
     }

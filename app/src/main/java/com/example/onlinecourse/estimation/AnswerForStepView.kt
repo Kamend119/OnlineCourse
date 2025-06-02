@@ -1,7 +1,9 @@
 package com.example.onlinecourse.estimation
 
+import android.net.Uri
 import android.widget.Toast
-import androidx.compose.foundation.clickable
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -57,7 +59,7 @@ fun AnswerForStepView(navController: NavHostController, userId: String, role: St
             result?.userScore?.let {
                 scoreInput = TextFieldValue(it.toString())
             }
-            commentInput = TextFieldValue(result?.userCommentTeacher.toString())
+            commentInput = TextFieldValue(if (result?.userCommentTeacher.toString() != "null") { result?.userCommentTeacher.toString() } else  "")
         }
     }
 
@@ -65,6 +67,18 @@ fun AnswerForStepView(navController: NavHostController, userId: String, role: St
         operationSuccess?.let {
             Toast.makeText(context, if (it) "Ответ оценен" else "Ошибка при оценивании", Toast.LENGTH_SHORT).show()
             viewModel.resetOperationSuccess()
+        }
+    }
+
+    var downloadedFileBytes by remember { mutableStateOf<ByteArray?>(null) }
+    val saveFileLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument()
+    ) { uri: Uri? ->
+        uri?.let {
+            context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                downloadedFileBytes?.let { outputStream.write(it) }
+            }
+            Toast.makeText(context, "Файл сохранён", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -115,6 +129,23 @@ fun AnswerForStepView(navController: NavHostController, userId: String, role: St
                             }
                         }
 
+                        if (s.stepTypeName == "Вопрос с приложением") {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text("Файл задания:", style = MaterialTheme.typography.titleMedium)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text("${s.taskFileName}", style = MaterialTheme.typography.bodyMedium)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Button(onClick = {
+                                viewModel.downloadFile(s.taskFilePath ?: "", onSuccess = { body ->
+                                    val bytes = body.bytes()
+                                    downloadedFileBytes = bytes
+                                    saveFileLauncher.launch(s.taskFileName ?: "file")
+                                })
+                            }) {
+                                Text("Скачать")
+                            }
+                        }
+
                         Spacer(modifier = Modifier.height(16.dp))
                         HorizontalDivider()
                         Spacer(modifier = Modifier.height(16.dp))
@@ -127,6 +158,7 @@ fun AnswerForStepView(navController: NavHostController, userId: String, role: St
 
                         if (s.stepTypeName == "Вопрос с вариантами ответа") {
                             Text("Выбранные опции:", style = MaterialTheme.typography.titleMedium)
+                            Spacer(modifier = Modifier.height(8.dp))
                             s.selectedOptions?.forEach {
                                 Text("- ${it.text} (Баллы: ${it.score})")
                             }
@@ -135,19 +167,19 @@ fun AnswerForStepView(navController: NavHostController, userId: String, role: St
                         if (s.stepTypeName == "Вопрос с приложением" && !s.answerFileName.isNullOrEmpty()) {
                             Spacer(modifier = Modifier.height(8.dp))
                             Text("Файл ответа: ${s.answerFileName}")
-                            Text(
-                                text = "Скачать",
-                                modifier = Modifier
-                                    .clickable {
-                                        viewModel.downloadFile(s.answerFilePath ?: "")
-                                        Toast.makeText(context, "Загрузка файла...", Toast.LENGTH_SHORT).show()
-                                    }
-                                    .padding(vertical = 8.dp),
-                                color = MaterialTheme.colorScheme.primary
-                            )
+                            Button(onClick = {
+                                viewModel.downloadFile(s.answerFilePath ?: "", onSuccess = { body ->
+                                    val bytes = body.bytes()
+                                    downloadedFileBytes = bytes
+                                    saveFileLauncher.launch(s.answerFileName ?: "file")
+                                })
+                            }) {
+                                Text("Скачать")
+                            }
                         }
 
                         if (!s.userCommentStudent.isNullOrEmpty()) {
+                            Spacer(modifier = Modifier.height(16.dp))
                             Text("Комментарий студента: ${s.userCommentStudent}")
                         }
 
@@ -195,6 +227,7 @@ fun AnswerForStepView(navController: NavHostController, userId: String, role: St
                                     score = score,
                                     commentTeacher = commentInput.text
                                 )
+                                navController.popBackStack()
                             }
                         }, modifier = Modifier.fillMaxWidth()) {
                             Text(if (s.userScore != null) "Изменить оценку" else "Оценить")

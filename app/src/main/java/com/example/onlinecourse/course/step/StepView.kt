@@ -37,7 +37,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.*
 import com.example.onlinecourse.network.StepDetailResponse
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -315,7 +314,7 @@ fun StepEditTeacherView( step: StepDetailResponse, viewModel: LessonStepAnswerVi
                     Text("(будет загружен)", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
                 }
             } else if (!step.taskFileName.isNullOrBlank()) {
-                Row(Modifier.padding(10.dp)) {
+                Column(Modifier.padding(10.dp)) {
                     Text(step.taskFileName)
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(onClick = {
@@ -564,6 +563,18 @@ fun StudentStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswer
                     }
                     Button(onClick = { launcher.launch("*/*") }) {
                         Text(if (stepDetail.answerFileName != null || fileUri != null) "Изменить файл" else "Добавить файл")
+                    }
+                }
+                else {
+                    Text("Файл ответа: ${stepDetail.answerFileName ?: "нет"}", modifier = Modifier.padding(top = 8.dp))
+                    Button(onClick = {
+                        viewModel.downloadFile(stepDetail.answerFilePath ?: "", onSuccess = { body ->
+                            val bytes = body.bytes()
+                            downloadedFileBytes = bytes
+                            saveFileLauncher.launch(stepDetail.answerFileName ?: "file")
+                        })
+                    }) {
+                        Text("Скачать")
                     }
                 }
             }
