@@ -760,6 +760,7 @@ fun AdministratorStepView( stepDetail: StepDetailResponse, viewModel: LessonStep
     }
 
     Column(modifier = Modifier.padding(16.dp)) {
+        Text("Тип шага: ${stepDetail.stepTypeName}", style = MaterialTheme.typography.titleMedium)
         Text("Название: ${stepDetail.stepName}", style = MaterialTheme.typography.titleMedium)
         Text("Контент: ${stepDetail.stepContent}", modifier = Modifier.padding(top = 8.dp))
         Text("Обязательный: ${if (stepDetail.obligatory) "Да" else "Нет"}", modifier = Modifier.padding(top = 8.dp))

@@ -1,7 +1,6 @@
 package com.example.onlinecourse.network
 
 import RetrofitClient
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -32,7 +31,7 @@ class DailyStatisticsViewModel : ViewModel() {
                 dailyStatistics = RetrofitClient.instance.getDailyStatistics(userId)
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке статистики по дням: ${e.message}"
+                errorMessage = "Ошибка при загрузке статистики по дням"
             } finally {
                 isLoading = false
             }
@@ -85,7 +84,7 @@ class RegisterUserViewModel : ViewModel() {
                 userId = responseId
                 onSuccess(userId!!)
             } catch (e: Exception) {
-                registrationResult = "Ошибка регистрации: ${e.message}"
+                registrationResult = "Ошибка регистрации"
             } finally {
                 isLoading = false
             }
@@ -126,7 +125,7 @@ class LoginViewModel : ViewModel() {
                     loginResult = "Неверный логин или пароль"
                 }
             } catch (e: Exception) {
-                loginResult = "Ошибка авторизации: ${e.message}"
+                loginResult = "Ошибка авторизации"
             } finally {
                 isLoading = false
             }
@@ -178,7 +177,7 @@ class ChangePasswordViewModel : ViewModel() {
                     passwordUpdated.value = false
                 }
             } catch (e: Exception) {
-                errorMessage.value = "Ошибка при смене пароля: ${e.message}"
+                errorMessage.value = "Ошибка при смене пароля"
                 passwordUpdated.value = false
             } finally {
                 isLoading.value = false
@@ -208,7 +207,7 @@ class UserNotificationsViewModel : ViewModel() {
                     "Уведомлений нет"
                 }
             } catch (e: Exception) {
-                loadResult = "Ошибка загрузки уведомлений: ${e.message}"
+                loadResult = "Ошибка загрузки уведомлений"
             } finally {
                 isLoading = false
             }
@@ -238,7 +237,7 @@ class NotificationDetailViewModel : ViewModel() {
                     notificationDetail = null
                 }
             } catch (e: Exception) {
-                loadResult = "Ошибка загрузки уведомления: ${e.message}"
+                loadResult = "Ошибка загрузки уведомления"
                 notificationDetail = null
             } finally {
                 isLoading = false
@@ -319,7 +318,7 @@ class UserProfileViewModel : ViewModel() {
                     errorMessage = "Профиль пользователя не найден"
                 }
             } catch (e: Exception) {
-                errorMessage = "Ошибка загрузки профиля: ${e.message}"
+                errorMessage = "Ошибка загрузки профиля"
             } finally {
                 isLoading = false
             }
@@ -333,10 +332,10 @@ class UserProfileViewModel : ViewModel() {
                 val response = RetrofitClient.instance.getFile(filePath)
                 fileResponse = response
                 if (!response.isSuccessful) {
-                    errorMessage = "Ошибка при загрузке файла: ${response.message()}"
+                    errorMessage = "Ошибка при загрузке файла"
                 }
             } catch (e: Exception) {
-                errorMessage = "Ошибка при получении файла: ${e.message}"
+                errorMessage = "Ошибка при получении файла"
             } finally {
                 isLoading = false
             }
@@ -355,7 +354,7 @@ class UserProfileViewModel : ViewModel() {
                     deletionResult = "Не удалось удалить пользователя"
                 }
             } catch (e: Exception) {
-                deletionResult = "Ошибка при удалении: ${e.message}"
+                deletionResult = "Ошибка при удалении"
             } finally {
                 isLoading = false
             }
@@ -391,14 +390,14 @@ class UserProfileViewModel : ViewModel() {
                     fileType = fileType?.let { rb(it) },
                     originalName = originalName?.let { rb(it) },
                     mimeType = mimeType?.let { rb(it) },
-                    sizeBytes = rb(fileSize),  // Теперь это строка с числом (например, "0")
+                    sizeBytes = rb(fileSize),
                     file = file
                 )
                 saveResult = response.body() == true
                 isLoading = false
             } catch (e: Exception) {
                 saveResult = false
-                errorMessage = "Ошибка при обновлении: ${e.message ?: "неизвестная ошибка"}"
+                errorMessage = "Ошибка при обновлении"
             } finally {
                 isLoading = false
             }
@@ -418,7 +417,7 @@ class UserProfileViewModel : ViewModel() {
                     "Не удалось выдать предупреждение"
                 }
             } catch (e: Exception) {
-                warningResult = "Ошибка при выдаче предупреждения: ${e.message}"
+                warningResult = "Ошибка при выдаче предупреждения"
             } finally {
                 isLoading = false
             }
@@ -449,7 +448,7 @@ class AppealViewModel : ViewModel() {
                 userAppeals = RetrofitClient.instance.getUserAppeals(userId)
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке обращений: ${e.message}"
+                errorMessage = "Ошибка при загрузке обращений"
             } finally {
                 isLoading = false
             }
@@ -464,7 +463,7 @@ class AppealViewModel : ViewModel() {
                 appealDetail = response.firstOrNull()
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при получении деталей обращения: ${e.message}"
+                errorMessage = "Ошибка при получении деталей обращения"
             } finally {
                 isLoading = false
             }
@@ -478,7 +477,7 @@ class AppealViewModel : ViewModel() {
                 topics = RetrofitClient.instance.getTopicsAppeals()
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке тем: ${e.message}"
+                errorMessage = "Ошибка при загрузке тем"
             } finally {
                 isLoading = false
             }
@@ -492,7 +491,7 @@ class AppealViewModel : ViewModel() {
                 allAppeals = RetrofitClient.instance.getAllAppeals()
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке всех обращений: ${e.message}"
+                errorMessage = "Ошибка при загрузке всех обращений"
             } finally {
                 isLoading = false
             }
@@ -528,7 +527,7 @@ class AppealViewModel : ViewModel() {
                 ).body()
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при отправке обращения: ${e.message}"
+                errorMessage = "Ошибка при отправке обращения"
                 operationSuccess = false
             } finally {
                 isLoading = false
@@ -547,7 +546,7 @@ class AppealViewModel : ViewModel() {
                 ).body()
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при отправке ответа: ${e.message}"
+                errorMessage = "Ошибка при отправке ответа"
                 operationSuccess = false
             } finally {
                 isLoading = false
@@ -578,7 +577,7 @@ class CourseDataViewModel : ViewModel() {
                 courseCategories = RetrofitClient.instance.getCourseCategories()
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка загрузки категорий курсов: ${e.message}"
+                errorMessage = "Ошибка загрузки категорий курсов"
             } finally {
                 isLoading = false
             }
@@ -592,7 +591,7 @@ class CourseDataViewModel : ViewModel() {
                 coursesByTeacher = RetrofitClient.instance.getCoursesByTeacher(teacherId)
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка загрузки курсов учителя: ${e.message}"
+                errorMessage = "Ошибка загрузки курсов учителя"
             } finally {
                 isLoading = false
             }
@@ -606,7 +605,7 @@ class CourseDataViewModel : ViewModel() {
                 allCourses = RetrofitClient.instance.getAllCourses()
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка загрузки всех курсов: ${e.message}"
+                errorMessage = "Ошибка загрузки всех курсов"
             } finally {
                 isLoading = false
             }
@@ -620,7 +619,7 @@ class CourseDataViewModel : ViewModel() {
                 coursesByUserAndStatus = RetrofitClient.instance.getCoursesByUserAndStatus(userId, statusName)
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка загрузки курсов пользователя по статусу: ${e.message}"
+                errorMessage = "Ошибка загрузки курсов пользователя по статусу"
             } finally {
                 isLoading = false
             }
@@ -664,7 +663,7 @@ class CourseDetailsViewModel : ViewModel() {
                 categories = RetrofitClient.instance.getCourseCategories()
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке категорий: ${e.message}"
+                errorMessage = "Ошибка при загрузке категорий"
             } finally {
                 isLoading = false
             }
@@ -683,7 +682,7 @@ class CourseDetailsViewModel : ViewModel() {
                     errorMessage = "Курс не найден"
                 }
             } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке курса: ${e.message}"
+                errorMessage = "Ошибка при загрузке курса"
             } finally {
                 isLoading = false
             }
@@ -697,7 +696,7 @@ class CourseDetailsViewModel : ViewModel() {
                 lessons = RetrofitClient.instance.getLessonsByCourse(courseId)
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке уроков: ${e.message}"
+                errorMessage = "Ошибка при загрузке уроков"
             } finally {
                 isLoading = false
             }
@@ -739,7 +738,7 @@ class CourseDetailsViewModel : ViewModel() {
                     "Не удалось обновить курс"
                 }
             } catch (e: Exception) {
-                updateResult = "Ошибка при обновлении курса: ${e.message}"
+                updateResult = "Ошибка при обновлении курса"
             } finally {
                 isLoading = false
             }
@@ -776,7 +775,7 @@ class CourseDetailsViewModel : ViewModel() {
             deleteResult = message
             message
         } catch (e: Exception) {
-            val message = "Ошибка при удалении курса: ${e.message}"
+            val message = "Ошибка при удалении курса"
             deleteResult = message
             message
         } finally {
@@ -810,7 +809,7 @@ class LessonDetailsViewModel : ViewModel() {
                     errorMessage = "Урок не найден"
                 }
             } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке урока: ${e.message}"
+                errorMessage = "Ошибка при загрузке урока"
             } finally {
                 isLoading = false
             }
@@ -824,7 +823,7 @@ class LessonDetailsViewModel : ViewModel() {
                 steps = RetrofitClient.instance.getStepsByLesson(lessonId)
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке шагов: ${e.message}"
+                errorMessage = "Ошибка при загрузке шагов"
             } finally {
                 isLoading = false
             }
@@ -853,7 +852,7 @@ class LessonDetailsViewModel : ViewModel() {
                 "Не удалось обновить урок"
             }
         } catch (e: Exception) {
-            updateResult = "Ошибка при обновлении урока: ${e.message}"
+            updateResult = "Ошибка при обновлении урока"
         } finally {
             isLoading = false
         }
@@ -869,7 +868,7 @@ class LessonDetailsViewModel : ViewModel() {
                 "Не удалось удалить урок"
             }
         } catch (e: Exception) {
-            "Ошибка при удалении урока: ${e.message}"
+            "Ошибка при удалении урока"
         } finally {
             isLoading = false
         }
@@ -952,7 +951,7 @@ class LessonStepAnswerViewModel : ViewModel() {
                     _answerResult.value = false
                 }
             } catch (e: Exception) {
-                errorMessage = "Ошибка при отправке ответа: ${e.message}"
+                errorMessage = "Ошибка при отправке ответа"
                 _answerResult.value = false
             } finally {
                 isLoading = false
@@ -1003,7 +1002,7 @@ class LessonStepAnswerViewModel : ViewModel() {
                     _answerResult.value = false
                 }
             } catch (e: Exception) {
-                errorMessage = "Ошибка при обновлении ответа: ${e.message}"
+                errorMessage = "Ошибка при обновлении ответа"
                 _answerResult.value = false
             } finally {
                 isLoading = false
@@ -1049,7 +1048,7 @@ class LessonStepAnswerViewModel : ViewModel() {
                     _updateResult.value = false
                 }
             } catch (e: Exception) {
-                errorMessage = "Ошибка при обновлении шага «Лекция»: ${e.message}"
+                errorMessage = "Ошибка при обновлении шага «Лекция»"
                 _updateResult.value = false
             } finally {
                 isLoading = false
@@ -1089,7 +1088,7 @@ class LessonStepAnswerViewModel : ViewModel() {
                     _updateResult.value = false
                 }
             } catch (e: Exception) {
-                errorMessage = "Ошибка при обновлении шага «Открытый вопрос»: ${e.message}"
+                errorMessage = "Ошибка при обновлении шага «Открытый вопрос»"
                 _updateResult.value = false
             } finally {
                 isLoading = false
@@ -1135,7 +1134,7 @@ class LessonStepAnswerViewModel : ViewModel() {
                     _updateResult.value = false
                 }
             } catch (e: Exception) {
-                errorMessage = "Ошибка при обновлении шага «Вопрос с вариантами ответа»: ${e.message}"
+                errorMessage = "Ошибка при обновлении шага «Вопрос с вариантами ответа»"
                 _updateResult.value = false
             } finally {
                 isLoading = false
@@ -1183,7 +1182,7 @@ class LessonStepAnswerViewModel : ViewModel() {
                     _updateResult.value = false
                 }
             } catch (e: Exception) {
-                errorMessage = "Ошибка при обновлении шага «Вопрос с приложением»: ${e.message}"
+                errorMessage = "Ошибка при обновлении шага «Вопрос с приложением»"
                 _updateResult.value = false
             } finally {
                 isLoading = false
@@ -1204,7 +1203,7 @@ class LessonStepAnswerViewModel : ViewModel() {
                 errorMessage = null
                 onSuccess(response)
             } catch (e: Exception) {
-                errorMessage = "Ошибка при получении деталей шага: ${e.message}"
+                errorMessage = "Ошибка при получении деталей шага"
             } finally {
                 isLoading = false
             }
@@ -1224,12 +1223,12 @@ class LessonStepAnswerViewModel : ViewModel() {
                 if (response.isSuccessful && response.body() != null) {
                     onSuccess(response.body()!!)
                 } else {
-                    val message = "Ошибка при скачивании файла: ${response.code()} ${response.message()}"
+                    val message = "Ошибка при скачивании файла"
                     fileDownloadError = message
                     onFailure(message)
                 }
             } catch (e: Exception) {
-                val message = "Ошибка при скачивании файла: ${e.message}"
+                val message = "Ошибка при скачивании файла"
                 fileDownloadError = message
                 onFailure(message)
             } finally {
@@ -1293,7 +1292,7 @@ class CourseCreateViewModel : ViewModel() {
                 categories = RetrofitClient.instance.getCourseCategories()
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке категорий: ${e.message}"
+                errorMessage = "Ошибка при загрузке категорий"
             } finally {
                 isLoading = false
             }
@@ -1320,7 +1319,7 @@ class CourseCreateViewModel : ViewModel() {
                 errorMessage = null
                 courseId.body()?.let { onSuccess(it) }
             } catch (e: Exception) {
-                errorMessage = "Ошибка при создании курса: ${e.message}"
+                errorMessage = "Ошибка при создании курса"
             } finally {
                 isLoading = false
             }
@@ -1357,7 +1356,7 @@ class LessonCreateViewModel : ViewModel() {
                 errorMessage = null
                 lessonId.body()?.let { onSuccess(it) }
             } catch (e: Exception) {
-                errorMessage = "Ошибка при создании урока: ${e.message}"
+                errorMessage = "Ошибка при создании урока"
             } finally {
                 isLoading = false
             }
@@ -1413,7 +1412,7 @@ class StepCreationViewModel : ViewModel() {
                     onError()
                 }
             } catch (e: Exception) {
-                errorMessage = "Ошибка при создании шага «Лекция»: ${e.message}"
+                errorMessage = "Ошибка при создании шага «Лекция»"
                 onError()
             } finally {
                 isLoading = false
@@ -1449,7 +1448,7 @@ class StepCreationViewModel : ViewModel() {
                     onError()
                 }
             } catch (e: Exception) {
-                errorMessage = "Ошибка при создании шага «Открытый вопрос»: ${e.message}"
+                errorMessage = "Ошибка при создании шага «Открытый вопрос»"
                 onError()
             } finally {
                 isLoading = false
@@ -1489,7 +1488,7 @@ class StepCreationViewModel : ViewModel() {
                     onError()
                 }
             } catch (e: Exception) {
-                errorMessage = "Ошибка при создании шага «Множественный выбор»: ${e.message}"
+                errorMessage = "Ошибка при создании шага «Множественный выбор»"
                 onError()
             } finally {
                 isLoading = false
@@ -1543,7 +1542,7 @@ class StepCreationViewModel : ViewModel() {
                     }
                 }
             } catch (e: Exception) {
-                errorMessage = "Ошибка: ${e.message}"
+                errorMessage = "Ошибка"
                 onError()
             } finally {
                 isLoading = false
@@ -1586,7 +1585,7 @@ class StepAnswersViewModel : ViewModel() {
                 answersForStep = RetrofitClient.instance.getAnswersForStep(stepId)
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке ответов: ${e.message}"
+                errorMessage = "Ошибка при загрузке ответов"
             } finally {
                 isLoading = false
             }
@@ -1606,7 +1605,7 @@ class StepAnswersViewModel : ViewModel() {
                 errorMessage = null
                 onSuccess(response)
             } catch (e: Exception) {
-                errorMessage = "Ошибка при получении деталей шага: ${e.message}"
+                errorMessage = "Ошибка при получении деталей шага"
             } finally {
                 isLoading = false
             }
@@ -1623,7 +1622,7 @@ class StepAnswersViewModel : ViewModel() {
                 errorMessage = null
             } catch (e: Exception) {
                 _operationSuccess.value = false
-                errorMessage = "Ошибка при оценивании ответа: ${e.message}"
+                errorMessage = "Ошибка при оценивании ответа"
             } finally {
                 isLoading = false
             }
@@ -1643,12 +1642,12 @@ class StepAnswersViewModel : ViewModel() {
                 if (response.isSuccessful && response.body() != null) {
                     onSuccess(response.body()!!)
                 } else {
-                    val message = "Ошибка при скачивании файла: ${response.code()} ${response.message()}"
+                    val message = "Ошибка при скачивании файла"
                     fileDownloadError = message
                     onFailure(message)
                 }
             } catch (e: Exception) {
-                val message = "Ошибка при скачивании файла: ${e.message}"
+                val message = "Ошибка при скачивании файла"
                 fileDownloadError = message
                 onFailure(message)
             } finally {
@@ -1664,7 +1663,7 @@ class StepAnswersViewModel : ViewModel() {
                 teacherCourses = RetrofitClient.instance.getCoursesByTeacher(teacherId)
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке курсов преподавателя: ${e.message}"
+                errorMessage = "Ошибка при загрузке курсов преподавателя"
             } finally {
                 isLoading = false
             }
@@ -1678,7 +1677,7 @@ class StepAnswersViewModel : ViewModel() {
                 lessonsByCourse = RetrofitClient.instance.getLessonsByCourse(courseId)
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке уроков курса: ${e.message}"
+                errorMessage = "Ошибка при загрузке уроков курса"
             } finally {
                 isLoading = false
             }
@@ -1692,7 +1691,7 @@ class StepAnswersViewModel : ViewModel() {
                 steps = RetrofitClient.instance.getStepsByLesson(lessonId)
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке шагов: ${e.message}"
+                errorMessage = "Ошибка при загрузке шагов"
             } finally {
                 isLoading = false
             }
@@ -1716,7 +1715,7 @@ class AppealStatisticsViewModel : ViewModel() {
                 statistics = RetrofitClient.instance.getAppealsStatistics()
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке статистики: ${e.message}"
+                errorMessage = "Ошибка при загрузке статистики"
             } finally {
                 isLoading = false
             }
@@ -1740,7 +1739,7 @@ class PlatformStatisticsViewModel : ViewModel() {
                 statistics = RetrofitClient.instance.getPlatformStatistics().firstOrNull()
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке статистики: ${e.message}"
+                errorMessage = "Ошибка при загрузке статистики"
             } finally {
                 isLoading = false
             }
@@ -1768,7 +1767,7 @@ class TeacherCoursesViewModel : ViewModel() {
                 courses = RetrofitClient.instance.getCoursesByTeacher(teacherId)
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке курсов: ${e.message}"
+                errorMessage = "Ошибка при загрузке курсов"
             } finally {
                 isLoading = false
             }
@@ -1782,7 +1781,7 @@ class TeacherCoursesViewModel : ViewModel() {
                 selectedCourseStatistics = RetrofitClient.instance.viewCourseStatistics(courseId)
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке статистики курса: ${e.message}"
+                errorMessage = "Ошибка при загрузке статистики курса"
             } finally {
                 isLoading = false
             }
@@ -1796,7 +1795,7 @@ class TeacherCoursesViewModel : ViewModel() {
                 issuedCertificate = RetrofitClient.instance.issueCertificate(userId, courseId).body() == true
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при выдаче сертификата: ${e.message}"
+                errorMessage = "Ошибка при выдаче сертификата"
             } finally {
                 isLoading = false
             }
@@ -1828,7 +1827,7 @@ class UserActivityStatsViewModel : ViewModel() {
                 activityStats = RetrofitClient.instance.getUserActivityStats(daysBack)
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке статистики активности: ${e.message}"
+                errorMessage = "Ошибка при загрузке статистики активности"
             } finally {
                 isLoading = false
             }
@@ -1852,7 +1851,7 @@ class UserStatisticsViewModel : ViewModel() {
                 allUsers = RetrofitClient.instance.getAllUsers()
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка загрузки всех пользователей: ${e.message}"
+                errorMessage = "Ошибка загрузки всех пользователей"
             } finally {
                 isLoading = false
             }
@@ -1877,7 +1876,7 @@ class AppealTopicViewModel : ViewModel() {
                 topics = RetrofitClient.instance.getTopicsAppeals()
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке тем обращений: ${e.message}"
+                errorMessage = "Ошибка при загрузке тем обращений"
             } finally {
                 isLoading = false
             }
@@ -1892,7 +1891,7 @@ class AppealTopicViewModel : ViewModel() {
                 errorMessage = null
                 if (operationResult == true) loadTopics()
             } catch (e: Exception) {
-                errorMessage = "Ошибка при добавлении темы: ${e.message}"
+                errorMessage = "Ошибка при добавлении темы"
                 operationResult = false
             } finally {
                 isLoading = false
@@ -1909,7 +1908,7 @@ class AppealTopicViewModel : ViewModel() {
                 errorMessage = null
                 if (operationResult == true) loadTopics()
             } catch (e: Exception) {
-                errorMessage = "Ошибка при обновлении темы: ${e.message}"
+                errorMessage = "Ошибка при обновлении темы"
                 operationResult = false
             } finally {
                 isLoading = false
@@ -1925,7 +1924,7 @@ class AppealTopicViewModel : ViewModel() {
                 errorMessage = null
                 if (operationResult == true) loadTopics()
             } catch (e: Exception) {
-                errorMessage = "Ошибка при удалении темы: ${e.message}"
+                errorMessage = "Ошибка при удалении темы"
                 operationResult = false
             } finally {
                 isLoading = false
@@ -1951,7 +1950,7 @@ class CourseCategoryViewModel : ViewModel() {
                 categories = RetrofitClient.instance.getCourseCategories()
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Ошибка при загрузке категорий курсов: ${e.message}"
+                errorMessage = "Ошибка при загрузке категорий курсов"
             } finally {
                 isLoading = false
             }
@@ -1967,7 +1966,7 @@ class CourseCategoryViewModel : ViewModel() {
                 errorMessage = null
                 if (operationResult == true) loadCategories()
             } catch (e: Exception) {
-                errorMessage = "Ошибка при добавлении категории: ${e.message}"
+                errorMessage = "Ошибка при добавлении категории"
                 operationResult = false
             } finally {
                 isLoading = false
@@ -1984,7 +1983,7 @@ class CourseCategoryViewModel : ViewModel() {
                 errorMessage = null
                 if (operationResult == true) loadCategories()
             } catch (e: Exception) {
-                errorMessage = "Ошибка при обновлении категории: ${e.message}"
+                errorMessage = "Ошибка при обновлении категории"
                 operationResult = false
             } finally {
                 isLoading = false
@@ -2001,7 +2000,7 @@ class CourseCategoryViewModel : ViewModel() {
                 errorMessage = null
                 if (operationResult == true) loadCategories()
             } catch (e: Exception) {
-                errorMessage = "Ошибка при удалении категории: ${e.message}"
+                errorMessage = "Ошибка при удалении категории"
                 operationResult = false
             } finally {
                 isLoading = false
@@ -2030,7 +2029,7 @@ class CertificatesViewModel : ViewModel() {
                 userCertificates = RetrofitClient.instance.getUserSertificates(userId)
                 generalError = null
             } catch (e: Exception) {
-                generalError = "Ошибка загрузки сертификатов: ${e.message}"
+                generalError = "Ошибка загрузки сертификатов"
             } finally {
                 isLoading = false
             }
@@ -2044,7 +2043,7 @@ class CertificatesViewModel : ViewModel() {
                 certificateDetails = RetrofitClient.instance.viewCertificate(certificateId)
                 generalError = null
             } catch (e: Exception) {
-                generalError = "Ошибка загрузки данных сертификата: ${e.message}"
+                generalError = "Ошибка загрузки данных сертификата"
             } finally {
                 isLoading = false
             }
@@ -2055,7 +2054,7 @@ class CertificatesViewModel : ViewModel() {
         return try {
             RetrofitClient.instance.getFile(filePath)
         } catch (e: Exception) {
-            downloadError = "Ошибка загрузки файла: ${e.message}"
+            downloadError = "Ошибка загрузки файла"
             null
         }
     }
