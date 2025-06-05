@@ -78,14 +78,15 @@ fun AppealStatisticsView(navController: NavHostController, userId: String, role:
                             }
                         }
 
-                        LazyColumn {
+                        LazyColumn(
+                            modifier = Modifier.weight(1f),
+                        ) {
                             items(statistics) { stat ->
                                 val fields = listOf(
                                     "Статус" to stat.status,
                                     "Кол-во обращений" to stat.appealCount.toString(),
                                     "Среднее время ответа (ч)" to String.format("%.2f", stat.avgResponseHours),
                                     "Просроченные обращения" to stat.overdueAppeals.toString(),
-                                    "Процент решений" to "${stat.resolutionRate}%",
                                     "Частая тема" to stat.mostCommonTopic,
                                     "Среднее файлов на обращение" to String.format("%.2f", stat.avgFilesPerAppeal)
                                 )

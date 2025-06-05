@@ -34,7 +34,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-
 @Composable
 fun PlatformStatisticsView(navController: NavHostController, userId: String, role: String) {
     val viewModel: PlatformStatisticsViewModel = viewModel()
