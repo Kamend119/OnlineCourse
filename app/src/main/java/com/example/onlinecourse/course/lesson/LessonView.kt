@@ -143,7 +143,6 @@ fun LessonView(navController: NavHostController, userId: String, role: String, c
                                         Spacer(Modifier.height(8.dp))
                                         Text(text = it.lessonDescription)
                                         Spacer(Modifier.height(8.dp))
-                                        Text(text = "Порядковый номер: ${it.sequenceNumber}")
                                         Text(text = "Дата публикации: ${it.datePublication}")
                                     }
                                 }

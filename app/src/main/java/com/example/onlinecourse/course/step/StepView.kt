@@ -49,6 +49,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import com.example.onlinecourse.function.TimePickerWithHMS
 import com.example.onlinecourse.function.getFileName
 import com.example.onlinecourse.function.uriToMultipartBody
@@ -486,8 +487,9 @@ fun StudentStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswer
     }
 
     Column(modifier = Modifier.padding(16.dp)) {
-        Text("Название: ${stepDetail.stepName}", style = MaterialTheme.typography.titleMedium)
-        Text("Контент: ${stepDetail.stepContent}", modifier = Modifier.padding(top = 8.dp))
+        Text(stepDetail.stepTypeName, style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+        Text(stepDetail.stepName, style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 8.dp))
+        Text(stepDetail.stepContent, modifier = Modifier.padding(top = 8.dp))
         Text("Обязательный: ${if (stepDetail.obligatory) "Да" else "Нет"}", modifier = Modifier.padding(top = 8.dp))
 
         if (stepDetail.stepTypeName != "Лекция") {
@@ -496,6 +498,7 @@ fun StudentStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswer
 
         when (stepDetail.stepTypeName) {
             "Вопрос без вариантов ответа" -> {
+                Spacer(Modifier.padding(12.dp))
                 OutlinedTextField(
                     value = answerText,
                     onValueChange = { answerText = it },
@@ -505,6 +508,7 @@ fun StudentStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswer
                 )
             }
             "Вопрос с вариантами ответа" -> {
+                Spacer(Modifier.padding(12.dp))
                 stepDetail.answerOptions?.forEach { option ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -547,6 +551,7 @@ fun StudentStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswer
                     Text("Скачать")
                 }
 
+                Spacer(Modifier.padding(12.dp))
                 if (isEditable) {
                     if (fileUri != null) {
                         val fileName =
@@ -590,6 +595,7 @@ fun StudentStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswer
                     .padding(top = 8.dp),
                 enabled = isEditable
             )
+            Spacer(Modifier.padding(12.dp))
 
             stepDetail.userCommentTeacher?.let {
                 if (!stepDetail.userCommentTeacher.isBlank()) {
@@ -760,9 +766,9 @@ fun AdministratorStepView( stepDetail: StepDetailResponse, viewModel: LessonStep
     }
 
     Column(modifier = Modifier.padding(16.dp)) {
-        Text("Тип шага: ${stepDetail.stepTypeName}", style = MaterialTheme.typography.titleMedium)
-        Text("Название: ${stepDetail.stepName}", style = MaterialTheme.typography.titleMedium)
-        Text("Контент: ${stepDetail.stepContent}", modifier = Modifier.padding(top = 8.dp))
+        Text(stepDetail.stepTypeName, style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+        Text(stepDetail.stepName, style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 8.dp))
+        Text(stepDetail.stepContent, modifier = Modifier.padding(top = 8.dp))
         Text("Обязательный: ${if (stepDetail.obligatory) "Да" else "Нет"}", modifier = Modifier.padding(top = 8.dp))
 
         if (stepDetail.stepTypeName != "Лекция") {
@@ -777,6 +783,7 @@ fun AdministratorStepView( stepDetail: StepDetailResponse, viewModel: LessonStep
                 }
             }
             "Вопрос с приложением" -> {
+                Spacer(Modifier.padding(12.dp))
                 Text(
                     "Файл задания: ${stepDetail.taskFileName ?: "нет"}",
                     modifier = Modifier.padding(top = 8.dp)
