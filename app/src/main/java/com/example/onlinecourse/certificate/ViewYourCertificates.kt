@@ -57,7 +57,7 @@ fun ViewYourCertificates(navController: NavHostController, userId: String, role:
                 Column(
                     modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Top
                 ) {
                     when {
                         isLoading -> {

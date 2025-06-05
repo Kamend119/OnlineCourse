@@ -243,7 +243,7 @@ fun CourseView(navController: NavHostController, userId: String, role: String, c
                                     }
                                 }
 
-                                if (role == "Студент" && statusName != "В прохождении") {
+                                if (role == "Студент" && statusName != "В прохождении" && statusName != "Пройден") {
                                     Spacer(Modifier.height(16.dp))
                                     Button(
                                         onClick = {

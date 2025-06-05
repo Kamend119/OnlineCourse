@@ -157,7 +157,7 @@ fun CoursesSearch(navController: NavHostController, userId: String, role: String
                         if (role == "Студент") {
                         DropdownMenuBox(
                             label = "Статус",
-                            options = listOf("Новые", "В прохождении", "Отложен", "Завершен"),
+                            options = listOf("Новые", "В прохождении", "Отложен", "Пройден"),
                             selectedOption = selectedStatus
                         ) {
                             selectedStatus = it

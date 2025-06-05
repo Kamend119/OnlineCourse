@@ -93,7 +93,10 @@ fun StepView(navController: NavHostController, userId: String, role: String, cou
                                 modifier = Modifier.size(48.dp)
                             )
                         }
-                    }else {
+                    } else if (viewModel.errorMessage == "Ошибка при получении деталей шага"){
+                        Text("Ошибка: ${viewModel.errorMessage}", color = MaterialTheme.colorScheme.error)
+                    }
+                    else {
                         when (role) {
                             "Учитель" -> {
                                 stepDetails?.let { StepEditTeacherView(it, viewModel, context, userId.toLong(), stepId.toLong(), navController) }
@@ -556,7 +559,7 @@ fun StudentStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswer
                     if (fileUri != null) {
                         val fileName =
                             getFileName(fileUri!!, context.contentResolver) ?: "Выбран файл"
-                        Row(Modifier.padding(10.dp)) {
+                        Column(Modifier.padding(10.dp)) {
                             Text(fileName)
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
@@ -564,6 +567,17 @@ fun StudentStepView( stepDetail: StepDetailResponse, viewModel: LessonStepAnswer
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.Gray
                             )
+                        }
+                    } else{
+                        Text("Файл ответа: ${stepDetail.answerFileName ?: "нет"}", modifier = Modifier.padding(top = 8.dp))
+                        Button(onClick = {
+                            viewModel.downloadFile(stepDetail.answerFilePath ?: "", onSuccess = { body ->
+                                val bytes = body.bytes()
+                                downloadedFileBytes = bytes
+                                saveFileLauncher.launch(stepDetail.answerFileName ?: "file")
+                            })
+                        }) {
+                            Text("Скачать")
                         }
                     }
                     Button(onClick = { launcher.launch("*/*") }) {
